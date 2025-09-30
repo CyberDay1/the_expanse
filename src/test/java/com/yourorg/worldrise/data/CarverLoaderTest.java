@@ -26,15 +26,15 @@ class CarverLoaderTest {
                 "Ocean canyon biome modifier should be included");
         assertTrue(enabled.stream().anyMatch(path -> path.endsWith("mega_ravine.json")),
                 "Mega ravine carver should be included");
-        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("add_mega_ravine.json")),
+        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("add_mega_ravines.json")),
                 "Mega ravine biome modifier should be included");
         assertTrue(enabled.stream().anyMatch(path -> path.endsWith("sinkhole.json")),
                 "Sinkhole carver should be included");
-        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("add_sinkhole.json")),
+        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("add_sinkholes.json")),
                 "Sinkhole biome modifier should be included");
         assertTrue(enabled.stream().anyMatch(path -> path.endsWith("ocean_blue_hole.json")),
                 "Ocean blue hole carver should be included");
-        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("add_ocean_blue_hole.json")),
+        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("add_blue_holes.json")),
                 "Ocean blue hole biome modifier should be included");
     }
 
@@ -47,7 +47,7 @@ class CarverLoaderTest {
         assertEquals(2, enabled.size(),
                 "Only mega ravine carver and modifier should remain active");
         assertTrue(enabled.stream().allMatch(path ->
-                path.endsWith("mega_ravine.json") || path.endsWith("add_mega_ravine.json")),
+                path.endsWith("mega_ravine.json") || path.endsWith("add_mega_ravines.json")),
                 "Only mega ravine resources should be returned");
     }
 }

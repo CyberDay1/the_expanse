@@ -24,6 +24,8 @@ public class WorldriseConfig {
     public final ModConfigSpec.BooleanValue endScaling;
     public final ModConfigSpec.BooleanValue tectonicEnabled;
     public final ModConfigSpec.BooleanValue lithoEnabled;
+    public final ModConfigSpec.BooleanValue biomesOPlentyCompat;
+    public final ModConfigSpec.BooleanValue bygCompat;
 
     static {
         final var builder = new ModConfigSpec.Builder();
@@ -69,6 +71,12 @@ public class WorldriseConfig {
                                  .define("tectonicEnabled", true);
         lithoEnabled = builder.comment("Enable vendored lithostitched registry hooks")
                                .define("lithoEnabled", true);
+        builder.push("compatibility");
+        biomesOPlentyCompat = builder.comment("Enable Biomes O' Plenty biome compatibility")
+                                     .define("biomesoplenty", true);
+        bygCompat = builder.comment("Enable Oh The Biomes We've Gone biome compatibility")
+                           .define("byg", true);
+        builder.pop();
         builder.pop();
     }
 }
