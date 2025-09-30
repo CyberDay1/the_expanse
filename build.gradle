@@ -1,3 +1,5 @@
+import groovy.json.JsonSlurper
+
 plugins {
     id 'java'
 }
@@ -5,8 +7,10 @@ plugins {
 repositories {
     mavenCentral()
     maven {
-        name = 'Sponge'
-        url = 'https://repo.spongepowered.org/repository/maven-public/'
+        url = 'https://repo.spongepowered.org/maven'
+    }
+    maven {
+        url = 'https://maven.neoforged.net/releases'
     }
 }
 
@@ -23,7 +27,7 @@ configurations.all {
 
 dependencies {
     implementation 'com.google.code.gson:gson:2.11.0'
-    compileOnly 'org.spongepowered:mixin:0.8.7'
+    compileOnly 'org.spongepowered:mixin:0.8.5'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     testImplementation 'org.tomlj:tomlj:1.1.0'
@@ -44,6 +48,24 @@ tasks.register('rescaleOres', JavaExec) {
     ]
 }
 
+def mixinConfigFiles() {
+    fileTree(projectDir) {
+        include "src/**/mixin*.json"
+        include "config/**/mixin*.json"
+    }
+}
+
+tasks.register("validateMixinCompatLevel") {
+    doLast {
+        mixinConfigFiles().each { file ->
+            def json = new JsonSlurper().parse(file)
+            if (json.compatibilityLevel != "JAVA_21") {
+                throw new GradleException("${file} is missing compatibilityLevel JAVA_21")
+            }
+        }
+    }
+}
+
 tasks.register("validateNoExternalMixinExtras") {
     doLast {
         fileTree("versions").matching {
@@ -57,5 +79,5 @@ tasks.register("validateNoExternalMixinExtras") {
 }
 
 tasks.named("build").configure {
-    dependsOn("validateNoExternalMixinExtras")
+    dependsOn("validateMixinCompatLevel", "validateNoExternalMixinExtras")
 }
