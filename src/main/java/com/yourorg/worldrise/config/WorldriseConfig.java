@@ -22,6 +22,8 @@ public class WorldriseConfig {
     public final ModConfigSpec.BooleanValue endCityScaling;
     public final ModConfigSpec.BooleanValue netherScaling;
     public final ModConfigSpec.BooleanValue endScaling;
+    public final ModConfigSpec.BooleanValue tectonicEnabled;
+    public final ModConfigSpec.BooleanValue lithoEnabled;
 
     static {
         final var builder = new ModConfigSpec.Builder();
@@ -63,6 +65,10 @@ public class WorldriseConfig {
                                .define("netherScaling", true);
         endScaling = builder.comment("Enable expanded end vertical range")
                             .define("endScaling", true);
+        tectonicEnabled = builder.comment("Enable vendored tectonic configuration loader")
+                                 .define("tectonicEnabled", true);
+        lithoEnabled = builder.comment("Enable vendored lithostitched registry hooks")
+                               .define("lithoEnabled", true);
         builder.pop();
     }
 }
