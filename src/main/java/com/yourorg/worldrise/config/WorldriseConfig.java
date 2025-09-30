@@ -8,6 +8,8 @@ public class WorldriseConfig {
 
     public final ModConfigSpec.BooleanValue oreScaling;
     public final ModConfigSpec.BooleanValue carverEnabled;
+    public final ModConfigSpec.DoubleValue oreDensityMultiplier;
+    public final ModConfigSpec.DoubleValue carverChanceMultiplier;
     public final ModConfigSpec.BooleanValue strongholdScaling;
     public final ModConfigSpec.BooleanValue ancientCityScaling;
     public final ModConfigSpec.BooleanValue mineshaftScaling;
@@ -30,6 +32,10 @@ public class WorldriseConfig {
                             .define("oreScaling", true);
         carverEnabled = builder.comment("Enable custom ocean canyon carver")
                                .define("carverEnabled", true);
+        oreDensityMultiplier = builder.comment("Multiplier for ore density (default 1.0)")
+                                      .defineInRange("oreDensityMultiplier", 1.0, 0.1, 10.0);
+        carverChanceMultiplier = builder.comment("Multiplier for carver chance (default 1.0)")
+                                        .defineInRange("carverChanceMultiplier", 1.0, 0.1, 10.0);
         strongholdScaling = builder.comment("Enable height rescaling for strongholds")
                                    .define("strongholdScaling", true);
         ancientCityScaling = builder.comment("Enable height rescaling for ancient cities")

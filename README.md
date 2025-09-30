@@ -29,6 +29,22 @@ Worldrise fundamentally alters overworld generation and ore placement. These cha
 only safe for **new worlds**—existing saves may exhibit chunk borders, duplicated ores, or
 other corruption. Always back up your worlds before experimenting.
 
+## Configuration
+
+The `config/worldrise.toml` file exposes tuning multipliers for players who need to balance
+performance with resource availability when stretching the world height:
+
+* `oreDensityMultiplier` – Scales the `count`/`tries` values used by ore placements. Set to
+  `0.5` for sparser veins or `2.0` for richer deposits. Values are clamped to at least one
+  placement attempt.
+* `carverChanceMultiplier` – Scales the `probability` value for carvers such as ocean
+  canyons. Lower values (e.g., `0.5`) reduce frequency, while higher values (e.g., `2.0`)
+  increase it. Probabilities are clamped between `0.0` and `1.0`.
+
+Lower multipliers lighten chunk generation cost by creating fewer features, whereas higher
+values increase terrain detail at the expense of performance. Extreme settings may break
+the expected gameplay balance, so adjust cautiously.
+
 ## Compatibility Notes
 
 * **Tectonic:** Verified alongside Worldrise—terrain retains Tectonic's noise while

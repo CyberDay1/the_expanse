@@ -10,3 +10,5 @@ monumentScaling = true
 endCityScaling = true
 netherScaling = true
 endScaling = true
+oreDensityMultiplier = 1.0
+carverChanceMultiplier = 1.0

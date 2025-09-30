@@ -20,6 +20,11 @@ public class ModConfigSpec {
             return new BooleanValue(defaultValue);
         }
 
+        public DoubleValue defineInRange(String key, double defaultValue, double minValue, double maxValue) {
+            double clamped = Math.max(minValue, Math.min(maxValue, defaultValue));
+            return new DoubleValue(clamped);
+        }
+
         public ModConfigSpec build() {
             return new ModConfigSpec();
         }
@@ -38,6 +43,23 @@ public class ModConfigSpec {
         }
 
         public boolean getAsBoolean() {
+            return value;
+        }
+    }
+
+    public static class DoubleValue implements Supplier<Double> {
+        private final double value;
+
+        private DoubleValue(double value) {
+            this.value = value;
+        }
+
+        @Override
+        public Double get() {
+            return value;
+        }
+
+        public double getAsDouble() {
             return value;
         }
     }
