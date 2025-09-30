@@ -33,3 +33,19 @@ tasks.register('rescaleOres', JavaExec) {
         "$projectDir/src/main/resources/data/worldrise/worldgen/placed_feature"
     ]
 }
+
+tasks.register("validateNoMixinExtrasImports") {
+    doLast {
+        fileTree("versions").matching {
+            include "**/*.java"
+        }.each { file ->
+            if (file.text.contains("com.llamalad7.mixinextras")) {
+                throw new GradleException("Found illegal import of external MixinExtras in ${file}")
+            }
+        }
+    }
+}
+
+tasks.named("build").configure {
+    dependsOn("validateNoMixinExtrasImports")
+}
