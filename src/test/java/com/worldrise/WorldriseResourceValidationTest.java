@@ -61,4 +61,60 @@ class WorldriseResourceValidationTest {
             }
         }
     }
+
+    @Test
+    @DisplayName("Ocean canyon carver geometry matches expected values")
+    void oceanCanyonCarverMatchesSpec() throws IOException {
+        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "worldrise", "worldgen",
+                "configured_carver", "ocean_canyon.json"));
+        assertTrue(Files.exists(carver), "ocean_canyon.json should exist");
+
+        JsonNode root = MAPPER.readTree(Files.newBufferedReader(carver));
+        JsonNode config = root.get("config");
+        assertNotNull(config, "Configured carver must declare a config object");
+
+        assertEquals(1.5, config.get("horizontal_radius_multiplier").asDouble(),
+                1.0E-6, "Horizontal radius multiplier should widen ravines to 1.5x");
+
+        JsonNode yNode = config.get("y");
+        assertNotNull(yNode, "Configured carver must define a y distribution");
+        assertEquals("minecraft:uniform", yNode.get("type").asText(),
+                "Ocean canyon carver should use a uniform Y distribution");
+
+        JsonNode valueNode = yNode.get("value");
+        assertNotNull(valueNode, "Uniform distribution must define value bounds");
+        assertEquals(-50, valueNode.get("min_inclusive").asInt(),
+                "Canyon floor should start at Y = -50");
+        assertEquals(-30, valueNode.get("max_inclusive").asInt(),
+                "Canyon roof should top out at Y = -30");
+    }
+
+    @Test
+    @DisplayName("Ocean-like biome tag references vanilla oceans")
+    void oceanLikeBiomeTagResolves() throws IOException {
+        Path tag = RESOURCE_ROOT.resolve(Path.of("data", "worldrise", "tags", "worldgen",
+                "biome", "ocean_like.json"));
+        assertTrue(Files.exists(tag), "ocean_like biome tag should exist");
+
+        JsonNode root = MAPPER.readTree(Files.newBufferedReader(tag));
+        assertTrue(root.has("values"), "ocean_like tag must declare biome values");
+        JsonNode values = root.get("values");
+        assertTrue(values.isArray(), "ocean_like values should be an array");
+
+        List<String> biomes = Stream.of("minecraft:ocean", "minecraft:deep_ocean",
+                        "minecraft:warm_ocean", "minecraft:lukewarm_ocean",
+                        "minecraft:cold_ocean", "minecraft:frozen_ocean")
+                .collect(Collectors.toList());
+
+        for (String biome : biomes) {
+            boolean present = false;
+            for (JsonNode value : values) {
+                if (biome.equals(value.asText())) {
+                    present = true;
+                    break;
+                }
+            }
+            assertTrue(present, () -> biome + " should be included in ocean_like tag");
+        }
+    }
 }
