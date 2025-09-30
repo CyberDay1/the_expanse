@@ -1,4 +1,5 @@
 import groovy.json.JsonSlurper
+import java.nio.file.Paths
 
 plugins {
     id 'java'
@@ -78,6 +79,48 @@ tasks.register("validateNoExternalMixinExtras") {
     }
 }
 
+tasks.register("validateVendoredProjectsStripped") {
+    group = "verification"
+    description = "Ensure vendored mods do not include their own build scripts or mods.toml descriptors"
+
+    doLast {
+        def vendorRoot = file("src/main/java/com/yourorg/worldrise/vendor")
+        if (vendorRoot.exists()) {
+            def forbiddenNames = ["build.gradle", "settings.gradle", "gradlew", "gradlew.bat"]
+            vendorRoot.eachFileRecurse { file ->
+                if (file.isFile()) {
+                    if (forbiddenNames.contains(file.name)) {
+                        def relative = vendorRoot.toPath().relativize(file.toPath())
+                        throw new GradleException("Vendored project build file ${relative} should be removed")
+                    }
+
+                    if (file.name == "mods.toml" && file.parentFile?.name == "META-INF") {
+                        def relative = vendorRoot.toPath().relativize(file.toPath())
+                        throw new GradleException("Vendored project metadata ${relative} should be removed")
+                    }
+                }
+            }
+        }
+
+        def resourceRoot = file("src/main/resources").canonicalFile
+        def modsTomls = fileTree(resourceRoot) {
+            include "**/mods.toml"
+        }.collect { it.canonicalFile }
+
+        def expected = resourceRoot.toPath().resolve(Paths.get("META-INF", "mods.toml")).toFile().canonicalFile
+        if (!modsTomls.contains(expected)) {
+            def relativePath = resourceRoot.toPath().relativize(expected.toPath())
+            throw new GradleException("Worldrise mods.toml is missing from ${relativePath}")
+        }
+
+        def extras = modsTomls.findAll { it != expected }
+        if (!extras.isEmpty()) {
+            def relativeExtras = extras.collect { resourceRoot.toPath().relativize(it.toPath()) }
+            throw new GradleException("Unexpected mods.toml files found: ${relativeExtras}")
+        }
+    }
+}
+
 tasks.named("build").configure {
-    dependsOn("validateMixinCompatLevel", "validateNoExternalMixinExtras")
+    dependsOn("validateMixinCompatLevel", "validateNoExternalMixinExtras", "validateVendoredProjectsStripped")
 }

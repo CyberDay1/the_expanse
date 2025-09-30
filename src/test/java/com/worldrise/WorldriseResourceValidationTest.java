@@ -192,4 +192,52 @@ class WorldriseResourceValidationTest {
             assertTrue(present, () -> biome + " should be included in ocean_like tag");
         }
     }
+
+    @Test
+    @DisplayName("Vendored projects omit build tooling and duplicate mods metadata")
+    void vendoredProjectsStripped() throws IOException {
+        Path vendorRoot = Path.of("src", "main", "java", "com", "yourorg", "worldrise", "vendor")
+                .toAbsolutePath().normalize();
+        if (Files.exists(vendorRoot)) {
+            try (Stream<Path> paths = Files.walk(vendorRoot)) {
+                List<Path> forbidden = paths
+                        .filter(Files::isRegularFile)
+                        .filter(path -> {
+                            String name = path.getFileName().toString();
+                            if (name.equals("build.gradle") || name.equals("settings.gradle")
+                                    || name.equals("gradlew") || name.equals("gradlew.bat")) {
+                                return true;
+                            }
+
+                            if (name.equals("mods.toml")) {
+                                Path parent = path.getParent();
+                                return parent != null
+                                        && parent.getFileName() != null
+                                        && parent.getFileName().toString().equals("META-INF");
+                            }
+
+                            return false;
+                        })
+                        .map(path -> vendorRoot.relativize(path.toAbsolutePath().normalize()))
+                        .collect(Collectors.toList());
+                assertTrue(forbidden.isEmpty(),
+                        () -> "Vendored projects should not ship Gradle build files or META-INF/mods.toml descriptors: "
+                                + forbidden);
+            }
+        }
+
+        Path resourceRoot = Path.of("src", "main", "resources").toAbsolutePath().normalize();
+        List<Path> mods;
+        try (Stream<Path> modStream = Files.walk(resourceRoot)
+                .filter(Files::isRegularFile)
+                .filter(path -> path.getFileName().toString().equals("mods.toml"))) {
+            mods = modStream
+                    .map(resourceRoot::relativize)
+                    .collect(Collectors.toList());
+        }
+
+        Path expectedMods = Path.of("META-INF", "mods.toml");
+        assertEquals(List.of(expectedMods), mods,
+                () -> "Only the Worldrise mods.toml should remain under resources. Found: " + mods);
+    }
 }
