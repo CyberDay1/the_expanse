@@ -1,0 +1,8 @@
+{
+  "replace": false,
+  "values": [
+    "#minecraft:is_ocean",
+    "#biomesoplenty:is_ocean",
+    "#byg:is_ocean"
+  ]
+}

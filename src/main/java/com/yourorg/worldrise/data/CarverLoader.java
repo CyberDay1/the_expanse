@@ -15,7 +15,8 @@ public final class CarverLoader {
 
     private static final Path CARVER_ROOT =
             Path.of("data", "worldrise", "worldgen", "configured_carver");
-    private static final Path BIOME_MODIFIER_ROOT = Path.of("data", "worldrise", "biome_modifier");
+    private static final Path BIOME_MODIFIER_ROOT =
+            Path.of("data", "worldrise", "worldgen", "biome_modifier");
 
     private CarverLoader() { }
 
@@ -38,11 +39,11 @@ public final class CarverLoader {
         addIfEnabled(enabled, carverBase.resolve("ocean_canyon.json"),
                 modifierBase.resolve("add_ocean_canyon.json"), toggles.oceanCanyons());
         addIfEnabled(enabled, carverBase.resolve("mega_ravine.json"),
-                modifierBase.resolve("add_mega_ravine.json"), toggles.megaRavines());
+                modifierBase.resolve("add_mega_ravines.json"), toggles.megaRavines());
         addIfEnabled(enabled, carverBase.resolve("sinkhole.json"),
-                modifierBase.resolve("add_sinkhole.json"), toggles.sinkholes());
+                modifierBase.resolve("add_sinkholes.json"), toggles.sinkholes());
         addIfEnabled(enabled, carverBase.resolve("ocean_blue_hole.json"),
-                modifierBase.resolve("add_ocean_blue_hole.json"), toggles.blueHoles());
+                modifierBase.resolve("add_blue_holes.json"), toggles.blueHoles());
         return List.copyOf(enabled);
     }
 

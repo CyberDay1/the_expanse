@@ -17,3 +17,7 @@ oreDensityMultiplier = 1.0
 carverChanceMultiplier = 1.0
 tectonicEnabled = true
 lithoEnabled = true
+
+[worldrise.compatibility]
+biomesoplenty = true
+byg = true
