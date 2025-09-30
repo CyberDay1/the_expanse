@@ -1,4 +1,8 @@
-/build/
-/out/
-*.class
-*.jar
+.gradle/
+build/
+.gradle-cache/
+run/
+out/
+.idea/
+*.iml
+.DS_Store
