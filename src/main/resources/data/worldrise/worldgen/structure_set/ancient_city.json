@@ -1,0 +1,17 @@
+{
+  "structures": [
+    { "structure": "minecraft:ancient_city", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 20083232,
+    "spacing": 40,
+    "separation": 8
+  },
+  "project_to_heightmap": null,
+  "height_range": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": -200 },
+    "max_inclusive": { "absolute": -120 }
+  }
+}

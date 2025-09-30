@@ -1,3 +1,6 @@
 [worldrise]
 oreScaling = true
 carverEnabled = true
+strongholdScaling = true
+ancientCityScaling = true
+mineshaftScaling = true

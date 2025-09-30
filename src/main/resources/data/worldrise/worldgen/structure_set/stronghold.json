@@ -1,0 +1,19 @@
+{
+  "structures": [
+    { "structure": "minecraft:stronghold", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:concentric_rings",
+    "distance": 32,
+    "spread": 3,
+    "count": 128,
+    "preferred_biomes": "#minecraft:has_stronghold",
+    "salt": 0
+  },
+  "project_to_heightmap": null,
+  "height_range": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": -128 },
+    "max_inclusive": { "absolute": 128 }
+  }
+}
