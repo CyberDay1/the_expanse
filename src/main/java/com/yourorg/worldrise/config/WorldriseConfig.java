@@ -11,6 +11,12 @@ public class WorldriseConfig {
     public final ModConfigSpec.BooleanValue strongholdScaling;
     public final ModConfigSpec.BooleanValue ancientCityScaling;
     public final ModConfigSpec.BooleanValue mineshaftScaling;
+    public final ModConfigSpec.BooleanValue fortressScaling;
+    public final ModConfigSpec.BooleanValue bastionScaling;
+    public final ModConfigSpec.BooleanValue monumentScaling;
+    public final ModConfigSpec.BooleanValue endCityScaling;
+    public final ModConfigSpec.BooleanValue netherScaling;
+    public final ModConfigSpec.BooleanValue endScaling;
 
     static {
         final var builder = new ModConfigSpec.Builder();
@@ -30,6 +36,18 @@ public class WorldriseConfig {
                                      .define("ancientCityScaling", true);
         mineshaftScaling = builder.comment("Enable height rescaling for mineshafts")
                                   .define("mineshaftScaling", true);
+        fortressScaling = builder.comment("Enable height rescaling for nether fortresses")
+                                 .define("fortressScaling", true);
+        bastionScaling = builder.comment("Enable height rescaling for bastion remnants")
+                                .define("bastionScaling", true);
+        monumentScaling = builder.comment("Enable height rescaling for ocean monuments")
+                                 .define("monumentScaling", true);
+        endCityScaling = builder.comment("Enable height rescaling for end cities")
+                                .define("endCityScaling", true);
+        netherScaling = builder.comment("Enable expanded nether vertical range")
+                               .define("netherScaling", true);
+        endScaling = builder.comment("Enable expanded end vertical range")
+                            .define("endScaling", true);
         builder.pop();
     }
 }

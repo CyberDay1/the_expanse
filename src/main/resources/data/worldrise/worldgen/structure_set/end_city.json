@@ -1,0 +1,17 @@
+{
+  "structures": [
+    { "structure": "minecraft:end_city", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 10387313,
+    "spacing": 20,
+    "separation": 11
+  },
+  "project_to_heightmap": "WORLD_SURFACE_WG",
+  "height_range": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": 60 },
+    "max_inclusive": { "absolute": 160 }
+  }
+}
