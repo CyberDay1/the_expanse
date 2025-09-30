@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_legacy_carvers",
+  "biomes": "#worldrise:surface_sinkhole_targets",
+  "step": "air",
+  "carvers": [ "worldrise:sinkhole" ]
+}

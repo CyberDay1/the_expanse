@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_legacy_carvers",
+  "biomes": "#minecraft:is_ocean",
+  "step": "air",
+  "carvers": [ "worldrise:ocean_blue_hole" ]
+}

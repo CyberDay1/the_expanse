@@ -1,0 +1,11 @@
+{
+  "type": "minecraft:canyon",
+  "config": {
+    "probability": 0.01,
+    "y": { "min_inclusive": { "absolute": 60 }, "max_inclusive": { "absolute": 200 } },
+    "yScale": { "type": "minecraft:uniform", "value": 0.5 },
+    "horizontal_radius_multiplier": 2.0,
+    "vertical_radius_multiplier": 2.5,
+    "shape": { "type": "minecraft:uniform", "value": 1.0 }
+  }
+}
