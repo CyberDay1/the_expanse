@@ -13,6 +13,7 @@ java {
 }
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.11.0'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     testImplementation 'org.tomlj:tomlj:1.1.0'
@@ -20,4 +21,15 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+tasks.register('rescaleOres', JavaExec) {
+    group = 'worldrise'
+    description = 'Rescales vanilla + modded ore placement JSON into worldrise namespace'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'com.yourorg.worldrise.util.OreRescaler'
+    args = [
+        "$projectDir/src/main/resources/data/minecraft/worldgen/placed_feature",
+        "$projectDir/src/main/resources/data/worldrise/worldgen/placed_feature"
+    ]
 }
