@@ -1,0 +1,60 @@
+{
+  "type": "minecraft:flat_cache",
+  "argument": {
+    "type": "minecraft:cache_2d",
+    "argument": {
+      "type": "minecraft:min",
+      "argument1": {
+        "type": "minecraft:add",
+        "argument1": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:blend_offset"
+          },
+          "argument2": {
+            "type": "minecraft:add",
+            "argument1": 1,
+            "argument2": {
+              "type": "minecraft:mul",
+              "argument1": -1,
+              "argument2": "worldrise:blend_alpha"
+            }
+          }
+        },
+        "argument2": {
+          "type": "minecraft:mul",
+          "argument1": {
+            "type": "minecraft:add",
+            "argument1": -0.5037500262260437,
+            "argument2": {
+              "type": "minecraft:add",
+              "argument1": {
+                "type": "minecraft:mul",
+                "argument1": "worldrise:island_selector",
+                "argument2": "worldrise:terrain_spline/offset/islands"
+              },
+              "argument2": {
+                "type": "minecraft:mul",
+                "argument1": "worldrise:continent_selector",
+                "argument2": {
+                  "type": "minecraft:mul",
+                  "argument1": {
+                    "type": "minecraft:range_choice",
+                    "input": "worldrise:terrain_spline/offset/continents",
+                    "min_inclusive": 0,
+                    "max_exclusive": 64,
+                    "when_in_range": "worldrise:__constants/vertical_scale",
+                    "when_out_of_range": 1
+                  },
+                  "argument2": "worldrise:terrain_spline/offset/continents"
+                }
+              }
+            }
+          },
+          "argument2": "worldrise:blend_alpha"
+        }
+      },
+      "argument2": "worldrise:__constants/max_offset"
+    }
+  }
+}
