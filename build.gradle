@@ -4,6 +4,10 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven {
+        name = 'Sponge'
+        url = 'https://repo.spongepowered.org/repository/maven-public/'
+    }
 }
 
 java {
@@ -12,8 +16,14 @@ java {
     }
 }
 
+configurations.all {
+    exclude group: "com.llamalad7", module: "MixinExtras"
+    exclude group: "com.github.LlamaLad7", module: "MixinExtras"
+}
+
 dependencies {
     implementation 'com.google.code.gson:gson:2.11.0'
+    compileOnly 'org.spongepowered:mixin:0.8.7'
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
     testImplementation 'com.fasterxml.jackson.core:jackson-databind:2.17.2'
     testImplementation 'org.tomlj:tomlj:1.1.0'
@@ -34,7 +44,7 @@ tasks.register('rescaleOres', JavaExec) {
     ]
 }
 
-tasks.register("validateNoMixinExtrasImports") {
+tasks.register("validateNoExternalMixinExtras") {
     doLast {
         fileTree("versions").matching {
             include "**/*.java"
@@ -47,5 +57,5 @@ tasks.register("validateNoMixinExtrasImports") {
 }
 
 tasks.named("build").configure {
-    dependsOn("validateNoMixinExtrasImports")
+    dependsOn("validateNoExternalMixinExtras")
 }
