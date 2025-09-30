@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_legacy_carvers",
+  "biomes": "#minecraft:is_overworld",
+  "step": "air",
+  "carvers": [ "worldrise:mega_ravine" ]
+}

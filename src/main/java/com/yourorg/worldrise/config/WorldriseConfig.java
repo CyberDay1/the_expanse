@@ -8,6 +8,9 @@ public class WorldriseConfig {
 
     public final ModConfigSpec.BooleanValue oreScaling;
     public final ModConfigSpec.BooleanValue carverEnabled;
+    public final ModConfigSpec.BooleanValue megaRavines;
+    public final ModConfigSpec.BooleanValue sinkholes;
+    public final ModConfigSpec.BooleanValue blueHoles;
     public final ModConfigSpec.DoubleValue oreDensityMultiplier;
     public final ModConfigSpec.DoubleValue carverChanceMultiplier;
     public final ModConfigSpec.BooleanValue strongholdScaling;
@@ -32,6 +35,12 @@ public class WorldriseConfig {
                             .define("oreScaling", true);
         carverEnabled = builder.comment("Enable custom ocean canyon carver")
                                .define("carverEnabled", true);
+        megaRavines = builder.comment("Enable mega ravine carver")
+                             .define("megaRavines", true);
+        sinkholes = builder.comment("Enable surface sinkhole carver")
+                           .define("sinkholes", true);
+        blueHoles = builder.comment("Enable ocean blue hole carver")
+                           .define("blueHoles", true);
         oreDensityMultiplier = builder.comment("Multiplier for ore density (default 1.0)")
                                       .defineInRange("oreDensityMultiplier", 1.0, 0.1, 10.0);
         carverChanceMultiplier = builder.comment("Multiplier for carver chance (default 1.0)")
