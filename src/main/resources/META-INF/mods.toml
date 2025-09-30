@@ -1,0 +1,9 @@
+modId="worldrise"
+loaderVersion="[4,)"
+displayName="Worldrise"
+version="1.0.0"
+description="Raise world height and adjust worldgen for 1.21.1"
+[[dependencies.worldrise]]
+   modId="neoforge"
+   type="required"
+   versionRange="[21.1.209,)"
