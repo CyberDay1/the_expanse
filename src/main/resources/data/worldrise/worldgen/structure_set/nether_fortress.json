@@ -1,0 +1,17 @@
+{
+  "structures": [
+    { "structure": "minecraft:fortress", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 30084232,
+    "spacing": 24,
+    "separation": 8
+  },
+  "project_to_heightmap": null,
+  "height_range": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": 32 },
+    "max_inclusive": { "absolute": 120 }
+  }
+}

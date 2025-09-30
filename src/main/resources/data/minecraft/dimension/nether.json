@@ -1,0 +1,4 @@
+{
+  "type": "worldrise:nether",
+  "generator": { "type": "minecraft:noise", "settings": "minecraft:nether" }
+}

@@ -1,0 +1,17 @@
+{
+  "structures": [
+    { "structure": "minecraft:monument", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 10387313,
+    "spacing": 32,
+    "separation": 5
+  },
+  "project_to_heightmap": "OCEAN_FLOOR",
+  "height_range": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": 30 },
+    "max_inclusive": { "absolute": 80 }
+  }
+}

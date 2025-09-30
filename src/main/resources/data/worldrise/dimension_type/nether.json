@@ -1,0 +1,19 @@
+{
+  "piglin_safe": true,
+  "natural": false,
+  "ambient_light": 0.1,
+  "has_skylight": false,
+  "has_ceiling": true,
+  "ultrawarm": true,
+  "has_raids": false,
+  "monster_spawn_light_level": { "type": "minecraft:uniform", "value": 7 },
+  "monster_spawn_block_light_limit": 15,
+  "infiniburn": "#minecraft:infiniburn_nether",
+  "respawn_anchor_works": true,
+  "bed_works": false,
+  "effects": "minecraft:the_nether",
+  "min_y": -256,
+  "height": 2272,
+  "logical_height": 2272,
+  "coordinate_scale": 8.0
+}

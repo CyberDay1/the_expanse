@@ -1,0 +1,17 @@
+{
+  "structures": [
+    { "structure": "minecraft:bastion_remnant", "weight": 1 }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 40083232,
+    "spacing": 32,
+    "separation": 8
+  },
+  "project_to_heightmap": null,
+  "height_range": {
+    "type": "minecraft:uniform",
+    "min_inclusive": { "absolute": 50 },
+    "max_inclusive": { "absolute": 160 }
+  }
+}

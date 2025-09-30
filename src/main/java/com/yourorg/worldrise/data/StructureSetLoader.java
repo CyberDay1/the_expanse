@@ -36,6 +36,10 @@ public final class StructureSetLoader {
         addIfEnabled(enabled, base.resolve("stronghold.json"), toggles.strongholdScaling());
         addIfEnabled(enabled, base.resolve("ancient_city.json"), toggles.ancientCityScaling());
         addIfEnabled(enabled, base.resolve("mineshaft.json"), toggles.mineshaftScaling());
+        addIfEnabled(enabled, base.resolve("nether_fortress.json"), toggles.fortressScaling());
+        addIfEnabled(enabled, base.resolve("bastion.json"), toggles.bastionScaling());
+        addIfEnabled(enabled, base.resolve("ocean_monument.json"), toggles.monumentScaling());
+        addIfEnabled(enabled, base.resolve("end_city.json"), toggles.endCityScaling());
         return List.copyOf(enabled);
     }
 
@@ -51,6 +55,14 @@ public final class StructureSetLoader {
         boolean ancientCityScaling();
 
         boolean mineshaftScaling();
+
+        boolean fortressScaling();
+
+        boolean bastionScaling();
+
+        boolean monumentScaling();
+
+        boolean endCityScaling();
 
         static StructureSetToggles fromConfig(WorldriseConfig config) {
             return new StructureSetToggles() {
@@ -68,10 +80,31 @@ public final class StructureSetLoader {
                 public boolean mineshaftScaling() {
                     return config.mineshaftScaling.get();
                 }
+
+                @Override
+                public boolean fortressScaling() {
+                    return config.fortressScaling.get();
+                }
+
+                @Override
+                public boolean bastionScaling() {
+                    return config.bastionScaling.get();
+                }
+
+                @Override
+                public boolean monumentScaling() {
+                    return config.monumentScaling.get();
+                }
+
+                @Override
+                public boolean endCityScaling() {
+                    return config.endCityScaling.get();
+                }
             };
         }
 
-        static StructureSetToggles of(boolean stronghold, boolean ancientCity, boolean mineshaft) {
+        static StructureSetToggles of(boolean stronghold, boolean ancientCity, boolean mineshaft,
+                boolean fortress, boolean bastion, boolean monument, boolean endCity) {
             return new StructureSetToggles() {
                 @Override
                 public boolean strongholdScaling() {
@@ -86,6 +119,26 @@ public final class StructureSetLoader {
                 @Override
                 public boolean mineshaftScaling() {
                     return mineshaft;
+                }
+
+                @Override
+                public boolean fortressScaling() {
+                    return fortress;
+                }
+
+                @Override
+                public boolean bastionScaling() {
+                    return bastion;
+                }
+
+                @Override
+                public boolean monumentScaling() {
+                    return monument;
+                }
+
+                @Override
+                public boolean endCityScaling() {
+                    return endCity;
                 }
             };
         }
