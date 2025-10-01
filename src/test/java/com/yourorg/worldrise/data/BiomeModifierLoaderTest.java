@@ -7,11 +7,14 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.yourorg.worldrise.config.WorldriseConfig;
 import com.yourorg.worldrise.data.BiomeModifierLoader.ScaledModifier;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 
 class BiomeModifierLoaderTest {
 
@@ -21,6 +24,9 @@ class BiomeModifierLoaderTest {
     private double defaultCarver;
     private String oreOverrides;
     private String carverOverrides;
+    private boolean ftbMaterialsCompat;
+    private boolean silentGearCompat;
+    private boolean productiveMetalworksCompat;
 
     @BeforeEach
     void snapshotConfig() {
@@ -29,6 +35,9 @@ class BiomeModifierLoaderTest {
         defaultCarver = config.defaultCarverMultiplier.get();
         oreOverrides = config.biomeOreMultipliersRaw.get();
         carverOverrides = config.biomeCarverMultipliersRaw.get();
+        ftbMaterialsCompat = config.ftbMaterialsCompatEnabled.get();
+        silentGearCompat = config.silentGearCompatEnabled.get();
+        productiveMetalworksCompat = config.productiveMetalworksCompatEnabled.get();
     }
 
     @AfterEach
@@ -38,6 +47,9 @@ class BiomeModifierLoaderTest {
         config.defaultCarverMultiplier.set(defaultCarver);
         config.biomeOreMultipliersRaw.set(oreOverrides);
         config.biomeCarverMultipliersRaw.set(carverOverrides);
+        config.ftbMaterialsCompatEnabled.set(ftbMaterialsCompat);
+        config.silentGearCompatEnabled.set(silentGearCompat);
+        config.productiveMetalworksCompatEnabled.set(productiveMetalworksCompat);
     }
 
     @Test
@@ -83,6 +95,106 @@ class BiomeModifierLoaderTest {
         double probability = config.get("probability").getAsDouble();
         assertEquals(0.04, probability, 1e-6,
                 "Override should double the 0.02 probability while ignoring the 0.5 default");
+    }
+
+    @Test
+    @DisplayName("Compat namespaces rescale height ranges when enabled")
+    void compatNamespacesRescaleWhenEnabled(@TempDir Path tempDir) throws Exception {
+        Path modifierDir = tempDir.resolve(Path.of("data", "worldrise", "worldgen", "biome_modifier"));
+        Files.createDirectories(modifierDir);
+        Files.writeString(modifierDir.resolve("compat_test.json"),
+                "{\n"
+                        + "  \"type\": \"neoforge:add_features\",\n"
+                        + "  \"biomes\": \"minecraft:plains\",\n"
+                        + "  \"features\": [\"ftbmaterials:ore_test\"],\n"
+                        + "  \"step\": \"underground_ores\"\n"
+                        + "}\n",
+                StandardCharsets.UTF_8);
+
+        Path featureDir = tempDir.resolve(Path.of("data", "ftbmaterials", "worldgen", "placed_feature"));
+        Files.createDirectories(featureDir);
+        Files.writeString(featureDir.resolve("ore_test.json"),
+                "{\n"
+                        + "  \"feature\": \"ftbmaterials:ore_test_configured\",\n"
+                        + "  \"placement\": [\n"
+                        + "    {\n"
+                        + "      \"type\": \"minecraft:height_range\",\n"
+                        + "      \"height\": {\n"
+                        + "        \"min_inclusive\": { \"absolute\": -64 },\n"
+                        + "        \"max_inclusive\": { \"absolute\": 320 }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  ]\n"
+                        + "}\n",
+                StandardCharsets.UTF_8);
+
+        WorldriseConfig.INSTANCE.ftbMaterialsCompatEnabled.set(true);
+        WorldriseConfig.INSTANCE.silentGearCompatEnabled.set(false);
+        WorldriseConfig.INSTANCE.productiveMetalworksCompatEnabled.set(false);
+
+        ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(tempDir, "compat_test");
+        JsonObject feature = scaled.placedFeatures().get("ftbmaterials:ore_test");
+        assertNotNull(feature, "Compat feature should be loaded");
+
+        JsonArray placements = feature.getAsJsonArray("placement");
+        JsonObject placement = placements.get(0).getAsJsonObject();
+        JsonObject height = placement.getAsJsonObject("height");
+        JsonObject min = height.getAsJsonObject("min_inclusive");
+        JsonObject max = height.getAsJsonObject("max_inclusive");
+        assertEquals(-256, min.get("absolute").getAsInt(),
+                "Minimum height should be rescaled to Worldrise bounds");
+        assertEquals(2015, max.get("absolute").getAsInt(),
+                "Maximum height should be rescaled to Worldrise bounds");
+    }
+
+    @Test
+    @DisplayName("Compat namespaces honour disabled toggles")
+    void compatNamespacesSkipWhenDisabled(@TempDir Path tempDir) throws Exception {
+        Path modifierDir = tempDir.resolve(Path.of("data", "worldrise", "worldgen", "biome_modifier"));
+        Files.createDirectories(modifierDir);
+        Files.writeString(modifierDir.resolve("compat_test.json"),
+                "{\n"
+                        + "  \"type\": \"neoforge:add_features\",\n"
+                        + "  \"biomes\": \"minecraft:plains\",\n"
+                        + "  \"features\": [\"silentgear:ore_test\"],\n"
+                        + "  \"step\": \"underground_ores\"\n"
+                        + "}\n",
+                StandardCharsets.UTF_8);
+
+        Path featureDir = tempDir.resolve(Path.of("data", "silentgear", "worldgen", "placed_feature"));
+        Files.createDirectories(featureDir);
+        Files.writeString(featureDir.resolve("ore_test.json"),
+                "{\n"
+                        + "  \"feature\": \"silentgear:ore_test_configured\",\n"
+                        + "  \"placement\": [\n"
+                        + "    {\n"
+                        + "      \"type\": \"minecraft:height_range\",\n"
+                        + "      \"height\": {\n"
+                        + "        \"min_inclusive\": { \"absolute\": -64 },\n"
+                        + "        \"max_inclusive\": { \"absolute\": 320 }\n"
+                        + "      }\n"
+                        + "    }\n"
+                        + "  ]\n"
+                        + "}\n",
+                StandardCharsets.UTF_8);
+
+        WorldriseConfig.INSTANCE.ftbMaterialsCompatEnabled.set(false);
+        WorldriseConfig.INSTANCE.silentGearCompatEnabled.set(false);
+        WorldriseConfig.INSTANCE.productiveMetalworksCompatEnabled.set(false);
+
+        ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(tempDir, "compat_test");
+        JsonObject feature = scaled.placedFeatures().get("silentgear:ore_test");
+        assertNotNull(feature, "Compat feature should be loaded");
+
+        JsonArray placements = feature.getAsJsonArray("placement");
+        JsonObject placement = placements.get(0).getAsJsonObject();
+        JsonObject height = placement.getAsJsonObject("height");
+        JsonObject min = height.getAsJsonObject("min_inclusive");
+        JsonObject max = height.getAsJsonObject("max_inclusive");
+        assertEquals(-64, min.get("absolute").getAsInt(),
+                "Minimum height should remain unchanged when compat disabled");
+        assertEquals(320, max.get("absolute").getAsInt(),
+                "Maximum height should remain unchanged when compat disabled");
     }
 
     private static int extractPlacementValue(JsonObject placedFeature, String type, String property) {

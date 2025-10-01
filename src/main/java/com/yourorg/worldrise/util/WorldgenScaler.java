@@ -5,8 +5,10 @@ import com.yourorg.worldrise.config.WorldriseConfig;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class WorldgenScaler {
 
@@ -114,5 +116,19 @@ public final class WorldgenScaler {
             }
         }
         return parsed;
+    }
+
+    public static Set<String> collectCompatNamespaces(WorldriseConfig config) {
+        Set<String> namespaces = new LinkedHashSet<>();
+        if (config.ftbMaterialsCompatEnabled.get()) {
+            namespaces.add("ftbmaterials");
+        }
+        if (config.silentGearCompatEnabled.get()) {
+            namespaces.add("silentgear");
+        }
+        if (config.productiveMetalworksCompatEnabled.get()) {
+            namespaces.add("productive_metalworks");
+        }
+        return namespaces;
     }
 }

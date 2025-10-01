@@ -28,6 +28,9 @@ public class WorldriseConfig {
     public final ModConfigSpec.BooleanValue tectonicEnabled;
     public final ModConfigSpec.BooleanValue lithoEnabled;
     public final ModConfigSpec.BooleanValue moonriseCompatEnabled;
+    public final ModConfigSpec.BooleanValue ftbMaterialsCompatEnabled;
+    public final ModConfigSpec.BooleanValue silentGearCompatEnabled;
+    public final ModConfigSpec.BooleanValue productiveMetalworksCompatEnabled;
     public final ModConfigSpec.BooleanValue biomesOPlentyCompat;
     public final ModConfigSpec.BooleanValue bygCompat;
 
@@ -86,6 +89,15 @@ public class WorldriseConfig {
                 .comment("Enable compatibility checks with Moonrise (optimization mod). "
                         + "If false, Worldrise ignores Moonrise even if loaded.")
                 .define("moonriseCompatEnabled", true);
+        ftbMaterialsCompatEnabled = builder
+                .comment("Enable rescaling of ore generation for FTB Materials.")
+                .define("ftbMaterialsCompatEnabled", true);
+        silentGearCompatEnabled = builder
+                .comment("Enable rescaling of ore generation for Silent Gear.")
+                .define("silentGearCompatEnabled", true);
+        productiveMetalworksCompatEnabled = builder
+                .comment("Enable rescaling of ore generation for Productive Metalworks.")
+                .define("productiveMetalworksCompatEnabled", true);
         builder.pop();
         builder.push("compatibility");
         biomesOPlentyCompat = builder.comment("Enable Biomes O' Plenty biome compatibility")

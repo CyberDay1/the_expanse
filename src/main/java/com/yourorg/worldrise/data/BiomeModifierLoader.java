@@ -4,6 +4,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.yourorg.worldrise.config.WorldriseConfig;
+import com.yourorg.worldrise.util.HeightRescaler;
 import com.yourorg.worldrise.util.WorldgenScaler;
 import java.io.IOException;
 import java.io.Reader;
@@ -15,6 +17,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.LinkedHashSet;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility that loads biome modifier JSON definitions and applies the configured scaling overrides to the
@@ -23,6 +29,7 @@ import java.util.Map;
  */
 public final class BiomeModifierLoader {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BiomeModifierLoader.class);
     private static final Path BIOME_MODIFIER_ROOT = Path.of("data", "worldrise", "worldgen", "biome_modifier");
     private static final Path PLACED_FEATURE_DIR = Path.of("worldgen", "placed_feature");
     private static final Path CONFIGURED_CARVER_DIR = Path.of("worldgen", "configured_carver");
@@ -45,6 +52,8 @@ public final class BiomeModifierLoader {
         List<String> selectors = extractBiomeSelectors(modifier);
 
         Map<String, JsonObject> features = new LinkedHashMap<>();
+        Set<String> compatNamespaces = WorldgenScaler.collectCompatNamespaces(WorldriseConfig.INSTANCE);
+        Set<String> loggedNamespaces = new LinkedHashSet<>();
         if (modifier.has("features")) {
             JsonArray featureIds = modifier.getAsJsonArray("features");
             for (JsonElement element : featureIds) {
@@ -53,6 +62,12 @@ public final class BiomeModifierLoader {
                 }
                 String featureId = element.getAsString();
                 JsonObject featureJson = loadPlacedFeature(resourceRoot, featureId);
+                String namespace = namespaceFromLocation(featureId);
+                if (compatNamespaces.contains(namespace)) {
+                    if (HeightRescaler.rescalePlacedFeature(featureJson)) {
+                        loggedNamespaces.add(namespace);
+                    }
+                }
                 scalePlacedFeature(featureJson, selectors);
                 features.put(featureId, featureJson);
             }
@@ -74,7 +89,14 @@ public final class BiomeModifierLoader {
             }
         }
 
+        logCompatRescales(loggedNamespaces);
         return new ScaledModifier(modifier.deepCopy(), Map.copyOf(features), Map.copyOf(carvers));
+    }
+
+    private static void logCompatRescales(Set<String> namespaces) {
+        for (String namespace : namespaces) {
+            LOGGER.info("Worldrise rescaled ore generation for {}", namespace);
+        }
     }
 
     private static void scalePlacedFeature(JsonObject placedFeature, Collection<String> selectors) {
@@ -126,6 +148,14 @@ public final class BiomeModifierLoader {
             throw new IOException("Missing worldgen resource '" + location + "' at " + resolved);
         }
         return resolved;
+    }
+
+    private static String namespaceFromLocation(String location) {
+        int colon = location.indexOf(':');
+        if (colon >= 0) {
+            return location.substring(0, colon);
+        }
+        return "minecraft";
     }
 
     private static JsonObject readJson(Path path) throws IOException {
