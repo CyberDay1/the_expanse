@@ -9,8 +9,8 @@
   "disable_mob_generation": true,
   "legacy_random_source": true,
   "noise": {
-    "height": 512,
-    "min_y": 0,
+    "height": 2272,
+    "min_y": -256,
     "size_horizontal": 2,
     "size_vertical": 1
   },
@@ -135,7 +135,7 @@
     "vein_toggle": 0.0
   },
   "ore_veins_enabled": false,
-  "sea_level": 1500,
+  "sea_level": 150,
   "spawn_target": [],
   "surface_rule": {
     "type": "minecraft:block",

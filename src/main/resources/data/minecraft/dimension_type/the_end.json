@@ -8,15 +8,16 @@
   "has_raids": false,
   "monster_spawn_light_level": {
     "type": "minecraft:uniform",
-    "value": 7
+    "value": 0
   },
   "monster_spawn_block_light_limit": 0,
   "infiniburn": "#minecraft:infiniburn_end",
   "respawn_anchor_works": false,
   "bed_works": false,
   "effects": "minecraft:the_end",
-  "min_y": 0,
-  "height": 512,
-  "logical_height": 512,
+  "min_y": -256,
+  "height": 2272,
+  "logical_height": 2272,
+  "sea_level": 150,
   "coordinate_scale": 1.0
 }

@@ -12,7 +12,7 @@
   "disable_mob_generation": false,
   "legacy_random_source": true,
   "noise": {
-    "height": 512,
+    "height": 2272,
     "min_y": -256,
     "size_horizontal": 1,
     "size_vertical": 2
@@ -104,7 +104,7 @@
     "vein_toggle": 0.0
   },
   "ore_veins_enabled": false,
-  "sea_level": 900,
+  "sea_level": 150,
   "spawn_target": [],
   "surface_rule": {
     "type": "minecraft:sequence",
