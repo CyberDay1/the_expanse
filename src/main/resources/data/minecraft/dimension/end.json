@@ -1,4 +1,0 @@
-{
-  "type": "worldrise:end",
-  "generator": { "type": "minecraft:noise", "settings": "minecraft:end" }
-}

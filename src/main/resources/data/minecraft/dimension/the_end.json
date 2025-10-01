@@ -1,0 +1,7 @@
+{
+  "type": "minecraft:the_end",
+  "generator": {
+    "type": "minecraft:noise",
+    "settings": "minecraft:end_expanded"
+  }
+}
