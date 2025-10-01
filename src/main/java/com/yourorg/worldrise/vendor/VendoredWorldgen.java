@@ -3,6 +3,7 @@ package com.yourorg.worldrise.vendor;
 import com.yourorg.worldrise.config.WorldriseConfig;
 import com.yourorg.worldrise.vendor.litho.config.ConfigHandler;
 import com.yourorg.worldrise.vendor.litho.registry.LithostitchedBuiltInRegistries;
+import com.yourorg.worldrise.vendor.litho.worldgen.surface.SurfaceRuleManager;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.loading.FMLPaths;
@@ -23,6 +24,7 @@ public final class VendoredWorldgen {
         if (lithoEnabled) {
             ConfigHandler.load(FMLPaths.CONFIGDIR.get().resolve("lithostitched.json"));
             LithostitchedBuiltInRegistries.init(bus);
+            SurfaceRuleManager.init();
         }
 
         if (tectonicEnabled) {
