@@ -1,6 +1,6 @@
 package com.theexpanse;
 
-import com.theexpanse.MixinCompatBootstrap;
+import com.theexpanse.mixin.MixinCompatBootstrap;
 import com.theexpanse.config.TheExpanseConfig;
 import com.theexpanse.vendor.VendoredWorldgen;
 import java.util.Optional;
@@ -31,7 +31,7 @@ public final class TheExpanse {
 
     public TheExpanse(ModContainer container) {
         this.modContainer = container;
-        MixinCompatBootstrap.enforce();
+        MixinCompatBootstrap.apply();
         VendoredWorldgen.init(container);
         NeoForge.EVENT_BUS.addListener(this::registerBuiltinDatapack);
         if (isMoonriseActive(TheExpanseConfig.INSTANCE)) {
