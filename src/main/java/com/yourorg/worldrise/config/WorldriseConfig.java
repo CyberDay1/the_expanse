@@ -53,10 +53,10 @@ public class WorldriseConfig {
                                        .defineInRange("defaultOreMultiplier", 1.0, 0.0, 10.0);
         defaultCarverMultiplier = builder.comment("Default carver probability multiplier (applied when no biome override matches)")
                                           .defineInRange("defaultCarverMultiplier", 1.0, 0.0, 10.0);
-        biomeOreMultipliers = builder.comment("Per-biome ore multipliers in the form '<biome or #tag>=<value>'")
-                                     .defineList("biomeOreMultipliers", List.of(), value -> value instanceof String);
-        biomeCarverMultipliers = builder.comment("Per-biome carver multipliers in the form '<biome or #tag>=<value>'")
-                                        .defineList("biomeCarverMultipliers", List.of(), value -> value instanceof String);
+        biomeOreMultipliers = builder.comment("Biome-specific ore multipliers")
+                                     .defineList("biomeOreMultipliers", List.of(), o -> o instanceof String);
+        biomeCarverMultipliers = builder.comment("Biome-specific carver multipliers")
+                                        .defineList("biomeCarverMultipliers", List.of(), o -> o instanceof String);
         builder.pop();
         strongholdScaling = builder.comment("Enable height rescaling for strongholds")
                                    .define("strongholdScaling", true);
