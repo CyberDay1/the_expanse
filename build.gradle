@@ -5,7 +5,7 @@ plugins {
 
 group = 'com.theexpanse'
 version = '0.1.0'
-archivesBaseName = 'the-expanse'
+archivesBaseName = 'the_expanse'
 
 java {
     toolchain {
@@ -23,14 +23,14 @@ repositories {
 ext {
     mc_version = "1.21.1"
     neoforge_version = "21.1.209"
-    mod_id = "the-expanse"
+    mod_id = "the_expanse"
     mod_name = "The Expanse"
     mod_author = "The Expanse Team"
     mod_license = "MIT"
     mod_description = "Extends world vertical bounds and retunes terrain, carvers, and ores."
-    homepage_url = "https://example.com/the-expanse"
-    sources_url = "https://github.com/your-org/the-expanse"
-    issues_url = "https://github.com/your-org/the-expanse/issues"
+    homepage_url = "https://example.com/the_expanse"
+    sources_url = "https://github.com/your-org/the_expanse"
+    issues_url = "https://github.com/your-org/the_expanse/issues"
 }
 
 dependencies {
@@ -78,7 +78,7 @@ jar {
         attributes(
             "Implementation-Title": project.name,
             "Implementation-Version": project.version,
-            "Implementation-Vendor": "the-expanse",
+            "Implementation-Vendor": "the_expanse",
             "Built-By": "codex",
             "Automatic-Module-Name": "com.theexpanse.mod"
         )

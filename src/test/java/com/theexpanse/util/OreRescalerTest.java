@@ -139,7 +139,7 @@ class OreRescalerTest {
 
     @Test
     @Disabled("Disabled until resource I/O is fixed")
-    @DisplayName("Running on vanilla resource rescaled values into the-expanse bounds")
+    @DisplayName("Running on vanilla resource rescaled values into the_expanse bounds")
     void rescaleSampleResource(@TempDir Path tempDir) throws Exception {
         Path inputDir = tempDir.resolve("input");
         Path outputDir = tempDir.resolve("output");

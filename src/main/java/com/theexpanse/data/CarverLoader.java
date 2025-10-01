@@ -14,9 +14,9 @@ import java.util.List;
 public final class CarverLoader {
 
     private static final Path CARVER_ROOT =
-            Path.of("data", "the-expanse", "worldgen", "configured_carver");
+            Path.of("data", "the_expanse", "worldgen", "configured_carver");
     private static final Path BIOME_MODIFIER_ROOT =
-            Path.of("data", "the-expanse", "worldgen", "biome_modifier");
+            Path.of("data", "the_expanse", "worldgen", "biome_modifier");
 
     private CarverLoader() { }
 

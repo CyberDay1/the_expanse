@@ -1,9 +1,0 @@
-{
-  "processors": [
-    {
-      "processor_type": "the-expanse:apply_random",
-      "mode": "per_piece",
-      "processor_lists": "#the-expanse:shipwreck_palettes"
-    }
-  ]
-}

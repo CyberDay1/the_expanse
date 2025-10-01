@@ -6,4 +6,4 @@ pluginManagement {
     }
 }
 
-rootProject.name = 'the-expanse'
+rootProject.name = 'the_expanse'

@@ -57,13 +57,13 @@ class BiomeModifierLoaderTest {
     void oreOverridesApplyToPlacedFeatures() throws Exception {
         TheExpanseConfig.INSTANCE.defaultOreMultiplier.set(2.0);
         TheExpanseConfig.INSTANCE.biomeOreMultipliersRaw
-                .set("#the-expanse:ores_overworld_biomes=0.5");
+                .set("#the_expanse:ores_overworld_biomes=0.5");
 
         ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(RESOURCE_ROOT, "add_scaled_ores");
         assertEquals(7, scaled.placedFeatures().size(),
                 "Expected all scaled ore placed features to be loaded");
 
-        JsonObject coalFeature = scaled.placedFeatures().get("the-expanse:ore_coal_scaled");
+        JsonObject coalFeature = scaled.placedFeatures().get("the_expanse:ore_coal_scaled");
         assertNotNull(coalFeature, "Coal placed feature should be present");
         int count = extractPlacementValue(coalFeature, "minecraft:count", "count");
         assertEquals(10, count, "Override should scale coal count down from 20 to 10");
@@ -76,7 +76,7 @@ class BiomeModifierLoaderTest {
         TheExpanseConfig.INSTANCE.biomeOreMultipliersRaw.set("");
 
         ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(RESOURCE_ROOT, "add_scaled_ores");
-        JsonObject coalFeature = scaled.placedFeatures().get("the-expanse:ore_coal_scaled");
+        JsonObject coalFeature = scaled.placedFeatures().get("the_expanse:ore_coal_scaled");
         int count = extractPlacementValue(coalFeature, "minecraft:count", "count");
         assertEquals(40, count, "Default multiplier should double the coal placement count");
     }
@@ -86,10 +86,10 @@ class BiomeModifierLoaderTest {
     void carverOverridesApplyProbabilityScaling() throws Exception {
         TheExpanseConfig.INSTANCE.defaultCarverMultiplier.set(0.5);
         TheExpanseConfig.INSTANCE.biomeCarverMultipliersRaw
-                .set("#the-expanse:ocean_like=2.0");
+                .set("#the_expanse:ocean_like=2.0");
 
         ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(RESOURCE_ROOT, "add_ocean_canyon");
-        JsonObject carver = scaled.configuredCarvers().get("the-expanse:ocean_canyon");
+        JsonObject carver = scaled.configuredCarvers().get("the_expanse:ocean_canyon");
         assertNotNull(carver, "Ocean canyon carver should be present");
         JsonObject config = carver.getAsJsonObject("config");
         double probability = config.get("probability").getAsDouble();
@@ -100,7 +100,7 @@ class BiomeModifierLoaderTest {
     @Test
     @DisplayName("Compat namespaces rescale height ranges when enabled")
     void compatNamespacesRescaleWhenEnabled(@TempDir Path tempDir) throws Exception {
-        Path modifierDir = tempDir.resolve(Path.of("data", "the-expanse", "worldgen", "biome_modifier"));
+        Path modifierDir = tempDir.resolve(Path.of("data", "the_expanse", "worldgen", "biome_modifier"));
         Files.createDirectories(modifierDir);
         Files.writeString(modifierDir.resolve("compat_test.json"),
                 "{\n"
@@ -150,7 +150,7 @@ class BiomeModifierLoaderTest {
     @Test
     @DisplayName("Compat namespaces honour disabled toggles")
     void compatNamespacesSkipWhenDisabled(@TempDir Path tempDir) throws Exception {
-        Path modifierDir = tempDir.resolve(Path.of("data", "the-expanse", "worldgen", "biome_modifier"));
+        Path modifierDir = tempDir.resolve(Path.of("data", "the_expanse", "worldgen", "biome_modifier"));
         Files.createDirectories(modifierDir);
         Files.writeString(modifierDir.resolve("compat_test.json"),
                 "{\n"

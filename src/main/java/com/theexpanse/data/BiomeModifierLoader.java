@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 public final class BiomeModifierLoader {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BiomeModifierLoader.class);
-    private static final Path BIOME_MODIFIER_ROOT = Path.of("data", "the-expanse", "worldgen", "biome_modifier");
+    private static final Path BIOME_MODIFIER_ROOT = Path.of("data", "the_expanse", "worldgen", "biome_modifier");
     private static final Path PLACED_FEATURE_DIR = Path.of("worldgen", "placed_feature");
     private static final Path CONFIGURED_CARVER_DIR = Path.of("worldgen", "configured_carver");
 
@@ -42,7 +42,7 @@ public final class BiomeModifierLoader {
      * them if required.
      *
      * @param resourceRoot root folder that contains the mod data pack resources
-     * @param modifierName file name (without extension) of the biome modifier located in the-expanse namespace
+     * @param modifierName file name (without extension) of the biome modifier located in the_expanse namespace
      * @return wrapper containing the biome modifier JSON along with the scaled placed features and carvers it references
      * @throws IOException if any of the referenced resources cannot be read
      */

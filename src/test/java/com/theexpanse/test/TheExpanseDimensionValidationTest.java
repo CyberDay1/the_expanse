@@ -42,7 +42,7 @@ public class TheExpanseDimensionValidationTest {
 
     @Test
     public void testOceanCanyonCarver() throws Exception {
-        JsonObject json = loadJson("data/the-expanse/worldgen/configured_carver/ocean_canyon.json")
+        JsonObject json = loadJson("data/the_expanse/worldgen/configured_carver/ocean_canyon.json")
                 .getAsJsonObject("config");
         double hrm = json.get("horizontal_radius_multiplier").getAsDouble();
         assertEquals(1.5, hrm, 1e-6, "Ocean canyon horizontal_radius_multiplier must be 1.5");

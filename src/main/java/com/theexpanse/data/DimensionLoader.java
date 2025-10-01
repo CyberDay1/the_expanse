@@ -14,7 +14,7 @@ import java.util.List;
 public final class DimensionLoader {
 
     private static final Path DIMENSION_TYPE_ROOT =
-            Path.of("data", "the-expanse", "dimension_type");
+            Path.of("data", "the_expanse", "dimension_type");
     private static final Path DIMENSION_ROOT = Path.of("data", "minecraft", "dimension");
 
     private DimensionLoader() { }

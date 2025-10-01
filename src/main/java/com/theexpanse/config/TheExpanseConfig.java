@@ -41,7 +41,7 @@ public class TheExpanseConfig {
     }
 
     private TheExpanseConfig(ModConfigSpec.Builder builder) {
-        builder.push("the-expanse");
+        builder.push("the_expanse");
         oreScaling = builder.comment("Enable rescaling of ore placements")
                             .define("oreScaling", true);
         carverEnabled = builder.comment("Enable custom ocean canyon carver")
