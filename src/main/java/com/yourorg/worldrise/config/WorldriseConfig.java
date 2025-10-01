@@ -1,5 +1,6 @@
 package com.yourorg.worldrise.config;
 
+import java.util.List;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 public class WorldriseConfig {
@@ -11,8 +12,10 @@ public class WorldriseConfig {
     public final ModConfigSpec.BooleanValue megaRavines;
     public final ModConfigSpec.BooleanValue sinkholes;
     public final ModConfigSpec.BooleanValue blueHoles;
-    public final ModConfigSpec.DoubleValue oreDensityMultiplier;
-    public final ModConfigSpec.DoubleValue carverChanceMultiplier;
+    public final ModConfigSpec.DoubleValue defaultOreMultiplier;
+    public final ModConfigSpec.DoubleValue defaultCarverMultiplier;
+    public final ModConfigSpec.ConfigValue<List<? extends String>> biomeOreMultipliers;
+    public final ModConfigSpec.ConfigValue<List<? extends String>> biomeCarverMultipliers;
     public final ModConfigSpec.BooleanValue strongholdScaling;
     public final ModConfigSpec.BooleanValue ancientCityScaling;
     public final ModConfigSpec.BooleanValue mineshaftScaling;
@@ -45,10 +48,16 @@ public class WorldriseConfig {
                            .define("sinkholes", true);
         blueHoles = builder.comment("Enable ocean blue hole carver")
                            .define("blueHoles", true);
-        oreDensityMultiplier = builder.comment("Multiplier for ore density (default 1.0)")
-                                      .defineInRange("oreDensityMultiplier", 1.0, 0.1, 10.0);
-        carverChanceMultiplier = builder.comment("Multiplier for carver chance (default 1.0)")
-                                        .defineInRange("carverChanceMultiplier", 1.0, 0.1, 10.0);
+        builder.push("scaling");
+        defaultOreMultiplier = builder.comment("Default ore density multiplier (applied when no biome override matches)")
+                                       .defineInRange("defaultOreMultiplier", 1.0, 0.0, 10.0);
+        defaultCarverMultiplier = builder.comment("Default carver probability multiplier (applied when no biome override matches)")
+                                          .defineInRange("defaultCarverMultiplier", 1.0, 0.0, 10.0);
+        biomeOreMultipliers = builder.comment("Per-biome ore multipliers in the form '<biome or #tag>=<value>'")
+                                     .defineList("biomeOreMultipliers", List.of(), value -> value instanceof String);
+        biomeCarverMultipliers = builder.comment("Per-biome carver multipliers in the form '<biome or #tag>=<value>'")
+                                        .defineList("biomeCarverMultipliers", List.of(), value -> value instanceof String);
+        builder.pop();
         strongholdScaling = builder.comment("Enable height rescaling for strongholds")
                                    .define("strongholdScaling", true);
         ancientCityScaling = builder.comment("Enable height rescaling for ancient cities")

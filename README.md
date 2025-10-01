@@ -34,12 +34,14 @@ other corruption. Always back up your worlds before experimenting.
 The `config/worldrise.toml` file exposes tuning multipliers for players who need to balance
 performance with resource availability when stretching the world height:
 
-* `oreDensityMultiplier` – Scales the `count`/`tries` values used by ore placements. Set to
-  `0.5` for sparser veins or `2.0` for richer deposits. Values are clamped to at least one
+* `scaling.defaultOreMultiplier` – Global multiplier applied to ore placement `count`/`tries`
+  when no biome-specific override matches. Values are clamped to produce at least one
   placement attempt.
-* `carverChanceMultiplier` – Scales the `probability` value for carvers such as ocean
-  canyons. Lower values (e.g., `0.5`) reduce frequency, while higher values (e.g., `2.0`)
-  increase it. Probabilities are clamped between `0.0` and `1.0`.
+* `scaling.defaultCarverMultiplier` – Global multiplier applied to carver `probability`
+  fields when no override matches. Probabilities are clamped to the `[0.0, 1.0]` range.
+* `scaling.biomeOreMultipliers` / `scaling.biomeCarverMultipliers` – Lists of strings in the
+  format `<biome-id or #tag>=<multiplier>`. These entries override the default multipliers for
+  matching biomes or biome tags, enabling biome-specific ore density or carver frequency.
 
 Lower multipliers lighten chunk generation cost by creating fewer features, whereas higher
 values increase terrain detail at the expense of performance. Extreme settings may break
