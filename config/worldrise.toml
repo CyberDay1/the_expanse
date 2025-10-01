@@ -20,9 +20,9 @@ lithoEnabled = true
 defaultOreMultiplier = 1.0
 defaultCarverMultiplier = 1.0
 
-# Per-biome overrides: biome tag or ID = multiplier
-biomeOreMultipliers = ["#minecraft:is_mountain=1.5", "#minecraft:is_ocean=0.5"]
-biomeCarverMultipliers = ["#worldrise:ocean_biomes=2.0"]
+# Per-biome overrides: comma-separated list of biome tag or ID = multiplier entries
+biomeOreMultipliers = "#minecraft:is_mountain=1.5,#minecraft:is_ocean=0.5"
+biomeCarverMultipliers = "#worldrise:ocean_biomes=2.0"
 
 [worldrise.compatibility]
 biomesoplenty = true

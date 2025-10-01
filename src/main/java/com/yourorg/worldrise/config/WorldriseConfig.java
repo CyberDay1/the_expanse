@@ -14,8 +14,8 @@ public class WorldriseConfig {
     public final ModConfigSpec.BooleanValue blueHoles;
     public final ModConfigSpec.DoubleValue defaultOreMultiplier;
     public final ModConfigSpec.DoubleValue defaultCarverMultiplier;
-    public final ModConfigSpec.ConfigValue<List<? extends String>> biomeOreMultipliers;
-    public final ModConfigSpec.ConfigValue<List<? extends String>> biomeCarverMultipliers;
+    public final ModConfigSpec.ConfigValue<String> biomeOreMultipliersRaw;
+    public final ModConfigSpec.ConfigValue<String> biomeCarverMultipliersRaw;
     public final ModConfigSpec.BooleanValue strongholdScaling;
     public final ModConfigSpec.BooleanValue ancientCityScaling;
     public final ModConfigSpec.BooleanValue mineshaftScaling;
@@ -53,10 +53,10 @@ public class WorldriseConfig {
                                        .defineInRange("defaultOreMultiplier", 1.0, 0.0, 10.0);
         defaultCarverMultiplier = builder.comment("Default carver probability multiplier (applied when no biome override matches)")
                                           .defineInRange("defaultCarverMultiplier", 1.0, 0.0, 10.0);
-        biomeOreMultipliers = builder.comment("Biome-specific ore multipliers")
-                                     .defineList("biomeOreMultipliers", List.of(), o -> o instanceof String);
-        biomeCarverMultipliers = builder.comment("Biome-specific carver multipliers")
-                                        .defineList("biomeCarverMultipliers", List.of(), o -> o instanceof String);
+        builder.comment("Biome-specific ore multipliers (comma-separated list of biome_id=multiplier)");
+        biomeOreMultipliersRaw = builder.define("biomeOreMultipliers", "");
+        builder.comment("Biome-specific carver multipliers (comma-separated list of biome_id=multiplier)");
+        biomeCarverMultipliersRaw = builder.define("biomeCarverMultipliers", "");
         builder.pop();
         strongholdScaling = builder.comment("Enable height rescaling for strongholds")
                                    .define("strongholdScaling", true);
@@ -87,5 +87,17 @@ public class WorldriseConfig {
                            .define("byg", true);
         builder.pop();
         builder.pop();
+    }
+
+    public List<String> getBiomeOreMultiplierEntries() {
+        String raw = biomeOreMultipliersRaw.get();
+        if (raw == null || raw.isBlank()) return List.of();
+        return List.of(raw.split(","));
+    }
+
+    public List<String> getBiomeCarverMultiplierEntries() {
+        String raw = biomeCarverMultipliersRaw.get();
+        if (raw == null || raw.isBlank()) return List.of();
+        return List.of(raw.split(","));
     }
 }

@@ -53,16 +53,16 @@ public final class WorldgenScaler {
 
     private static double resolveOreMultiplier(Collection<String> biomeSelectors) {
         return resolveMultiplier(biomeSelectors, WorldriseConfig.INSTANCE.defaultOreMultiplier.get(),
-                WorldriseConfig.INSTANCE.biomeOreMultipliers.get());
+                WorldriseConfig.INSTANCE.getBiomeOreMultiplierEntries());
     }
 
     private static double resolveCarverMultiplier(Collection<String> biomeSelectors) {
         return resolveMultiplier(biomeSelectors, WorldriseConfig.INSTANCE.defaultCarverMultiplier.get(),
-                WorldriseConfig.INSTANCE.biomeCarverMultipliers.get());
+                WorldriseConfig.INSTANCE.getBiomeCarverMultiplierEntries());
     }
 
     private static double resolveMultiplier(Collection<String> biomeSelectors, double defaultMultiplier,
-            List<? extends String> overrides) {
+            List<String> overrides) {
         Map<String, Double> overrideMap = parseOverrides(overrides);
         if (biomeSelectors != null) {
             for (String selector : biomeSelectors) {

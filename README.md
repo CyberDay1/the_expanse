@@ -39,8 +39,8 @@ performance with resource availability when stretching the world height:
   placement attempt.
 * `scaling.defaultCarverMultiplier` – Global multiplier applied to carver `probability`
   fields when no override matches. Probabilities are clamped to the `[0.0, 1.0]` range.
-* `scaling.biomeOreMultipliers` / `scaling.biomeCarverMultipliers` – Lists of strings in the
-  format `<biome-id or #tag>=<multiplier>`. These entries override the default multipliers for
+* `scaling.biomeOreMultipliers` / `scaling.biomeCarverMultipliers` – Comma-separated strings in
+  the format `<biome-id or #tag>=<multiplier>`. These entries override the default multipliers for
   matching biomes or biome tags, enabling biome-specific ore density or carver frequency.
 
 Lower multipliers lighten chunk generation cost by creating fewer features, whereas higher
