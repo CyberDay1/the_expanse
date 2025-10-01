@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_carvers",
+  "biomes": "#the-expanse:carver_overworld_biomes",
+  "carvers": [ "the-expanse:mega_ravine" ],
+  "step": "air"
+}

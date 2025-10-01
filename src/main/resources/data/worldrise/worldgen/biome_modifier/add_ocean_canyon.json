@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_legacy_carvers",
-  "biomes": "#worldrise:ocean_like",
-  "step": "air",
-  "carvers": [ "worldrise:ocean_canyon" ]
-}
