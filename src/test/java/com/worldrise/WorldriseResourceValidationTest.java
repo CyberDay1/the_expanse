@@ -13,7 +13,9 @@ import java.util.stream.Stream;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.tomlj.Toml;
+import org.tomlj.TomlArray;
 import org.tomlj.TomlParseResult;
+import org.tomlj.TomlTable;
 
 class WorldriseResourceValidationTest {
 
@@ -30,7 +32,14 @@ class WorldriseResourceValidationTest {
         assertTrue(result.errors().isEmpty(), () ->
                 "mods.toml had parse errors: " + result.errors());
 
-        assertEquals("worldrise", result.getString("modId"),
+        TomlArray mods = result.getArray("mods");
+        assertNotNull(mods, "mods.toml should declare at least one mod entry");
+        assertTrue(mods.size() > 0, "mods.toml should list the worldrise mod");
+
+        TomlTable modEntry = mods.getTable(0);
+        assertNotNull(modEntry, "mods.toml should contain a table for the worldrise mod");
+
+        assertEquals("worldrise", modEntry.getString("modId"),
                 "mods.toml should declare the worldrise modId");
     }
 

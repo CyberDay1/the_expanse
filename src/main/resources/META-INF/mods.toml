@@ -9,12 +9,13 @@ displayName="Worldrise"
 authors="Your Team"
 description='''
 Worldrise expands Minecraft's world height and depth, rescales ores and
-structures, and provides compatibility with popular biome/ore mods.
+structures, adds custom carvers, and provides compatibility with
+popular biome/ore mods.
 '''
 
 [[dependencies.worldrise]]
-modId="neoforge"
-type="required"
-versionRange="[21.1.0,)"
-ordering="NONE"
-side="BOTH"
+    modId="neoforge"
+    type="required"
+    versionRange="[21.1.0,)"
+    ordering="NONE"
+    side="BOTH"
