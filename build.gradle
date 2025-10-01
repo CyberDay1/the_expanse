@@ -35,7 +35,16 @@ ext {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
-    compileOnly "org.spongepowered:mixin:0.8.5" // if you have mixins; safe as compileOnly
+    compileOnly "org.spongepowered:mixin:0.8.5" // if you have mixins
+
+    // --- Test dependencies ---
+    testImplementation "org.junit.jupiter:junit-jupiter:5.10.2"
+    testImplementation "com.fasterxml.jackson.core:jackson-databind:2.17.2"
+    testImplementation "com.fasterxml.jackson.core:jackson-core:2.17.2"
+    testImplementation "com.fasterxml.jackson.core:jackson-annotations:2.17.2"
+
+    // TOML parser for mods.toml validation tests
+    testImplementation "org.tomlj:tomlj:1.1.1"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -75,4 +84,8 @@ jar {
         )
     }
     from("LICENSE") { into "META-INF" }
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
 }

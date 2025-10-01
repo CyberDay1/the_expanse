@@ -21,11 +21,11 @@ class DimensionLoaderTest {
         assertEquals(4, enabled.size(), "Expected both nether and end overrides to load");
         assertTrue(enabled.stream().anyMatch(path -> path.endsWith("dimension_type/nether.json")),
                 "Nether dimension type override should be included");
-        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("dimension/nether.json")),
+        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("dimension/the_nether.json")),
                 "Vanilla nether override should be included");
         assertTrue(enabled.stream().anyMatch(path -> path.endsWith("dimension_type/end.json")),
                 "End dimension type override should be included");
-        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("dimension/end.json")),
+        assertTrue(enabled.stream().anyMatch(path -> path.endsWith("dimension/the_end.json")),
                 "Vanilla end override should be included");
     }
 
