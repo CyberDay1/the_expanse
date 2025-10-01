@@ -1,6 +1,6 @@
 {
   "pack": {
     "pack_format": 48,
-    "description": "Worldrise worldgen"
+    "description": "Worldrise resource overrides (expanded world heights and noise settings)"
   }
 }
