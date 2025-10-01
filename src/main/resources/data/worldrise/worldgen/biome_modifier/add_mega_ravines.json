@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_carvers",
-  "biomes": "#worldrise:carver_overworld_biomes",
-  "carvers": [ "worldrise:mega_ravine" ],
-  "step": "air"
-}

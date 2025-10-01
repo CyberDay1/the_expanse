@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_carvers",
-  "biomes": "#worldrise:ocean_biomes",
-  "carvers": [ "worldrise:ocean_blue_hole" ],
-  "step": "air"
-}

@@ -1,9 +1,0 @@
-{
-  "processors": [
-    {
-      "processor_type": "worldrise:apply_random",
-      "mode": "per_piece",
-      "processor_lists": "#worldrise:shipwreck_palettes"
-    }
-  ]
-}

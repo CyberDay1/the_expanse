@@ -1,9 +1,9 @@
-# Worldrise Integration Test Checklist
+# The Expanse Integration Test Checklist
 
 ## Environment
 - [ ] Minecraft version:
 - [ ] NeoForge version:
-- [ ] Worldrise version/commit:
+- [ ] The Expanse version/commit:
 - [ ] Other mods loaded:
 
 ## World Validation
