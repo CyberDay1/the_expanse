@@ -1,9 +1,20 @@
-modId="worldrise"
+modLoader="javafml"
 loaderVersion="[4,)"
-displayName="Worldrise"
+license="CC0-1.0"
+
+[[mods]]
+modId="worldrise"
 version="1.0.0"
-description="Raise world height and adjust worldgen for 1.21.1"
+displayName="Worldrise"
+authors="Your Team"
+description='''
+Worldrise expands Minecraft's world height and depth, rescales ores and
+structures, and provides compatibility with popular biome/ore mods.
+'''
+
 [[dependencies.worldrise]]
-   modId="neoforge"
-   type="required"
-   versionRange="[21.1.209,)"
+modId="neoforge"
+type="required"
+versionRange="[21.1.0,)"
+ordering="NONE"
+side="BOTH"
