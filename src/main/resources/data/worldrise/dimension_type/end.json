@@ -15,8 +15,8 @@
   "respawn_anchor_works": false,
   "bed_works": false,
   "effects": "minecraft:the_end",
-  "min_y": -256,
-  "height": 2272,
-  "logical_height": 2272,
+  "min_y": 0,
+  "height": 512,
+  "logical_height": 512,
   "coordinate_scale": 1.0
 }
