@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_legacy_carvers",
+  "biomes": "#the_expanse:ocean_like",
+  "step": "air",
+  "carvers": [ "the_expanse:ocean_canyon" ]
+}

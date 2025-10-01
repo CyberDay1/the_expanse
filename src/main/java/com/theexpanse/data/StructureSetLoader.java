@@ -14,7 +14,7 @@ import java.util.List;
 public final class StructureSetLoader {
 
     private static final Path STRUCTURE_SET_ROOT =
-            Path.of("data", "the-expanse", "worldgen", "structure_set");
+            Path.of("data", "the_expanse", "worldgen", "structure_set");
 
     private StructureSetLoader() { }
 

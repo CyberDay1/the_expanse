@@ -3,7 +3,7 @@ loaderVersion="[4,)"
 license="MIT"
 
 [[mods]]
-modId="the-expanse"
+modId="the_expanse"
 version="0.1.0"
 displayName="The Expanse"
 authors="The Expanse Team"
@@ -13,7 +13,7 @@ structures, adds custom carvers, and provides compatibility with
 popular biome/ore mods.
 '''
 
-[[dependencies.the-expanse]]
+[[dependencies.the_expanse]]
     modId="neoforge"
     type="required"
     versionRange="[21.1.209,)"

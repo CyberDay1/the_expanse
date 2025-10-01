@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_carvers",
+  "biomes": "#the_expanse:carver_overworld_biomes",
+  "carvers": [ "the_expanse:sinkhole" ],
+  "step": "air"
+}

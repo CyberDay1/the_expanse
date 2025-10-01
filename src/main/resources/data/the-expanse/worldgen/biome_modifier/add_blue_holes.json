@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_carvers",
-  "biomes": "#the-expanse:ocean_biomes",
-  "carvers": [ "the-expanse:ocean_blue_hole" ],
-  "step": "air"
-}

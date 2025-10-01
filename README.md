@@ -31,7 +31,7 @@ other corruption. Always back up your worlds before experimenting.
 
 ## Configuration
 
-The `config/the-expanse.toml` file exposes tuning multipliers for players who need to balance
+The `config/the_expanse.toml` file exposes tuning multipliers for players who need to balance
 performance with resource availability when stretching the world height:
 
 * `scaling.defaultOreMultiplier` – Global multiplier applied to ore placement `count`/`tries`
@@ -60,7 +60,7 @@ the expected gameplay balance, so adjust cautiously.
 
 * F3 debug overlay reports the expanded Y range of **-256 to 2015** in-game.
 * Ocean biomes exhibit visibly wider canyons carved by the custom ocean canyon carver.
-* `/placefeature the-expanse:ore_coal_scaled` successfully spawns scaled coal seams for
+* `/placefeature the_expanse:ore_coal_scaled` successfully spawns scaled coal seams for
   verification during testing sessions.
 
 ## Test Evidence

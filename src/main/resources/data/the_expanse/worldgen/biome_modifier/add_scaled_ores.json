@@ -1,0 +1,14 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#the_expanse:ores_overworld_biomes",
+  "features": [
+    "the_expanse:ore_coal_scaled",
+    "the_expanse:ore_iron_scaled",
+    "the_expanse:ore_copper_scaled",
+    "the_expanse:ore_gold_scaled",
+    "the_expanse:ore_diamond_scaled",
+    "the_expanse:ore_redstone_scaled",
+    "the_expanse:ore_lapis_scaled"
+  ],
+  "step": "underground_ores"
+}

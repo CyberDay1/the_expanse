@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 @Mod(TheExpanse.MOD_ID)
 public final class TheExpanse {
-    public static final String MOD_ID = "the-expanse";
+    public static final String MOD_ID = "the_expanse";
     private static final String BUILTIN_PACK_ID = "mod/" + MOD_ID;
     private static final Component BUILTIN_PACK_TITLE = Component.literal("The Expanse Datapack");
     private static final Logger LOGGER = LoggerFactory.getLogger(TheExpanse.class);

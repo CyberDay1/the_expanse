@@ -38,25 +38,25 @@ Run the following commands in creative mode to validate scaled ore placement. Us
 spectator pass afterward to check that only the rescaled variants remain.
 
 ```
-/placefeature the-expanse:ore_coal_scaled
-/placefeature the-expanse:ore_iron_scaled
-/placefeature the-expanse:ore_copper_scaled
-/placefeature the-expanse:ore_gold_scaled
-/placefeature the-expanse:ore_redstone_scaled
-/placefeature the-expanse:ore_lapis_scaled
-/placefeature the-expanse:ore_diamond_scaled
+/placefeature the_expanse:ore_coal_scaled
+/placefeature the_expanse:ore_iron_scaled
+/placefeature the_expanse:ore_copper_scaled
+/placefeature the_expanse:ore_gold_scaled
+/placefeature the_expanse:ore_redstone_scaled
+/placefeature the_expanse:ore_lapis_scaled
+/placefeature the_expanse:ore_diamond_scaled
 
-/placefeature the-expanse:ore_osmium_scaled
-/placefeature the-expanse:ore_fluorite_scaled
-/placefeature the-expanse:ore_lead_scaled
-/placefeature the-expanse:ore_tin_scaled
-/placefeature the-expanse:ore_uranium_scaled
+/placefeature the_expanse:ore_osmium_scaled
+/placefeature the_expanse:ore_fluorite_scaled
+/placefeature the_expanse:ore_lead_scaled
+/placefeature the_expanse:ore_tin_scaled
+/placefeature the_expanse:ore_uranium_scaled
 
-/placefeature the-expanse:ore_aluminum_scaled
-/placefeature the-expanse:ore_silver_scaled
-/placefeature the-expanse:ore_nickel_scaled
-/placefeature the-expanse:ore_platinum_scaled
-/placefeature the-expanse:ore_zinc_scaled
+/placefeature the_expanse:ore_aluminum_scaled
+/placefeature the_expanse:ore_silver_scaled
+/placefeature the_expanse:ore_nickel_scaled
+/placefeature the_expanse:ore_platinum_scaled
+/placefeature the_expanse:ore_zinc_scaled
 ```
 
 Document any anomalies you encounter (missing blocks, incorrect heights, duplicate

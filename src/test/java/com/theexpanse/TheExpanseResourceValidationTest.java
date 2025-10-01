@@ -23,7 +23,7 @@ class TheExpanseResourceValidationTest {
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Test
-    @DisplayName("mods.toml parses and declares the the-expanse modId")
+    @DisplayName("mods.toml parses and declares the the_expanse modId")
     void modsTomlParses() throws IOException {
         Path modsToml = RESOURCE_ROOT.resolve(Path.of("META-INF", "mods.toml"));
         assertTrue(Files.exists(modsToml), "mods.toml should exist");
@@ -34,13 +34,13 @@ class TheExpanseResourceValidationTest {
 
         TomlArray mods = result.getArray("mods");
         assertNotNull(mods, "mods.toml should declare at least one mod entry");
-        assertTrue(mods.size() > 0, "mods.toml should list the the-expanse mod");
+        assertTrue(mods.size() > 0, "mods.toml should list the the_expanse mod");
 
         TomlTable modEntry = mods.getTable(0);
-        assertNotNull(modEntry, "mods.toml should contain a table for the the-expanse mod");
+        assertNotNull(modEntry, "mods.toml should contain a table for the the_expanse mod");
 
-        assertEquals("the-expanse", modEntry.getString("modId"),
-                "mods.toml should declare the the-expanse modId");
+        assertEquals("the_expanse", modEntry.getString("modId"),
+                "mods.toml should declare the the_expanse modId");
     }
 
     @Test
@@ -74,7 +74,7 @@ class TheExpanseResourceValidationTest {
     @Test
     @DisplayName("Ocean canyon carver geometry matches expected values")
     void oceanCanyonCarverMatchesSpec() throws IOException {
-        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the-expanse", "worldgen",
+        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the_expanse", "worldgen",
                 "configured_carver", "ocean_canyon.json"));
         assertTrue(Files.exists(carver), "ocean_canyon.json should exist");
 
@@ -101,7 +101,7 @@ class TheExpanseResourceValidationTest {
     @Test
     @DisplayName("Mega ravine carver uses expanded vertical range")
     void megaRavineCarverMatchesSpec() throws IOException {
-        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the-expanse", "worldgen",
+        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the_expanse", "worldgen",
                 "configured_carver", "mega_ravine.json"));
         assertTrue(Files.exists(carver), "mega_ravine.json should exist");
 
@@ -126,7 +126,7 @@ class TheExpanseResourceValidationTest {
     @Test
     @DisplayName("Surface sinkhole carver targets high Y values")
     void sinkholeCarverMatchesSpec() throws IOException {
-        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the-expanse", "worldgen",
+        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the_expanse", "worldgen",
                 "configured_carver", "sinkhole.json"));
         assertTrue(Files.exists(carver), "sinkhole.json should exist");
 
@@ -151,7 +151,7 @@ class TheExpanseResourceValidationTest {
     @Test
     @DisplayName("Ocean blue hole carver stays within underwater range")
     void oceanBlueHoleCarverMatchesSpec() throws IOException {
-        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the-expanse", "worldgen",
+        Path carver = RESOURCE_ROOT.resolve(Path.of("data", "the_expanse", "worldgen",
                 "configured_carver", "ocean_blue_hole.json"));
         assertTrue(Files.exists(carver), "ocean_blue_hole.json should exist");
 
@@ -176,7 +176,7 @@ class TheExpanseResourceValidationTest {
     @Test
     @DisplayName("Ocean-like biome tag references vanilla oceans")
     void oceanLikeBiomeTagResolves() throws IOException {
-        Path tag = RESOURCE_ROOT.resolve(Path.of("data", "the-expanse", "tags", "worldgen",
+        Path tag = RESOURCE_ROOT.resolve(Path.of("data", "the_expanse", "tags", "worldgen",
                 "biome", "ocean_like.json"));
         assertTrue(Files.exists(tag), "ocean_like biome tag should exist");
 
