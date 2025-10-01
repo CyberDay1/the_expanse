@@ -18,6 +18,9 @@ lithoEnabled = true
 
 [worldrise.compat]
 moonriseCompatEnabled = true
+ftbMaterialsCompatEnabled = true
+silentGearCompatEnabled = true
+productiveMetalworksCompatEnabled = true
 
 [worldrise.scaling]
 defaultOreMultiplier = 1.0

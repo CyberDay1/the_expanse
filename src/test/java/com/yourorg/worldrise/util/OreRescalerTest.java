@@ -7,9 +7,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.yourorg.worldrise.util.HeightRescaler;
 import java.io.IOException;
 import java.io.Reader;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -33,12 +33,9 @@ class OreRescalerTest {
     @Test
     @DisplayName("rescaleY converts known sample values")
     void rescaleYSampleValues() throws Exception {
-        Method rescaleMethod = OreRescaler.class.getDeclaredMethod("rescaleY", int.class);
-        rescaleMethod.setAccessible(true);
-
-        int min = (int) rescaleMethod.invoke(null, -64);
-        int max = (int) rescaleMethod.invoke(null, 320);
-        int zero = (int) rescaleMethod.invoke(null, 0);
+        int min = HeightRescaler.rescaleY(-64);
+        int max = HeightRescaler.rescaleY(320);
+        int zero = HeightRescaler.rescaleY(0);
 
         assertEquals(-256, min);
         assertEquals(2015, max);
@@ -68,10 +65,7 @@ class OreRescalerTest {
         placement.add(heightRange);
         root.add("placement", placement);
 
-        Method rescaleHeight = OreRescaler.class.getDeclaredMethod("rescaleHeight", JsonObject.class);
-        rescaleHeight.setAccessible(true);
-
-        boolean changed = (boolean) rescaleHeight.invoke(null, root);
+        boolean changed = HeightRescaler.rescalePlacedFeature(root);
         assertTrue(changed, "Expected rescale to modify trapezoid height");
 
         JsonObject rescaledHeight = root.getAsJsonArray("placement")
@@ -104,10 +98,7 @@ class OreRescalerTest {
         placement.add(heightRange);
         root.add("placement", placement);
 
-        Method rescaleHeight = OreRescaler.class.getDeclaredMethod("rescaleHeight", JsonObject.class);
-        rescaleHeight.setAccessible(true);
-
-        boolean changed = (boolean) rescaleHeight.invoke(null, root);
+        boolean changed = HeightRescaler.rescalePlacedFeature(root);
         assertTrue(changed, "Expected rescale to modify plateau provider");
 
         JsonObject rescaledHeight = root.getAsJsonArray("placement")
