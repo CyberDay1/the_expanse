@@ -13,10 +13,16 @@ monumentScaling = true
 endCityScaling = true
 netherScaling = true
 endScaling = true
-oreDensityMultiplier = 1.0
-carverChanceMultiplier = 1.0
 tectonicEnabled = true
 lithoEnabled = true
+
+[worldrise.scaling]
+defaultOreMultiplier = 1.0
+defaultCarverMultiplier = 1.0
+
+# Per-biome overrides: biome tag or ID = multiplier
+biomeOreMultipliers = ["#minecraft:is_mountain=1.5", "#minecraft:is_ocean=0.5"]
+biomeCarverMultipliers = ["#worldrise:ocean_biomes=2.0"]
 
 [worldrise.compatibility]
 biomesoplenty = true
