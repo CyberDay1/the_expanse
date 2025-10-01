@@ -8,7 +8,6 @@ import com.google.gson.JsonObject;
 import com.yourorg.worldrise.config.WorldriseConfig;
 import com.yourorg.worldrise.data.BiomeModifierLoader.ScaledModifier;
 import java.nio.file.Path;
-import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,16 +19,16 @@ class BiomeModifierLoaderTest {
 
     private double defaultOre;
     private double defaultCarver;
-    private List<String> oreOverrides;
-    private List<String> carverOverrides;
+    private String oreOverrides;
+    private String carverOverrides;
 
     @BeforeEach
     void snapshotConfig() {
         WorldriseConfig config = WorldriseConfig.INSTANCE;
         defaultOre = config.defaultOreMultiplier.get();
         defaultCarver = config.defaultCarverMultiplier.get();
-        oreOverrides = List.copyOf(config.biomeOreMultipliers.get());
-        carverOverrides = List.copyOf(config.biomeCarverMultipliers.get());
+        oreOverrides = config.biomeOreMultipliersRaw.get();
+        carverOverrides = config.biomeCarverMultipliersRaw.get();
     }
 
     @AfterEach
@@ -37,16 +36,16 @@ class BiomeModifierLoaderTest {
         WorldriseConfig config = WorldriseConfig.INSTANCE;
         config.defaultOreMultiplier.set(defaultOre);
         config.defaultCarverMultiplier.set(defaultCarver);
-        config.biomeOreMultipliers.set(oreOverrides);
-        config.biomeCarverMultipliers.set(carverOverrides);
+        config.biomeOreMultipliersRaw.set(oreOverrides);
+        config.biomeCarverMultipliersRaw.set(carverOverrides);
     }
 
     @Test
     @DisplayName("Ore overrides apply to placed feature placement counts")
     void oreOverridesApplyToPlacedFeatures() throws Exception {
         WorldriseConfig.INSTANCE.defaultOreMultiplier.set(2.0);
-        WorldriseConfig.INSTANCE.biomeOreMultipliers
-                .set(List.of("#worldrise:ores_overworld_biomes=0.5"));
+        WorldriseConfig.INSTANCE.biomeOreMultipliersRaw
+                .set("#worldrise:ores_overworld_biomes=0.5");
 
         ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(RESOURCE_ROOT, "add_scaled_ores");
         assertEquals(7, scaled.placedFeatures().size(),
@@ -62,7 +61,7 @@ class BiomeModifierLoaderTest {
     @DisplayName("Default multiplier is used when no ore override matches")
     void defaultOreMultiplierUsedWhenNoOverrideMatches() throws Exception {
         WorldriseConfig.INSTANCE.defaultOreMultiplier.set(2.0);
-        WorldriseConfig.INSTANCE.biomeOreMultipliers.set(List.of());
+        WorldriseConfig.INSTANCE.biomeOreMultipliersRaw.set("");
 
         ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(RESOURCE_ROOT, "add_scaled_ores");
         JsonObject coalFeature = scaled.placedFeatures().get("worldrise:ore_coal_scaled");
@@ -74,8 +73,8 @@ class BiomeModifierLoaderTest {
     @DisplayName("Carver overrides adjust configured carver probability")
     void carverOverridesApplyProbabilityScaling() throws Exception {
         WorldriseConfig.INSTANCE.defaultCarverMultiplier.set(0.5);
-        WorldriseConfig.INSTANCE.biomeCarverMultipliers
-                .set(List.of("#worldrise:ocean_like=2.0"));
+        WorldriseConfig.INSTANCE.biomeCarverMultipliersRaw
+                .set("#worldrise:ocean_like=2.0");
 
         ScaledModifier scaled = BiomeModifierLoader.loadScaledModifier(RESOURCE_ROOT, "add_ocean_canyon");
         JsonObject carver = scaled.configuredCarvers().get("worldrise:ocean_canyon");
