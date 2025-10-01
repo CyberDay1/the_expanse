@@ -27,6 +27,7 @@ public class WorldriseConfig {
     public final ModConfigSpec.BooleanValue endScaling;
     public final ModConfigSpec.BooleanValue tectonicEnabled;
     public final ModConfigSpec.BooleanValue lithoEnabled;
+    public final ModConfigSpec.BooleanValue moonriseCompatEnabled;
     public final ModConfigSpec.BooleanValue biomesOPlentyCompat;
     public final ModConfigSpec.BooleanValue bygCompat;
 
@@ -80,6 +81,12 @@ public class WorldriseConfig {
                                  .define("tectonicEnabled", true);
         lithoEnabled = builder.comment("Enable vendored lithostitched registry hooks")
                                .define("lithoEnabled", true);
+        builder.push("compat");
+        moonriseCompatEnabled = builder
+                .comment("Enable compatibility checks with Moonrise (optimization mod). "
+                        + "If false, Worldrise ignores Moonrise even if loaded.")
+                .define("moonriseCompatEnabled", true);
+        builder.pop();
         builder.push("compatibility");
         biomesOPlentyCompat = builder.comment("Enable Biomes O' Plenty biome compatibility")
                                      .define("biomesoplenty", true);

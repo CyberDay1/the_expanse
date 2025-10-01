@@ -16,6 +16,9 @@ endScaling = true
 tectonicEnabled = true
 lithoEnabled = true
 
+[worldrise.compat]
+moonriseCompatEnabled = true
+
 [worldrise.scaling]
 defaultOreMultiplier = 1.0
 defaultCarverMultiplier = 1.0
