@@ -8,6 +8,9 @@
   "natural": true,
   "bed_works": true,
   "has_raids": true,
-  "monster_spawn_light_level": { "type": "minecraft:uniform", "value": 7 },
+  "monster_spawn_light_level": {
+    "type": "minecraft:uniform",
+    "value": 7
+  },
   "monster_spawn_block_light_limit": 0
 }
