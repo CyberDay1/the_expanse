@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-GRADLE_VERSION="8.10"
+GRADLE_VERSION="8.13"
 DIST_URL="https://services.gradle.org/distributions/gradle-${GRADLE_VERSION}-bin.zip"
 CACHE_DIR="${GRADLE_USER_HOME:-$HOME/.gradle}/wrapper/dists"
 HASH=$(printf '%s' "$DIST_URL" | md5sum | awk '{print $1}')
