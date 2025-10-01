@@ -2,6 +2,7 @@
   "min_y": -256,
   "height": 2272,
   "logical_height": 2272,
+  "sea_level": 150,
   "has_skylight": true,
   "effects": "minecraft:overworld",
   "infiniburn": "#minecraft:infiniburn_overworld",
