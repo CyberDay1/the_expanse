@@ -35,7 +35,7 @@ ext {
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
-    compileOnly "org.spongepowered:mixin:0.8.5" // if you have mixins
+    compileOnly "org.spongepowered:mixin:0.8.7" // if you have mixins
 }
 
 tasks.withType(JavaCompile).configureEach {

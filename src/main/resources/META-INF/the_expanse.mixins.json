@@ -1,0 +1,37 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_21",
+  "package": "com.theexpanse.vendor.litho.mixin",
+  "mixins": [
+    "common.BeardifierMixin",
+    "common.BiomeAccessor",
+    "common.BiomeGenerationSettingsAccessor",
+    "common.ChunkGeneratorAccessor",
+    "common.ChunkMapMixin",
+    "common.GameTestServerMixin",
+    "common.HolderReferenceAccessor",
+    "common.JigsawStructureAccessor",
+    "common.JigsawStructureMixin",
+    "common.MappedRegistryAccessor",
+    "common.MobSpawnSettingsAccessor",
+    "common.NoiseGeneratorSettingsAccessor",
+    "common.PlacedFeatureAccessor",
+    "common.PoolAliasLookupMixin",
+    "common.RandomStateAccessor",
+    "common.ServerLifecycleHooksMixin",
+    "common.ShipwreckPieceMixin",
+    "common.SinglePoolElementAccessor",
+    "common.StructureProcessorListAccessor",
+    "common.StructureSetAccessor",
+    "common.StructureTemplateMixin",
+    "common.StructureTemplatePoolAccessor",
+    "common.StructureTemplatePoolMixin"
+  ],
+  "client": [
+    "client.IntegratedServerMixin"
+  ],
+  "server": [
+    "server.DedicatedServerMixin"
+  ]
+}
