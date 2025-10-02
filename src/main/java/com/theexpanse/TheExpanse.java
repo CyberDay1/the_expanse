@@ -8,7 +8,7 @@ import net.neoforged.fml.common.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Mod(TheExpanse.MOD_ID)
+@Mod("the_expanse")
 public final class TheExpanse {
     public static final String MOD_ID = "the_expanse";
     private static final Logger LOGGER = LoggerFactory.getLogger(TheExpanse.class);
