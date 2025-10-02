@@ -18,7 +18,7 @@ import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddPackFindersEvent;
 
-@EventBusSubscriber(modid = TheExpanse.MOD_ID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = TheExpanse.MOD_ID)
 public final class ExpanseDataPackInjector {
     private static final String BUILTIN_PACK_ID = "the_expanse_builtin";
     private static final Component BUILTIN_PACK_TITLE = Component.literal("The Expanse Builtin");
