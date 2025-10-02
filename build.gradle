@@ -90,18 +90,9 @@ jar {
 
     from("LICENSE") { into "META-INF" }
 
-    // Explicitly include pack.mcmeta from resources
-    from(sourceSets.main.resources) {
-        include 'pack.mcmeta'
-        include 'the_expanse.mixins.json'
-        include 'META-INF/**'
-        include 'assets/**'
-        include 'data/**'
-        // Add duplicate handling strategy
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
+    // Set duplicate handling strategy
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
-
 tasks.named("test") {
     enabled = false
 }
