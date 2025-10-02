@@ -34,15 +34,18 @@ ext {
 }
 
 processResources {
-    from(sourceSets.main.resources.srcDirs) {
-        include '**/*'
-    }
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
     inputs.property "mod_id", mod_id
     inputs.property "mod_name", mod_name
     inputs.property "version", project.version
+    inputs.property "mc_version", mc_version
+    inputs.property "neoforge_version", neoforge_version
+    inputs.property "mod_description", mod_description
+    inputs.property "homepage_url", homepage_url
+    inputs.property "sources_url", sources_url
+    inputs.property "issues_url", issues_url
+    inputs.property "mod_license", mod_license
+    inputs.property "mod_author", mod_author
+
     filesMatching("META-INF/neoforge.mods.toml") {
         expand([
             mod_id: mod_id,
