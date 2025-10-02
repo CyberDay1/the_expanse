@@ -33,17 +33,13 @@ ext {
     issues_url = "https://github.com/your-org/the_expanse/issues"
 }
 
-dependencies {
-    implementation "net.neoforged:neoforge:${neoforge_version}"
-    compileOnly "org.spongepowered:mixin:0.8.7" // if you have mixins
-}
-
-tasks.withType(JavaCompile).configureEach {
-    options.encoding = 'UTF-8'
-    options.release = 21
-}
-
 processResources {
+    from(sourceSets.main.resources.srcDirs) {
+        include '**/*'
+    }
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
     inputs.property "mod_id", mod_id
     inputs.property "mod_name", mod_name
     inputs.property "version", project.version
@@ -62,6 +58,16 @@ processResources {
             mod_author: mod_author
         ])
     }
+}
+
+dependencies {
+    implementation "net.neoforged:neoforge:${neoforge_version}"
+    compileOnly "org.spongepowered:mixin:0.8.7" // if you have mixins
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+    options.release = 21
 }
 
 jar {
