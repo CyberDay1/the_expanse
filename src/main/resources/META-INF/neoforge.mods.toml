@@ -29,4 +29,4 @@ ordering="NONE"
 side="BOTH"
 
 [[mixins]]
-config="the_expanse.mixins.json"
+config="META-INF/the_expanse.mixins.json"
