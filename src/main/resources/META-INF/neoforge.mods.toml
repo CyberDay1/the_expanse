@@ -1,30 +1,26 @@
 modLoader="javafml"
-loaderVersion="[2,)"
+loaderVersion="[4,)"
 
-license="${mod_license}"
+license="MIT"
 
 [[mods]]
-modId="${mod_id}"
-version="${version}"
-displayName="${mod_name}"
-authors="${mod_author}"
-description='''${mod_description}'''
-displayURL="${homepage_url}"
-issueTrackerURL="${issues_url}"
+modId="the_expanse"
+version="0.1.0"
+displayName="The Expanse"
+authors="Your Name or Team"
+description='''
+Expands Minecraft's build height and depth, adjusts noise and terrain generation, 
+and provides compatibility with biome and ore mods.
+'''
+displayURL="https://github.com/yourorg/the_expanse"
+issueTrackerURL="https://github.com/yourorg/the_expanse/issues"
 
-[[mixins]]  # Remove this block if you do not use mixins
-config="${mod_id}.mixins.json"
+[[mixins]]
+config="the_expanse.mixins.json"
 
-[[dependencies.${mod_id}]]
+[[dependencies.the_expanse]]
 modId="neoforge"
 type="required"
-versionRange="[${neoforge_version},)"
-ordering="NONE"
-side="BOTH"
-
-[[dependencies.${mod_id}]]
-modId="minecraft"
-type="required"
-versionRange="[${mc_version}]"
+versionRange="[21.1.0,)"
 ordering="NONE"
 side="BOTH"
