@@ -1,22 +1,21 @@
 {
-  "piglin_safe": false,
-  "natural": false,
-  "ambient_light": 0.0,
-  "has_skylight": false,
-  "has_ceiling": false,
   "ultrawarm": false,
-  "has_raids": false,
-  "monster_spawn_light_level": {
-    "type": "minecraft:uniform",
-    "value": 7
-  },
-  "monster_spawn_block_light_limit": 0,
-  "infiniburn": "#minecraft:infiniburn_end",
+  "natural": false,
+  "piglin_safe": false,
   "respawn_anchor_works": false,
   "bed_works": false,
+  "has_raids": false,
+  "has_skylight": false,
+  "has_ceiling": false,
+  "coordinate_scale": 1.0,
+  "ambient_light": 0.0,
+  "min_y": -256,
+  "height": 2304,
+  "logical_height": 2304,
+  "infiniburn": "#minecraft:infiniburn_end",
   "effects": "minecraft:the_end",
-  "min_y": 0,
-  "height": 512,
-  "logical_height": 512,
-  "coordinate_scale": 1.0
+  "monster_spawn_light_level": 0,
+  "monster_spawn_block_light_limit": 0,
+  "fixed_time": 6000,
+  "sea_level": 150
 }
