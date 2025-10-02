@@ -5,6 +5,7 @@ plugins {
 
 group = 'com.theexpanse'
 version = '0.1.0'
+archivesBaseName = 'the_expanse'
 
 java {
     toolchain {
@@ -33,7 +34,6 @@ ext {
 }
 
 processResources {
-    // Declare all inputs for up-to-date checking
     inputs.property "mod_id", mod_id
     inputs.property "mod_name", mod_name
     inputs.property "version", project.version
@@ -46,7 +46,6 @@ processResources {
     inputs.property "mod_license", mod_license
     inputs.property "mod_author", mod_author
 
-    // Expand variables in neoforge.mods.toml
     filesMatching("META-INF/neoforge.mods.toml") {
         expand([
                 mod_id: mod_id,
@@ -62,9 +61,6 @@ processResources {
                 mod_author: mod_author
         ])
     }
-
-    // CHANGED: Use WARN instead of EXCLUDE to see what's happening
-    duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
 dependencies {
@@ -90,9 +86,17 @@ jar {
 
     from("LICENSE") { into "META-INF" }
 
-    // Set duplicate handling strategy
+    // FORCE include pack.mcmeta from source
+    from(file('src/main/resources')) {
+        include 'pack.mcmeta'
+    }
+
+    // Include all processed resources
+    from(sourceSets.main.output.resourcesDir)
+
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
+
 tasks.named("test") {
     enabled = false
 }
