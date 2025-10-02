@@ -5,7 +5,6 @@ plugins {
 
 group = 'com.theexpanse'
 version = '0.1.0'
-archivesBaseName = 'the_expanse'
 
 java {
     toolchain {
@@ -86,15 +85,8 @@ jar {
 
     from("LICENSE") { into "META-INF" }
 
-    // FORCE include pack.mcmeta from source
-    from(file('src/main/resources')) {
-        include 'pack.mcmeta'
-    }
-
-    // Include all processed resources
-    from(sourceSets.main.output.resourcesDir)
-
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    // Don't set duplicatesStrategy to EXCLUDE - use WARN to see what's happening
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
 tasks.named("test") {
