@@ -1,15 +1,6 @@
 {
   "sea_level": 150,
-  "noise": {
-    "min_y": -256,
-    "height": 2304,
-    "size_horizontal": 1,
-    "size_vertical": 2
-  },
-  "default_block": {
-    "Name": "minecraft:end_stone"
-  },
-  "default_fluid": {
-    "Name": "minecraft:air"
-  }
+  "noise": { "min_y": -256, "height": 2304, "size_horizontal": 1, "size_vertical": 2 },
+  "default_block": { "Name": "minecraft:end_stone" },
+  "default_fluid": { "Name": "minecraft:air" }
 }
