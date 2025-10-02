@@ -86,3 +86,17 @@ jar {
 tasks.named("test") {
     enabled = false
 }
+
+def applyAccessTransformerClass
+
+try {
+    applyAccessTransformerClass = project.class.classLoader.loadClass('net.neoforged.gradle.dsl.common.tasks.ApplyAccessTransformer')
+} catch (ClassNotFoundException ignored) {
+    applyAccessTransformerClass = null
+}
+
+if (applyAccessTransformerClass != null) {
+    tasks.withType(applyAccessTransformerClass).configureEach {
+        onlyIf { file("src/main/resources/META-INF/accesstransformer.cfg").exists() }
+    }
+}
