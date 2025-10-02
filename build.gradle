@@ -92,3 +92,23 @@ jar {
 tasks.named("test") {
     enabled = false
 }
+
+jar {
+    manifest {
+        attributes(
+                'Specification-Title'     : 'the_expanse',
+                'Specification-Vendor'    : 'CyberDay1',
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.version,
+                'Implementation-Vendor'   : 'CyberDay1',
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        )
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        include 'META-INF/neoforge.mods.toml'
+        include 'the_expanse.mixins.json'
+        include 'pack.mcmeta'
+    }
+}
