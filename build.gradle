@@ -5,6 +5,7 @@ plugins {
 
 group = 'com.theexpanse'
 version = '0.1.0'
+archivesBaseName = 'the_expanse'
 
 java {
     toolchain {
@@ -33,7 +34,7 @@ ext {
 }
 
 processResources {
-    // Declare all inputs
+    // Declare all inputs for up-to-date checking
     inputs.property "mod_id", mod_id
     inputs.property "mod_name", mod_name
     inputs.property "version", project.version
@@ -62,11 +63,14 @@ processResources {
                 mod_author: mod_author
         ])
     }
+
+    // CHANGED: Use WARN instead of EXCLUDE to see what's happening
+    duplicatesStrategy = DuplicatesStrategy.WARN
 }
 
 dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
-    compileOnly "org.spongepowered:mixin:0.8.7" // if you have mixins
+    compileOnly "org.spongepowered:mixin:0.8.7"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -77,14 +81,24 @@ tasks.withType(JavaCompile).configureEach {
 jar {
     manifest {
         attributes(
-            "Implementation-Title": project.name,
-            "Implementation-Version": project.version,
-            "Implementation-Vendor": "the_expanse",
-            "Built-By": "codex",
-            "Automatic-Module-Name": "com.theexpanse.mod"
+                "Implementation-Title": project.name,
+                "Implementation-Version": project.version,
+                "Implementation-Vendor": "the_expanse",
+                "Built-By": "codex",
+                "Automatic-Module-Name": "com.theexpanse.mod"
         )
     }
+
     from("LICENSE") { into "META-INF" }
+
+    // Explicitly include pack.mcmeta from resources
+    from(sourceSets.main.resources) {
+        include 'pack.mcmeta'
+        include 'the_expanse.mixins.json'
+        include 'META-INF/**'
+        include 'assets/**'
+        include 'data/**'
+    }
 }
 
 tasks.named("test") {
