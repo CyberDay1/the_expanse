@@ -6,27 +6,20 @@ license="MIT"
 modId="the_expanse"
 version="0.1.0"
 displayName="The Expanse"
-authors="Your Name or Team"
-description='''
-Expands Minecraft's build height and depth, adjusts noise and terrain generation, 
-and provides compatibility with biome and ore mods.
-'''
-displayURL="https://github.com/CyberDay1/the_expanse"
-issueTrackerURL="https://github.com/CyberDay1/the_expanse/issues"
+authors="Your Name"
+description='''Expands Minecraft's build height and depth.'''
 
 [[dependencies.the_expanse]]
 modId="neoforge"
 type="required"
 versionRange="[21.1.0,)"
-ordering="NONE"
 side="BOTH"
 
 [[dependencies.the_expanse]]
 modId="minecraft"
 type="required"
 versionRange="[1.21.1,1.22)"
-ordering="NONE"
 side="BOTH"
 
 [[mixins]]
-config="META-INF/the_expanse.mixins.json"
+config="the_expanse.mixins.json"
