@@ -35,9 +35,9 @@ public final class DimensionLoader {
         Path dimensionBase = resourceRoot.resolve(DIMENSION_ROOT);
 
         List<Path> enabled = new ArrayList<>();
-        addIfEnabled(enabled, dimensionTypeBase.resolve("nether.json"),
+        addIfEnabled(enabled, dimensionTypeBase.resolve("the_nether.json"),
                 dimensionBase.resolve("the_nether.json"), toggles.netherScaling());
-        addIfEnabled(enabled, dimensionTypeBase.resolve("end.json"),
+        addIfEnabled(enabled, dimensionTypeBase.resolve("the_end.json"),
                 dimensionBase.resolve("the_end.json"), toggles.endScaling());
         return List.copyOf(enabled);
     }
