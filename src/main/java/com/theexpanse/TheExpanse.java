@@ -1,6 +1,8 @@
 package com.theexpanse;
 
+import com.theexpanse.data.worldgen.processor.TheExpanseProcessors;
 import net.minecraft.core.registries.Registries;
+import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
@@ -9,7 +11,9 @@ import net.neoforged.neoforge.event.server.ServerStartedEvent;
 public class TheExpanse {
     public static final String MOD_ID = "the_expanse";
 
-    public TheExpanse() {
+    public TheExpanse(IEventBus modEventBus) {
+        TheExpanseProcessors.register(modEventBus);
+
         // DEBUG: prove container is built
         System.out.println("[TheExpanse] Constructor hit");
         // Ensure mixin bootstrap is run
