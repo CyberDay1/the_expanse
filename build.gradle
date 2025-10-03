@@ -32,32 +32,20 @@ ext {
     issues_url = "https://github.com/your-org/the_expanse/issues"
 }
 
-processResources {
-    inputs.property "mod_id", mod_id
-    inputs.property "mod_name", mod_name
-    inputs.property "version", project.version
-    inputs.property "mc_version", mc_version
-    inputs.property "neoforge_version", neoforge_version
-    inputs.property "mod_description", mod_description
-    inputs.property "homepage_url", homepage_url
-    inputs.property "sources_url", sources_url
-    inputs.property "issues_url", issues_url
-    inputs.property "mod_license", mod_license
-    inputs.property "mod_author", mod_author
-
+tasks.processResources {
     filesMatching("META-INF/neoforge.mods.toml") {
         expand([
-                mod_id: mod_id,
-                mod_name: mod_name,
-                version: project.version,
-                mc_version: mc_version,
-                neoforge_version: neoforge_version,
-                mod_description: mod_description,
-                homepage_url: homepage_url,
-                sources_url: sources_url,
-                issues_url: issues_url,
-                mod_license: mod_license,
-                mod_author: mod_author
+            mod_id: mod_id,
+            mod_name: mod_name,
+            version: project.version,
+            mc_version: mc_version,
+            neoforge_version: neoforge_version,
+            mod_description: mod_description,
+            homepage_url: homepage_url,
+            sources_url: sources_url,
+            issues_url: issues_url,
+            mod_license: mod_license,
+            mod_author: mod_author
         ])
     }
 }
@@ -72,43 +60,31 @@ tasks.withType(JavaCompile).configureEach {
     options.release = 21
 }
 
-jar {
+tasks.jar {
+    from(sourceSets.main.output)
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
     manifest {
         attributes(
-                "Implementation-Title": project.name,
-                "Implementation-Version": project.version,
-                "Implementation-Vendor": "the_expanse",
-                "Built-By": "codex",
-                "Automatic-Module-Name": "com.theexpanse.mod"
+            'Specification-Title': project.name,
+            'Specification-Vendor': 'CyberDay1',
+            'Specification-Version': '1',
+            'Implementation-Title': project.name,
+            'Implementation-Version': project.version,
+            'Implementation-Vendor': 'CyberDay1',
+            'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
         )
     }
 
-    from("LICENSE") { into "META-INF" }
-
-    // Don't set duplicatesStrategy to EXCLUDE - use WARN to see what's happening
-    duplicatesStrategy = DuplicatesStrategy.WARN
+    // Force datapack files into JAR
+    from("src/main/resources") {
+        include "data/**"
+        include "assets/**"
+        include "META-INF/**"
+        include "pack.mcmeta"
+    }
 }
 
 tasks.named("test") {
     enabled = false
-}
-
-jar {
-    manifest {
-        attributes(
-                'Specification-Title'     : 'the_expanse',
-                'Specification-Vendor'    : 'CyberDay1',
-                'Specification-Version'   : '1',
-                'Implementation-Title'    : project.name,
-                'Implementation-Version'  : project.version,
-                'Implementation-Vendor'   : 'CyberDay1',
-                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
-        )
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/neoforge.mods.toml'
-        include 'the_expanse.mixins.json'
-        include 'pack.mcmeta'
-    }
 }
