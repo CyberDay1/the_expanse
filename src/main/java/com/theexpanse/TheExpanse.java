@@ -10,7 +10,7 @@ public class TheExpanse {
         // DEBUG: prove container is built
         System.out.println("[TheExpanse] Constructor hit");
         // Ensure mixin bootstrap is run
-        com.theexpanse.mixin.MixinCompatBootstrap.init();
+        com.theexpanse.bootstrap.MixinCompatBootstrap.init();
         System.out.println("[TheExpanse] Mod constructor called");
     }
 }
