@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:ore",
+  "config": {
+    "discard_chance_on_air_exposure": 0.2,
+    "size": 14,
+    "targets": [
+      {
+        "target": "minecraft:stone_ore_replaceables",
+        "state": { "Name": "minecraft:copper_ore" }
+      },
+      {
+        "target": "minecraft:deepslate_ore_replaceables",
+        "state": { "Name": "minecraft:deepslate_copper_ore" }
+      }
+    ]
+  }
+}
