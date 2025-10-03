@@ -5,12 +5,22 @@
     "size": 9,
     "targets": [
       {
-        "target": "minecraft:stone_ore_replaceables",
-        "state": { "Name": "minecraft:iron_ore" }
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:stone_ore_replaceables"
+        },
+        "state": {
+          "Name": "minecraft:iron_ore"
+        }
       },
       {
-        "target": "minecraft:deepslate_ore_replaceables",
-        "state": { "Name": "minecraft:deepslate_iron_ore" }
+        "target": {
+          "predicate_type": "minecraft:tag_match",
+          "tag": "minecraft:deepslate_ore_replaceables"
+        },
+        "state": {
+          "Name": "minecraft:deepslate_iron_ore"
+        }
       }
     ]
   }
