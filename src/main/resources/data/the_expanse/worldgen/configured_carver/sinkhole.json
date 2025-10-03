@@ -4,20 +4,32 @@
     "probability": 0.01,
     "y": {
       "type": "minecraft:uniform",
-      "min_inclusive": { "absolute": 40 },
-      "max_inclusive": { "absolute": 140 }
+      "min_inclusive": {
+        "absolute": 40
+      },
+      "max_inclusive": {
+        "absolute": 140
+      }
     },
-    "y_scale": {
+    "yScale": {
       "type": "minecraft:uniform",
       "min_inclusive": 1.0,
       "max_inclusive": 2.5
     },
-    "lava_level": { "above_bottom": 8 },
+    "lava_level": {
+      "above_bottom": 8
+    },
+    "replaceable": "#minecraft:overworld_carver_replaceables",
+    "vertical_rotation": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 0.0,
+      "max_inclusive": 6.283185307179586
+    },
     "shape": {
-      "vertical_rotation": {
+      "distance_factor": {
         "type": "minecraft:uniform",
-        "min_inclusive": 0.0,
-        "max_inclusive": 6.2831855
+        "min_inclusive": 0.75,
+        "max_inclusive": 1.0
       },
       "thickness": {
         "type": "minecraft:uniform",
