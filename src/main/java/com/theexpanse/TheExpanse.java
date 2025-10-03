@@ -2,10 +2,10 @@ package com.theexpanse;
 
 import net.minecraft.core.registries.Registries;
 import net.neoforged.fml.common.Mod;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.server.ServerStartedEvent;
+import net.neoforged.neoforge.common.NeoForge;
+import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
-@Mod("the_expanse")
+@Mod(TheExpanse.MOD_ID)
 public class TheExpanse {
     public static final String MOD_ID = "the_expanse";
 
@@ -17,7 +17,7 @@ public class TheExpanse {
         System.out.println("[TheExpanse] Mod constructor called");
 
         // Attach our runtime debug logger
-        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
+        NeoForge.EVENT_BUS.addListener(this::onServerStarted);
     }
 
     private void onServerStarted(ServerStartedEvent event) {
