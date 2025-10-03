@@ -9,6 +9,9 @@ displayName="The Expanse"
 authors="Your Name"
 description='''Expands Minecraft's build height and depth.'''
 
+  [[mixins]]
+  config="the_expanse.mixins.json"
+
 [[dependencies.the_expanse]]
 modId="neoforge"
 type="required"
@@ -20,6 +23,3 @@ modId="minecraft"
 type="required"
 versionRange="[1.21.1,1.22)"
 side="BOTH"
-
-[[mixins]]
-config="the_expanse.mixins.json"
