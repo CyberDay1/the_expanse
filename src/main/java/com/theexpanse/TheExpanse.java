@@ -5,6 +5,8 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.level.levelgen.DensityFunction;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.neoforged.fml.common.Mod;
 
 @Mod("the_expanse")
@@ -19,9 +21,20 @@ public class TheExpanse {
         System.out.println("[TheExpanse] Mod constructor called");
 
         RegistryAccess registryAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
-        Registry<DensityFunction> registry = registryAccess.registryOrThrow(Registries.DENSITY_FUNCTION);
-        registry.entrySet().forEach(e -> {
+
+        Registry<DensityFunction> dfRegistry = registryAccess.registryOrThrow(Registries.DENSITY_FUNCTION);
+        dfRegistry.entrySet().forEach(e -> {
             System.out.println("[TheExpanse][DF] " + e.getKey() + " -> " + e.getValue());
+        });
+
+        Registry<ConfiguredWorldCarver<?>> carverRegistry = registryAccess.registryOrThrow(Registries.CONFIGURED_CARVER);
+        carverRegistry.entrySet().forEach(e -> {
+            System.out.println("[TheExpanse][Carver] " + e.getKey() + " -> " + e.getValue());
+        });
+
+        Registry<ConfiguredFeature<?, ?>> featureRegistry = registryAccess.registryOrThrow(Registries.CONFIGURED_FEATURE);
+        featureRegistry.entrySet().forEach(e -> {
+            System.out.println("[TheExpanse][Feature] " + e.getKey() + " -> " + e.getValue());
         });
     }
 }
