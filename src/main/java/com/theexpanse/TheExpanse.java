@@ -1,13 +1,9 @@
 package com.theexpanse;
 
-import net.minecraft.core.Registry;
-import net.minecraft.core.RegistryAccess;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.world.level.levelgen.DensityFunction;
-import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.neoforged.fml.common.Mod;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.server.ServerStartedEvent;
 
 @Mod("the_expanse")
 public class TheExpanse {
@@ -20,21 +16,29 @@ public class TheExpanse {
         com.theexpanse.bootstrap.MixinCompatBootstrap.init();
         System.out.println("[TheExpanse] Mod constructor called");
 
-        RegistryAccess registryAccess = RegistryAccess.fromRegistryOfRegistries(BuiltInRegistries.REGISTRY);
+        // Attach our runtime debug logger
+        MinecraftForge.EVENT_BUS.addListener(this::onServerStarted);
+    }
 
-        Registry<DensityFunction> dfRegistry = registryAccess.registryOrThrow(Registries.DENSITY_FUNCTION);
-        dfRegistry.entrySet().forEach(e -> {
-            System.out.println("[TheExpanse][DF] " + e.getKey() + " -> " + e.getValue());
-        });
+    private void onServerStarted(ServerStartedEvent event) {
+        var access = event.getServer().registryAccess();
 
-        Registry<ConfiguredWorldCarver<?>> carverRegistry = registryAccess.registryOrThrow(Registries.CONFIGURED_CARVER);
-        carverRegistry.entrySet().forEach(e -> {
-            System.out.println("[TheExpanse][Carver] " + e.getKey() + " -> " + e.getValue());
-        });
+        // Dump density functions
+        var dfRegistry = access.registryOrThrow(Registries.DENSITY_FUNCTION);
+        dfRegistry.entrySet().forEach(e ->
+            System.out.println("[TheExpanse][DF] " + e.getKey())
+        );
 
-        Registry<ConfiguredFeature<?, ?>> featureRegistry = registryAccess.registryOrThrow(Registries.CONFIGURED_FEATURE);
-        featureRegistry.entrySet().forEach(e -> {
-            System.out.println("[TheExpanse][Feature] " + e.getKey() + " -> " + e.getValue());
-        });
+        // Dump configured carvers
+        var carverRegistry = access.registryOrThrow(Registries.CONFIGURED_CARVER);
+        carverRegistry.entrySet().forEach(e ->
+            System.out.println("[TheExpanse][Carver] " + e.getKey())
+        );
+
+        // Dump configured features
+        var featureRegistry = access.registryOrThrow(Registries.CONFIGURED_FEATURE);
+        featureRegistry.entrySet().forEach(e ->
+            System.out.println("[TheExpanse][Feature] " + e.getKey())
+        );
     }
 }
