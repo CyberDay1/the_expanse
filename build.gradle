@@ -32,6 +32,12 @@ ext {
     issues_url = "https://github.com/your-org/the_expanse/issues"
 }
 
+sourceSets {
+    main {
+        resources.setSrcDirs(["src/main/resources"])
+    }
+}
+
 tasks.processResources {
     filesMatching("META-INF/neoforge.mods.toml") {
         expand([
