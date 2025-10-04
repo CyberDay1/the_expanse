@@ -18,5 +18,5 @@
   "monster_spawn_block_light_limit": 15,
   "fixed_time": 18000,
   "sea_level": 150,
-  "noise_settings": "the_expanse:the_nether"
+  "noise_settings": "minecraft:the_nether"
 }

@@ -20,5 +20,5 @@
     "max_inclusive": 7
   },
   "monster_spawn_block_light_limit": 15,
-  "noise_settings": "the_expanse:the_nether"
+  "noise_settings": "minecraft:the_nether"
 }
