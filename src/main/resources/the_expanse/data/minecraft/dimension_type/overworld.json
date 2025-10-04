@@ -18,5 +18,5 @@
   "monster_spawn_block_light_limit": 0,
   "fixed_time": null,
   "sea_level": 150,
-  "noise_settings": "the_expanse:overworld"
+  "noise_settings": "minecraft:overworld"
 }
