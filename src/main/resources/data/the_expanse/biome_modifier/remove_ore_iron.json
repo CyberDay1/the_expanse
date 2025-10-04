@@ -2,9 +2,9 @@
   "type": "neoforge:remove_features",
   "biomes": "#minecraft:is_overworld",
   "features": [
-    "minecraft:ore_iron_upper_placed",
-    "minecraft:ore_iron_middle_placed",
-    "minecraft:ore_iron_small_placed"
+    "minecraft:ore_iron_upper",
+    "minecraft:ore_iron_middle",
+    "minecraft:ore_iron_small"
   ],
   "step": "underground_ores"
 }

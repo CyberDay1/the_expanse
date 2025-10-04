@@ -2,8 +2,8 @@
   "type": "neoforge:remove_features",
   "biomes": "#minecraft:is_overworld",
   "features": [
-    "minecraft:ore_lapis_placed",
-    "minecraft:ore_lapis_buried_placed"
+    "minecraft:ore_lapis",
+    "minecraft:ore_lapis_buried"
   ],
   "step": "underground_ores"
 }
