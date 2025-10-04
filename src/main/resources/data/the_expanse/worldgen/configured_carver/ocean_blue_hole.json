@@ -7,14 +7,14 @@
       "min_inclusive": {
         "absolute": 10
       },
-      "max_inclusive": {
+      "max_exclusive": {
         "absolute": 180
       }
     },
     "yScale": {
       "type": "minecraft:uniform",
       "min_inclusive": 2.0,
-      "max_inclusive": 5.0
+      "max_exclusive": 5.0
     },
     "lava_level": {
       "above_bottom": 8
@@ -23,18 +23,18 @@
     "vertical_rotation": {
       "type": "minecraft:uniform",
       "min_inclusive": 0.0,
-      "max_inclusive": 6.283185307179586
+      "max_exclusive": 6.283185307179586
     },
     "shape": {
       "distance_factor": {
         "type": "minecraft:uniform",
         "min_inclusive": 0.75,
-        "max_inclusive": 1.0
+        "max_exclusive": 1.0
       },
       "thickness": {
         "type": "minecraft:uniform",
         "min_inclusive": 0.0,
-        "max_inclusive": 3.0
+        "max_exclusive": 3.0
       },
       "horizontal_radius_factor": 1.2,
       "vertical_radius_default_factor": 1.0,
