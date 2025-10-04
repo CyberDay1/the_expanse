@@ -3,11 +3,10 @@
   "config": {
     "probability": 0.02,
     "y": {
-      "type": "minecraft:uniform",
       "min_inclusive": {
         "absolute": 20
       },
-      "max_exclusive": {
+      "max_inclusive": {
         "absolute": 180
       }
     },
