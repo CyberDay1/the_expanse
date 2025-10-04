@@ -24,6 +24,12 @@ public class TheExpanse {
         // Ensure mixin bootstrap is run
         com.theexpanse.bootstrap.MixinCompatBootstrap.init();
         System.out.println("[TheExpanse] Mod constructor called");
+        System.out.println("[TheExpanse] DimensionType registry entries:");
+        net.minecraft.core.Registry<net.minecraft.world.level.dimension.DimensionType> dimTypeRegistry =
+            net.minecraft.core.Registry.DIMENSION_TYPE;
+        dimTypeRegistry.keySet().forEach(key -> {
+            System.out.println(" - " + key.location());
+        });
 
         // Attach our runtime debug logger
         NeoForge.EVENT_BUS.addListener(this::onServerStarted);

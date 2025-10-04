@@ -1,0 +1,24 @@
+{
+  "sea_level": 150,
+  "disable_mob_generation": false,
+  "noise": { "min_y": -256, "height": 2256, "size_horizontal": 1, "size_vertical": 2 },
+  "noise_router": {
+    "barrier": { "type": "minecraft:constant", "value": -1.0 },
+    "fluid_level_floodedness": { "type": "minecraft:constant", "value": 0.0 },
+    "fluid_level_spread": { "type": "minecraft:constant", "value": 0.0 },
+    "lava": { "type": "minecraft:constant", "value": 0.0 },
+    "temperature": { "type": "minecraft:cache_2d", "argument": { "type": "minecraft:noise", "noise": "minecraft:temperature" } },
+    "vegetation": { "type": "minecraft:cache_2d", "argument": { "type": "minecraft:noise", "noise": "minecraft:vegetation" } },
+    "continents": { "type": "minecraft:noise", "noise": "minecraft:continents" },
+    "erosion": { "type": "minecraft:noise", "noise": "minecraft:erosion" },
+    "depth": { "type": "minecraft:y_clamped_gradient", "from_y": -256, "to_y": 2000, "from_value": 1.0, "to_value": -1.0 },
+    "ridges": { "type": "minecraft:noise", "noise": "minecraft:ridges" },
+    "initial_density_without_jaggedness": { "type": "minecraft:interpolated", "argument": { "type": "minecraft:noise", "noise": "minecraft:initial_density" } },
+    "final_density": { "type": "minecraft:interpolated", "argument": { "type": "minecraft:noise", "noise": "minecraft:final_density" } },
+    "vein_toggle": { "type": "minecraft:noise", "noise": "minecraft:vein_toggle" },
+    "vein_ridged": { "type": "minecraft:noise", "noise": "minecraft:vein_ridged" },
+    "vein_gap": { "type": "minecraft:noise", "noise": "minecraft:vein_gap" }
+  },
+  "spawn_target": [ { "target": { "block": "minecraft:stone" }, "state": { "Name": "minecraft:stone" } } ],
+  "surface_rule": { "type": "minecraft:stone_depth", "offset": 0, "surface_type": "floor" }
+}
