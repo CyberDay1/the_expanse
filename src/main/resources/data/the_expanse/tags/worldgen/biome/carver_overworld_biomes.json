@@ -1,8 +1,13 @@
 {
   "replace": false,
   "values": [
-    "#minecraft:is_overworld",
-    "#biomesoplenty:is_overworld",
-    "#byg:is_overworld"
+    "minecraft:plains",
+    "minecraft:forest",
+    "minecraft:jungle",
+    "minecraft:mountains",
+    "minecraft:swamp",
+    "minecraft:desert",
+    "minecraft:badlands",
+    "minecraft:savanna"
   ]
 }
