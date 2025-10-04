@@ -1,0 +1,20 @@
+{
+  "sea_level": 150,
+  "disable_mob_generation": false,
+  "noise_caves_enabled": false,
+  "aquifers_enabled": false,
+  "ore_veins_enabled": false,
+  "use_legacy_random_source": false,
+  "default_block": { "Name": "minecraft:end_stone" },
+  "default_fluid": { "Name": "minecraft:air" },
+  "noise": {
+    "min_y": -256,
+    "height": 2000,
+    "size_horizontal": 2,
+    "size_vertical": 1
+  },
+  "noise_router": "minecraft:end",
+  "surface_rule": "minecraft:end",
+  "spawn_target": "minecraft:end",
+  "spawn_target_probability": 0.1
+}

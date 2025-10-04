@@ -1,0 +1,20 @@
+{
+  "sea_level": 150,
+  "disable_mob_generation": false,
+  "noise_caves_enabled": true,
+  "aquifers_enabled": true,
+  "ore_veins_enabled": true,
+  "use_legacy_random_source": false,
+  "default_block": { "Name": "minecraft:stone" },
+  "default_fluid": { "Name": "minecraft:water" },
+  "noise": {
+    "min_y": -256,
+    "height": 2000,
+    "size_horizontal": 1,
+    "size_vertical": 2
+  },
+  "noise_router": "minecraft:overworld",
+  "surface_rule": "minecraft:overworld",
+  "spawn_target": "minecraft:overworld",
+  "spawn_target_probability": 0.1
+}

@@ -2,6 +2,11 @@ package com.theexpanse;
 
 import com.theexpanse.data.worldgen.processor.TheExpanseProcessors;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
@@ -25,7 +30,32 @@ public class TheExpanse {
     }
 
     private void onServerStarted(ServerStartedEvent event) {
-        var access = event.getServer().registryAccess();
+        MinecraftServer server = event.getServer();
+
+        server.registryAccess()
+              .registryOrThrow(Registries.LEVEL_STEM)
+              .entrySet()
+              .forEach(entry -> {
+                  var stem = entry.getValue();
+                  DimensionType type = stem.type().value();
+                  ResourceLocation dimensionTypeId = stem.type().unwrapKey()
+                      .map(ResourceKey::location)
+                      .orElse(null);
+                  ResourceLocation noise = null;
+                  if (stem.generator() instanceof NoiseBasedChunkGenerator noiseGenerator) {
+                      noise = noiseGenerator.generatorSettings().unwrapKey()
+                          .map(ResourceKey::location)
+                          .orElse(null);
+                  }
+                  ResourceLocation displayId = dimensionTypeId != null ? dimensionTypeId : entry.getKey().location();
+                  System.out.println("[TheExpanse][Debug] DimensionType " + displayId +
+                      " -> noise_settings=" + (noise == null ? "null" : noise.toString()) +
+                      " min_y=" + type.minY() +
+                      " height=" + type.height() +
+                      " logical_height=" + type.logicalHeight());
+              });
+
+        var access = server.registryAccess();
 
         // Dump density functions
         var dfRegistry = access.registryOrThrow(Registries.DENSITY_FUNCTION);
