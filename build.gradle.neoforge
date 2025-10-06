@@ -1,11 +1,8 @@
 plugins {
-    id "base"
-    id "java"
-    id "net.neoforged.gradle.userdev" version "7.0.190"
+    id 'java'
+    id 'base' // provides clean
+    id 'net.neoforged.gradle.userdev' version '7.0.190'
 }
-
-group = "com.theexpanse"
-version = "0.1.0"
 
 java {
     toolchain {
@@ -15,9 +12,9 @@ java {
 
 repositories {
     mavenCentral()
-    maven { url "https://maven.neoforged.net/releases" }
+    maven { url = 'https://maven.neoforged.net/releases' }
 }
 
 dependencies {
-    // NeoForge dependencies here
+    implementation "net.neoforged:neoforge:${project.loaderVersion}"
 }

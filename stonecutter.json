@@ -1,0 +1,23 @@
+{
+  "versions": {
+    "1.20.1-forge": {
+      "mcVersion": "1.20.1",
+      "loader": "forge",
+      "vars": {
+        "PACK_FORMAT": "26",
+        "LOADER_FILE": "mods.toml",
+        "loaderVersion": "47.3.0"
+      }
+    },
+    "1.21.1-neoforge": {
+      "mcVersion": "1.21.1",
+      "loader": "neoforge",
+      "vars": {
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    }
+  },
+  "default": "1.21.1-neoforge"
+}
