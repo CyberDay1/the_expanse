@@ -1,5 +1,20 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        mavenCentral()
+        maven { url "https://maven.kikugie.dev/releases" }
+    }
+}
+
 plugins {
     id "dev.kikugie.stonecutter" version "0.6.2"
 }
 
 rootProject.name = "expanse_heights"
+
+stonecutter {
+    versions "1.20.1-forge", "1.20.2-forge", "1.20.3-forge", "1.20.4-forge", "1.20.5-forge", "1.20.6-forge",
+             "1.21.1-neoforge", "1.21.2-neoforge", "1.21.3-neoforge", "1.21.4-neoforge", "1.21.5-neoforge",
+             "1.21.6-neoforge", "1.21.7-neoforge", "1.21.8-neoforge", "1.21.9-neoforge"
+    default "1.21.1-neoforge"
+}
