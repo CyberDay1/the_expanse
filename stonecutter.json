@@ -4,15 +4,148 @@
       "mcVersion": "1.20.1",
       "loader": "forge",
       "vars": {
+        "BUILD_SCRIPT": "build.gradle.forge",
         "PACK_FORMAT": "26",
         "LOADER_FILE": "mods.toml",
         "loaderVersion": "47.3.0"
       }
     },
+    "1.20.2-forge": {
+      "mcVersion": "1.20.2",
+      "loader": "forge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.forge",
+        "PACK_FORMAT": "32",
+        "LOADER_FILE": "mods.toml",
+        "loaderVersion": "47.3.0"
+      }
+    },
+    "1.20.3-forge": {
+      "mcVersion": "1.20.3",
+      "loader": "forge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.forge",
+        "PACK_FORMAT": "32",
+        "LOADER_FILE": "mods.toml",
+        "loaderVersion": "47.3.0"
+      }
+    },
+    "1.20.4-forge": {
+      "mcVersion": "1.20.4",
+      "loader": "forge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.forge",
+        "PACK_FORMAT": "32",
+        "LOADER_FILE": "mods.toml",
+        "loaderVersion": "47.3.0"
+      }
+    },
+    "1.20.5-forge": {
+      "mcVersion": "1.20.5",
+      "loader": "forge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.forge",
+        "PACK_FORMAT": "34",
+        "LOADER_FILE": "mods.toml",
+        "loaderVersion": "47.3.0"
+      }
+    },
+    "1.20.6-forge": {
+      "mcVersion": "1.20.6",
+      "loader": "forge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.forge",
+        "PACK_FORMAT": "34",
+        "LOADER_FILE": "mods.toml",
+        "loaderVersion": "47.3.0"
+      }
+    },
+
     "1.21.1-neoforge": {
       "mcVersion": "1.21.1",
       "loader": "neoforge",
       "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.2-neoforge": {
+      "mcVersion": "1.21.2",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.3-neoforge": {
+      "mcVersion": "1.21.3",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.4-neoforge": {
+      "mcVersion": "1.21.4",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.5-neoforge": {
+      "mcVersion": "1.21.5",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.6-neoforge": {
+      "mcVersion": "1.21.6",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.7-neoforge": {
+      "mcVersion": "1.21.7",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.8-neoforge": {
+      "mcVersion": "1.21.8",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
+        "PACK_FORMAT": "48",
+        "LOADER_FILE": "neoforge.mods.toml",
+        "loaderVersion": "21.1.209"
+      }
+    },
+    "1.21.9-neoforge": {
+      "mcVersion": "1.21.9",
+      "loader": "neoforge",
+      "vars": {
+        "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
         "loaderVersion": "21.1.209"

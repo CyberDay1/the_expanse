@@ -13,4 +13,6 @@ plugins {
 
 rootProject.name = "expanse_heights"
 
-stonecutter { }
+stonecutter {
+    json(file("stonecutter.json"))
+}
