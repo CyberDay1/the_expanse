@@ -1,1 +1,6 @@
-{ "pack": { "description": "Expanse Heights built-in data", "pack_format": 34, "forge:data_pack_format": 34 } }
+{
+  "pack": {
+    "pack_format": 48,
+    "description": "Expanse Heights built-in datapack"
+  }
+}
