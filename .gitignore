@@ -1,0 +1,14 @@
+﻿# build
+.gradle/
+.gradle-cache/
+build/
+run/
+runs/
+out/
+# IDE
+.idea/
+*.iml
+.DS_Store
+# never ship raw noise registries
+/src/main/resources/data/*/worldgen/noise/
+/src/main/resources/data/the_expanse/worldgen/noise_settings/

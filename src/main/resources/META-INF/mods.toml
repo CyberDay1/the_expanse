@@ -1,0 +1,9 @@
+﻿modLoader="javafml"
+loaderVersion="[4,)"
+license="MIT"
+
+[[mods]]
+modId="expanse_heights"
+version="${file.jarVersion}"
+displayName="Expanse Heights"
+description="Raises world height; terrain style stays with Tectonic."

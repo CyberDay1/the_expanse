@@ -1,0 +1,13 @@
+﻿plugins {
+    id "java"
+    id "net.neoforged.gradle.userdev" version "7.0.+"
+}
+group = "com.cyberday1"
+version = "0.1.0"
+
+java { toolchain { languageVersion = JavaLanguageVersion.of(21) } }
+neoForge { version = "21.1.209" }
+
+repositories { mavenCentral() }
+dependencies { }
+tasks.withType(JavaCompile).configureEach { options.release = 21 }
