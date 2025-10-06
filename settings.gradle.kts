@@ -13,7 +13,4 @@ plugins {
 
 rootProject.name = "expanse_heights"
 
-// Force Stonecutter to read stonecutter.json and register subprojects
-stonecutter {
-    loadSubprojects()
-}
+stonecutter { }
