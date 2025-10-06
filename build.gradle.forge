@@ -1,0 +1,26 @@
+plugins {
+    id "java"
+    id "net.minecraftforge.gradle" version "6.0.+"
+}
+
+group = "com.theexpanse"
+version = "0.1.0"
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+minecraft {
+    // ForgeGradle configuration for 1.20.x
+    // mappings, run configs, etc.
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Forge dependencies here
+}
