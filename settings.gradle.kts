@@ -13,3 +13,6 @@ plugins {
 }
 
 rootProject.name = "expanse_heights"
+
+// Ensure Stonecutter configuration is applied
+apply(from = "stonecutter.gradle.kts")
