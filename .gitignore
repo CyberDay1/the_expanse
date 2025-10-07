@@ -12,3 +12,6 @@ out/
 # never ship raw noise registries
 /src/main/resources/data/*/worldgen/noise/
 /src/main/resources/data/the_expanse/worldgen/noise_settings/
+
+# tooling
+gradle/wrapper/gradle-wrapper.jar
