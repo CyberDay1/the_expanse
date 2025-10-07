@@ -14,6 +14,7 @@ java {
 
 group = "com.theexpanse"
 version = project.findProperty("modVersion") ?: "0.1.0"
+
 base {
     archivesName.set("the_expanse")
 }
@@ -24,7 +25,8 @@ repositories {
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:")
+    val neoVersion = project.findProperty("loaderVersion")?.toString() ?: "21.1.+"
+    implementation("net.neoforged:neoforge:$neoVersion")
 }
 
 tasks.jar {
@@ -42,14 +44,19 @@ tasks.jar {
     }
 }
 
+// reobfJar is optional — only register if NeoForge plugin doesn’t already
 val reobfJar = tasks.findByName("reobfJar") ?: tasks.register("reobfJar") {
     dependsOn(tasks.jar)
 }
 
+/**
+ * Explicit buildMod task.
+ * Always registered so it shows in `gradlew tasks`.
+ */
 tasks.register("buildMod") {
     group = "build"
     description = "Build distributable mod jar"
-    dependsOn(tasks.jar, reobfJar)
+    dependsOn(tasks.named("jar"), reobfJar)
 }
 
 publishing {
