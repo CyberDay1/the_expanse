@@ -1,0 +1,18 @@
+{
+  "default": "1.21.1-neoforge",
+  "variants": {
+    "1.21.1-neoforge": {
+      "replace": {
+        "MC_VERSION": "1.21.1",
+        "NEOFORGE_VERSION": "21.1.209"
+      }
+    },
+    "1.21.4-neoforge": {
+      "replace": {
+        "MC_VERSION": "1.21.4",
+        "NEOFORGE_VERSION": "21.4.154"
+      }
+    }
+  }
+}
+

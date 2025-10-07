@@ -1,0 +1,21 @@
+{
+  "sea_level": 160,
+  "disable_mob_generation": false,
+  "aquifers_enabled": true,
+  "ore_veins_enabled": false,
+  "legacy_random_source": false,
+  "default_block": { "Name": "minecraft:stone" },
+  "default_fluid": { "Name": "minecraft:water", "Properties": { "level": "0" } },
+  "noise": { "min_y": -256, "height": 2288, "size_horizontal": 1, "size_vertical": 2 },
+  "surface_rule": { "type": "minecraft:surface", "surface": "minecraft:overworld" },
+  "noise_router": {
+    "temperature": { "type": "minecraft:noise", "noise": "minecraft:overworld/temperature" },
+    "vegetation": { "type": "minecraft:noise", "noise": "minecraft:overworld/vegetation" },
+    "continents": { "type": "minecraft:noise", "noise": "minecraft:overworld/continents" },
+    "erosion": { "type": "minecraft:noise", "noise": "minecraft:overworld/erosion" },
+    "depth": { "type": "minecraft:noise", "noise": "minecraft:overworld/depth" },
+    "ridges": { "type": "minecraft:noise", "noise": "minecraft:overworld/ridges" },
+    "initial_density_without_jaggedness": { "type": "minecraft:reference", "key": "minecraft:overworld/initial_density_without_jaggedness" },
+    "final_density": { "type": "minecraft:reference", "key": "minecraft:overworld/final_density" }
+  }
+}
