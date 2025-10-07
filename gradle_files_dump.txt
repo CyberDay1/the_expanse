@@ -1,0 +1,295 @@
+﻿===== C:\Users\conno\IdeaProjects\the_expanse\template\build.gradle.kts =====
+plugins {
+    id("java")
+    id("net.neoforged.gradle.userdev") version "7.0.190"
+    id("maven-publish")
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    withSourcesJar()
+}
+
+group = "com.theexpanse"
+version = "0.1.0"
+base {
+    archivesName.set("the_expanse")
+}
+
+repositories {
+    mavenCentral()
+    maven("https://maven.neoforged.net/releases")
+}
+
+dependencies {
+    implementation("net.neoforged:neoforge:${property("NEOFORGE_VERSION")}")
+}
+
+// Expand tokens in resources (mods.toml, pack.mcmeta, etc.)
+tasks.processResources {
+    inputs.property("version", project.version)
+    inputs.property("mcVersion", property("MC_VERSION"))
+    inputs.property("neoVersion", property("NEOFORGE_VERSION"))
+
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand(
+            "version" to project.version,
+            "mcVersion" to property("MC_VERSION"),
+            "neoVersion" to property("NEOFORGE_VERSION")
+        )
+    }
+
+    filesMatching("pack.mcmeta") {
+        expand(
+            "version" to project.version,
+            "mcVersion" to property("MC_VERSION"),
+            "neoVersion" to property("NEOFORGE_VERSION"),
+            "packFormat" to property("PACK_FORMAT")
+        )
+    }
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifact(tasks["jar"])
+        }
+    }
+}
+
+===== C:\Users\conno\IdeaProjects\the_expanse\build.gradle.kts =====
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
+
+stonecutter {
+    shared {
+        set("JAVA_VERSION", "21")
+    }
+    kotlin.set(false)
+
+    create("1.21.1-neoforge") {
+        set("MC_VERSION", "1.21.1")
+        set("NEOFORGE_VERSION", "21.1.209")
+        set("PACK_FORMAT", "48")
+    }
+    create("1.21.2-neoforge") {
+        set("MC_VERSION", "1.21.2")
+        set("NEOFORGE_VERSION", "21.2.84")
+        set("PACK_FORMAT", "57")
+    }
+    create("1.21.3-neoforge") {
+        set("MC_VERSION", "1.21.3")
+        set("NEOFORGE_VERSION", "21.3.64")
+        set("PACK_FORMAT", "57")
+    }
+    create("1.21.4-neoforge") {
+        set("MC_VERSION", "1.21.4")
+        set("NEOFORGE_VERSION", "21.4.154")
+        set("PACK_FORMAT", "61")
+    }
+    create("1.21.5-neoforge") {
+        set("MC_VERSION", "1.21.5")
+        set("NEOFORGE_VERSION", "21.5.72")
+        set("PACK_FORMAT", "71")
+    }
+    create("1.21.6-neoforge") {
+        set("MC_VERSION", "1.21.6")
+        set("NEOFORGE_VERSION", "21.6.43")
+        set("PACK_FORMAT", "80")
+    }
+    create("1.21.7-neoforge") {
+        set("MC_VERSION", "1.21.7")
+        set("NEOFORGE_VERSION", "21.7.12")
+        set("PACK_FORMAT", "81")
+    }
+    create("1.21.8-neoforge") {
+        set("MC_VERSION", "1.21.8")
+        set("NEOFORGE_VERSION", "21.8.17")
+        set("PACK_FORMAT", "81")
+    }
+    create("1.21.9-neoforge") {
+        set("MC_VERSION", "1.21.9")
+        set("NEOFORGE_VERSION", "21.9.6")
+        set("PACK_FORMAT", "88")
+    }
+}
+
+===== C:\Users\conno\IdeaProjects\the_expanse\gradle.properties =====
+# ----------------------------
+# Global Java & Gradle settings
+# ----------------------------
+org.gradle.jvmargs=-Xmx4G
+org.gradle.parallel=true
+org.gradle.caching=true
+org.gradle.daemon=true
+
+# Force toolchain Java 21
+JAVA_VERSION=21
+
+# ----------------------------
+# Minecraft / NeoForge versions
+# ----------------------------
+
+# 1.21.1
+MC_1_21_1=1.21.1
+NEOFORGE_1_21_1=21.1.209
+
+MC_1_21_2=1.21.2
+NEOFORGE_1_21_2=21.2.1-beta
+
+MC_1_21_3=1.21.3
+NEOFORGE_1_21_3=21.3.93
+
+MC_1_21_4=1.21.4
+NEOFORGE_1_21_4=21.4.154
+
+MC_1_21_5=1.21.5
+NEOFORGE_1_21_5=21.5.95
+
+MC_1_21_6=1.21.6
+NEOFORGE_1_21_6=21.6.20-beta
+
+MC_1_21_7=1.21.7
+NEOFORGE_1_21_7=21.7.25-beta
+
+MC_1_21_8=1.21.8
+NEOFORGE_1_21_8=21.8.47
+
+MC_1_21_9=1.21.9
+NEOFORGE_1_21_9=21.9.16-beta
+
+MC_1_21_10=1.21.10
+NEOFORGE_1_21_10=21.10.0-beta
+
+===== C:\Users\conno\IdeaProjects\the_expanse\settings.gradle.kts =====
+import dev.kikugie.stonecutter.settings.StonecutterSettingsExtension
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
+import java.io.File
+
+private val stonecutterConfigFile: File = settings.settingsDir.resolve("stonecutter.json")
+
+@Suppress("UNCHECKED_CAST")
+private fun loadStonecutterConfig(): MutableMap<String, Any?> {
+    if (!stonecutterConfigFile.exists()) {
+        return linkedMapOf("variants" to linkedMapOf<String, Any?>())
+    }
+    val parsed = JsonSlurper().parse(stonecutterConfigFile) as? Map<String, Any?> ?: emptyMap()
+    val root = LinkedHashMap(parsed)
+    val variants = (parsed["variants"] as? Map<String, Any?>)?.let { LinkedHashMap(it) }
+        ?: linkedMapOf<String, Any?>()
+    root["variants"] = variants
+    return root
+}
+
+private fun saveStonecutterConfig(config: Map<String, Any?>) {
+    stonecutterConfigFile.parentFile.mkdirs()
+    val json = JsonOutput.prettyPrint(JsonOutput.toJson(config))
+    stonecutterConfigFile.writeText(json + "\n")
+}
+
+private fun updateStonecutterConfig(block: MutableMap<String, Any?>.() -> Unit) {
+    val config = loadStonecutterConfig()
+    config.block()
+    saveStonecutterConfig(config)
+}
+
+private class StonecutterVersionDsl {
+    val extra: MutableMap<String, Any?> = linkedMapOf()
+}
+
+private class StonecutterVersionsDsl {
+    private val versions: MutableMap<String, Map<String, Any?>> = linkedMapOf()
+
+    fun register(name: String, block: StonecutterVersionDsl.() -> Unit) {
+        val dsl = StonecutterVersionDsl().apply(block)
+        versions[name] = linkedMapOf("replace" to LinkedHashMap(dsl.extra))
+    }
+
+    fun asMap(): Map<String, Map<String, Any?>> = LinkedHashMap(versions)
+}
+
+private fun StonecutterSettingsExtension.active(version: String) {
+    updateStonecutterConfig { this["default"] = version }
+}
+
+private fun StonecutterSettingsExtension.versions(block: StonecutterVersionsDsl.() -> Unit) {
+    val variants = StonecutterVersionsDsl().apply(block).asMap()
+    updateStonecutterConfig { this["variants"] = LinkedHashMap(variants) }
+}
+
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven("https://maven.neoforged.net/releases")
+        maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.architectury.dev/")
+        mavenCentral()
+    }
+    plugins {
+        id("dev.kikugie.stonecutter") version "0.7.10"
+    }
+}
+
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
+
+rootProject.name = "the_expanse"
+
+stonecutter {
+    active("1.21.1-neoforge")
+
+    versions {
+        register("1.21.1-neoforge") {
+            extra["MC_VERSION"] = "1.21.1"
+            extra["NEOFORGE_VERSION"] = "21.1.209"
+            extra["PACK_FORMAT"] = "48"
+        }
+        register("1.21.2-neoforge") {
+            extra["MC_VERSION"] = "1.21.2"
+            extra["NEOFORGE_VERSION"] = "21.2.84"
+            extra["PACK_FORMAT"] = "57"
+        }
+        register("1.21.3-neoforge") {
+            extra["MC_VERSION"] = "1.21.3"
+            extra["NEOFORGE_VERSION"] = "21.3.64"
+            extra["PACK_FORMAT"] = "57"
+        }
+        register("1.21.4-neoforge") {
+            extra["MC_VERSION"] = "1.21.4"
+            extra["NEOFORGE_VERSION"] = "21.4.154"
+            extra["PACK_FORMAT"] = "61"
+        }
+        register("1.21.5-neoforge") {
+            extra["MC_VERSION"] = "1.21.5"
+            extra["NEOFORGE_VERSION"] = "21.5.72"
+            extra["PACK_FORMAT"] = "71"
+        }
+        register("1.21.6-neoforge") {
+            extra["MC_VERSION"] = "1.21.6"
+            extra["NEOFORGE_VERSION"] = "21.6.43"
+            extra["PACK_FORMAT"] = "80"
+        }
+        register("1.21.7-neoforge") {
+            extra["MC_VERSION"] = "1.21.7"
+            extra["NEOFORGE_VERSION"] = "21.7.12"
+            extra["PACK_FORMAT"] = "81"
+        }
+        register("1.21.8-neoforge") {
+            extra["MC_VERSION"] = "1.21.8"
+            extra["NEOFORGE_VERSION"] = "21.8.17"
+            extra["PACK_FORMAT"] = "81"
+        }
+        register("1.21.9-neoforge") {
+            extra["MC_VERSION"] = "1.21.9"
+            extra["NEOFORGE_VERSION"] = "21.9.6"
+            extra["PACK_FORMAT"] = "88"
+        }
+    }
+}
+

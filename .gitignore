@@ -15,3 +15,6 @@ out/
 
 # tooling
 gradle/wrapper/gradle-wrapper.jar
+
+backup-stonecutter-*
+

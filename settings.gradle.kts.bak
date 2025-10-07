@@ -1,0 +1,45 @@
+pluginManagement {
+    repositories {
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.architectury.dev")
+        maven("https://maven.minecraftforge.net/")
+        maven("https://maven.neoforged.net/releases/")
+        maven("https://maven.kikugie.dev/releases/")
+        maven("https://maven.kikugie.dev/snapshots/")
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
+
+stonecutter {
+    create(rootProject) {
+        // Helper to register NeoForge versions
+        fun mc(mcVersion: String, neoVersion: String, packFormat: String) {
+            version("$mcVersion-neoforge", mcVersion).apply {
+                buildscript = "build.neoforge.gradle.kts"
+                props["MC_VERSION"] = mcVersion
+                props["NEOFORGE_VERSION"] = neoVersion
+                props["PACK_FORMAT"] = packFormat
+                props["LOADER"] = "neoforge"
+            }
+        }
+
+        mc("1.21.1", "21.1.209", "48")
+        mc("1.21.2", "21.2.84",  "57")
+        mc("1.21.3", "21.3.64",  "57")
+        mc("1.21.4", "21.4.154", "61")
+        mc("1.21.5", "21.5.72",  "71")
+        mc("1.21.6", "21.6.43",  "80")
+        mc("1.21.7", "21.7.12",  "81")
+        mc("1.21.8", "21.8.17",  "81")
+        mc("1.21.9", "21.9.6",   "88")
+
+        vcsVersion = "1.21.1-neoforge"
+    }
+}
+
+rootProject.name = "the_expanse"
