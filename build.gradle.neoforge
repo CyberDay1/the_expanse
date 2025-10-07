@@ -18,3 +18,14 @@ repositories {
 dependencies {
     implementation "net.neoforged:neoforge:${project.loaderVersion}"
 }
+
+// Ensure resources are bundled into jar
+tasks.named('jar') {
+    from sourceSets.main.output
+    archiveBaseName.set("the_expanse-${project.mcVersion}-${project.loader}")
+}
+
+// Register the jar as the default artifact
+artifacts {
+    archives tasks.jar
+}

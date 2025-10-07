@@ -1,6 +1,9 @@
 {
-  "versions": {
-    "1.20.1-forge": {
+  "default": "1.21.1-neoforge",
+  "versions": [
+    {
+      "id": "1.20.1-forge",
+      "project": "1.20.1-forge",
       "mcVersion": "1.20.1",
       "loader": "forge",
       "vars": {
@@ -10,7 +13,9 @@
         "loaderVersion": "47.3.0"
       }
     },
-    "1.20.2-forge": {
+    {
+      "id": "1.20.2-forge",
+      "project": "1.20.2-forge",
       "mcVersion": "1.20.2",
       "loader": "forge",
       "vars": {
@@ -20,7 +25,9 @@
         "loaderVersion": "47.3.0"
       }
     },
-    "1.20.3-forge": {
+    {
+      "id": "1.20.3-forge",
+      "project": "1.20.3-forge",
       "mcVersion": "1.20.3",
       "loader": "forge",
       "vars": {
@@ -30,7 +37,9 @@
         "loaderVersion": "47.3.0"
       }
     },
-    "1.20.4-forge": {
+    {
+      "id": "1.20.4-forge",
+      "project": "1.20.4-forge",
       "mcVersion": "1.20.4",
       "loader": "forge",
       "vars": {
@@ -40,7 +49,9 @@
         "loaderVersion": "47.3.0"
       }
     },
-    "1.20.5-forge": {
+    {
+      "id": "1.20.5-forge",
+      "project": "1.20.5-forge",
       "mcVersion": "1.20.5",
       "loader": "forge",
       "vars": {
@@ -50,7 +61,9 @@
         "loaderVersion": "47.3.0"
       }
     },
-    "1.20.6-forge": {
+    {
+      "id": "1.20.6-forge",
+      "project": "1.20.6-forge",
       "mcVersion": "1.20.6",
       "loader": "forge",
       "vars": {
@@ -61,7 +74,9 @@
       }
     },
 
-    "1.21.1-neoforge": {
+    {
+      "id": "1.21.1-neoforge",
+      "project": "1.21.1-neoforge",
       "mcVersion": "1.21.1",
       "loader": "neoforge",
       "vars": {
@@ -71,7 +86,9 @@
         "loaderVersion": "21.1.209"
       }
     },
-    "1.21.2-neoforge": {
+    {
+      "id": "1.21.2-neoforge",
+      "project": "1.21.2-neoforge",
       "mcVersion": "1.21.2",
       "loader": "neoforge",
       "vars": {
@@ -81,7 +98,9 @@
         "loaderVersion": "21.2.+"
       }
     },
-    "1.21.3-neoforge": {
+    {
+      "id": "1.21.3-neoforge",
+      "project": "1.21.3-neoforge",
       "mcVersion": "1.21.3",
       "loader": "neoforge",
       "vars": {
@@ -91,7 +110,9 @@
         "loaderVersion": "21.3.+"
       }
     },
-    "1.21.4-neoforge": {
+    {
+      "id": "1.21.4-neoforge",
+      "project": "1.21.4-neoforge",
       "mcVersion": "1.21.4",
       "loader": "neoforge",
       "vars": {
@@ -101,7 +122,9 @@
         "loaderVersion": "21.4.+"
       }
     },
-    "1.21.5-neoforge": {
+    {
+      "id": "1.21.5-neoforge",
+      "project": "1.21.5-neoforge",
       "mcVersion": "1.21.5",
       "loader": "neoforge",
       "vars": {
@@ -111,7 +134,9 @@
         "loaderVersion": "21.5.+"
       }
     },
-    "1.21.6-neoforge": {
+    {
+      "id": "1.21.6-neoforge",
+      "project": "1.21.6-neoforge",
       "mcVersion": "1.21.6",
       "loader": "neoforge",
       "vars": {
@@ -121,7 +146,9 @@
         "loaderVersion": "21.6.+"
       }
     },
-    "1.21.7-neoforge": {
+    {
+      "id": "1.21.7-neoforge",
+      "project": "1.21.7-neoforge",
       "mcVersion": "1.21.7",
       "loader": "neoforge",
       "vars": {
@@ -131,7 +158,9 @@
         "loaderVersion": "21.7.+"
       }
     },
-    "1.21.8-neoforge": {
+    {
+      "id": "1.21.8-neoforge",
+      "project": "1.21.8-neoforge",
       "mcVersion": "1.21.8",
       "loader": "neoforge",
       "vars": {
@@ -141,7 +170,9 @@
         "loaderVersion": "21.8.+"
       }
     },
-    "1.21.9-neoforge": {
+    {
+      "id": "1.21.9-neoforge",
+      "project": "1.21.9-neoforge",
       "mcVersion": "1.21.9",
       "loader": "neoforge",
       "vars": {
@@ -151,6 +182,5 @@
         "loaderVersion": "21.9.+"
       }
     }
-  },
-  "default": "1.21.1-neoforge"
+  ]
 }
