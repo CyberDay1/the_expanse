@@ -1,3 +1,4 @@
+import org.gradle.api.tasks.JavaExec
 plugins {
     id("java")
     id("net.neoforged.gradle.userdev") version "7.0.190"
@@ -56,4 +57,17 @@ publishing {
             artifact(tasks["jar"])
         }
     }
+}
+
+
+val datapackValidationTest by tasks.registering(JavaExec::class) {
+    group = "verification"
+    description = "Validates Patchouli cross-link metadata for JEI HUD overlays."
+    classpath = sourceSets["test"].runtimeClasspath
+    mainClass.set("com.theexpanse.datapack.DatapackValidationTest")
+    workingDir = project.projectDir
+}
+
+tasks.named("check") {
+    dependsOn(datapackValidationTest)
 }
