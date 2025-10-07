@@ -2,18 +2,22 @@
 
 ## Multi-Version Builds with Stonecutter
 
-Switch to a specific Minecraft/NeoForge variant and build:
+The active variant defaults to the value declared in [`stonecutter.json`](stonecutter.json). Build it with:
 
-```powershell
-./gradlew.bat stonecutter use 1.21.1-neoforge
-./gradlew.bat chiseledBuild
+```bash
+./gradlew chiseledBuild
 ```
 
-Run the audit client for a given variant:
+To target a different Minecraft/NeoForge variant, override the active variant when invoking Gradle:
 
-```powershell
-./gradlew.bat stonecutter use 1.21.4-neoforge
-./gradlew.bat runAuditClient
+```bash
+./gradlew chiseledBuild -Pstonecutter.active=1.21.4-neoforge
+```
+
+Run the audit client for a given variant in the same way:
+
+```bash
+./gradlew runAuditClient -Pstonecutter.active=1.21.4-neoforge
 ```
 
 Audit reports are archived to `reports/parity/` as configured.
