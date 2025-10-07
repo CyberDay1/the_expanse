@@ -1,7 +1,6 @@
 {
   "pack": {
-    "pack_format": 34,
-    "description": "Expanded heights for OW/Nether/End"
+    "pack_format": ${packFormat},
+    "description": "The Expanse — Expanded build height and depth for Overworld, Nether, and End"
   }
 }
-

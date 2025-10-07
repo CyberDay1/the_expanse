@@ -1,19 +1,16 @@
-modLoader="javafml"
-loaderVersion="[1,)"
+modLoader = "javafml"
+loaderVersion = "[1,)" # Accept any 1.x NeoForge loader
+license = "MIT"
 
 [[mods]]
-  modId="the_expanse"
-  version="${version}"
-  displayName="The Expanse"
-  description="Extends the Overworld, Nether, and End world heights."
-  authors="CyberDay1"
+modId = "the_expanse"
+version = "${version}"
+displayName = "The Expanse"
+authors = "CyberDay1"
+description = '''
+Expands Minecraft’s build height and depth across the Overworld, Nether, and End.
+'''
 
-[[dependencies.the_expanse]]
-  modId="neoforge"
-  type="required"
-  versionRange="[21.1,)"
-[[dependencies.the_expanse]]
-  modId="minecraft"
-  type="required"
-  versionRange="[1.21.1,1.22)"
-
+# Optional but recommended: logo and credits
+# logoFile = "the_expanse.png"
+# credits = "Contributors and the modding community"

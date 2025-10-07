@@ -6,36 +6,40 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(
+            project.findProperty("JAVA_VERSION")?.toString()?.toInt() ?: 21
+        )
     }
     withSourcesJar()
 }
 
-val modGroup = (project.findProperty("MOD_GROUP") as String?) ?: "com.theexpanse"
-val modVersion = (project.findProperty("MOD_VERSION") as String?) ?: "0.1.0"
-val modName = (project.findProperty("MOD_NAME") as String?) ?: "the_expanse"
-val neoForgeVersion = (project.findProperty("NEOFORGE_VERSION") as String?) ?: "21.1.209"
+group = project.findProperty("MOD_GROUP") as String? ?: "com.theexpanse"
+version = project.findProperty("MOD_VERSION") as String? ?: "0.1.0"
 
-group = modGroup
-version = modVersion
 base {
-    archivesName.set(modName)
+    archivesName.set(project.findProperty("MOD_NAME") as String? ?: "the_expanse")
 }
 
 repositories {
     mavenCentral()
     maven { url = uri("https://maven.neoforged.net/releases") }
-    maven { url = uri("https://maven.kikugie.dev/releases") } // Stonecutter deps
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:$neoForgeVersion")
+    implementation("net.neoforged:neoforge:${project.findProperty("NEOFORGE_VERSION")}")
 }
 
 tasks.processResources {
     inputs.property("version", project.version)
+    inputs.property("packFormat", project.findProperty("PACK_FORMAT") ?: "48")
+
     filesMatching(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")) {
-        expand(mapOf("version" to project.version))
+        expand(
+            mapOf(
+                "version" to project.version,
+                "packFormat" to (project.findProperty("PACK_FORMAT") ?: "48")
+            )
+        )
     }
 }
 
@@ -43,12 +47,11 @@ tasks.jar {
     from("src/main/resources")
     manifest {
         attributes(
-            "Specification-Title" to "the_expanse",
+            "Specification-Title" to (project.findProperty("MOD_NAME") ?: "the_expanse"),
             "Specification-Vendor" to "CyberDay1",
             "Specification-Version" to project.version,
-            "Implementation-Title" to "the_expanse",
+            "Implementation-Title" to (project.findProperty("MOD_NAME") ?: "the_expanse"),
             "Implementation-Version" to project.version,
         )
     }
 }
-
