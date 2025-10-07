@@ -1,6 +1,6 @@
-package com.theexpanse.expanse_heights.worldgen;
+package com.theexpanse.worldgen;
 
-import com.theexpanse.expanseheights.ExpanseHeights;
+import com.theexpanse.TheExpanse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -27,10 +27,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = ExpanseHeights.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@Mod.EventBusSubscriber(modid = TheExpanse.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
 public final class OreScaler {
     private static final int NEW_MIN = -256;
-    private static final int NEW_MAX = 2000;
+    private static final int NEW_MAX = 2288;
     private static final int VANILLA_RANGE = 384;
     private static final int VANILLA_MIN = -64;
     private static final int VANILLA_MAX = VANILLA_MIN + VANILLA_RANGE;
