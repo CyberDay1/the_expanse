@@ -1,0 +1,22 @@
+{
+  "name": "Energy Bank HUD",
+  "icon": "cyclic:energy_bank",
+  "category": "cyclic:machines/overlays",
+  "read_by_default": true,
+  "sortnum": 3,
+  "extra_recipe_categories": [
+    "jei:cyclic:hud_overlay"
+  ],
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "cyclic:energy_bank",
+      "title": "Energy Bank Overlay",
+      "text": "$(thing)$(translate:cyclic.overlay.patchouli.link)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "See charge rate, stored FE, and IO limits directly from the overlay."
+    }
+  ]
+}

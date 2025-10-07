@@ -1,0 +1,22 @@
+{
+  "name": "Item Infuser HUD",
+  "icon": "cyclic:item_infuser",
+  "category": "cyclic:machines/overlays",
+  "read_by_default": true,
+  "sortnum": 2,
+  "extra_recipe_categories": [
+    "jei:cyclic:hud_overlay"
+  ],
+  "pages": [
+    {
+      "type": "patchouli:spotlight",
+      "item": "cyclic:item_infuser",
+      "title": "Item Infuser Overlay",
+      "text": "$(thing)$(translate:cyclic.overlay.patchouli.link)"
+    },
+    {
+      "type": "patchouli:text",
+      "text": "Track processing time and catalyst burn at a glance from the JEI overlay."
+    }
+  ]
+}
