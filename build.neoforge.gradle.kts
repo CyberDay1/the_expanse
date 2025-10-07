@@ -1,38 +1,36 @@
-plugins {
+﻿plugins {
     id("java")
+    id("net.neoforged.moddev") version "1.+"
     id("maven-publish")
-    id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
 java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
     withSourcesJar()
 }
 
 group = "com.theexpanse"
-version = "0.1.0"
+version = properties["mod.version"]!!
+base.archivesName.set("the_expanse")
 
 repositories {
     mavenCentral()
     maven("https://maven.neoforged.net/releases")
 }
 
-stonecutter {
-    // Bind properties so subprojects get MC + NeoForge version from stonecutter.json
-    val mc: String by versionProperty
-    val neoforge: String by versionProperty
+dependencies {
+    implementation("net.neoforged:neoforge:${properties["NEOFORGE_VERSION"]}")
+}
 
-    subprojects {
-        apply(plugin = "net.neoforged.gradle.userdev")
-
-        dependencies {
-            "implementation"("net.neoforged:neoforge:$neoforge")
-        }
-
-        base {
-            archivesName.set("the_expanse-$mc")
-        }
+tasks.jar {
+    from("src/main/resources")
+    manifest {
+        attributes(
+            "Specification-Title" to "the_expanse",
+            "Specification-Vendor" to "CyberDay1",
+            "Specification-Version" to project.version,
+            "Implementation-Title" to "the_expanse",
+            "Implementation-Version" to project.version
+        )
     }
 }
