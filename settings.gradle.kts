@@ -2,6 +2,7 @@ pluginManagement {
     repositories {
         gradlePluginPortal()
         maven("https://maven.neoforged.net/releases")
+        maven("https://maven.kikugie.dev/releases")
     }
 }
 
@@ -11,5 +12,5 @@ plugins {
 
 rootProject.name = "the_expanse"
 
-// Load Stonecutter matrix configuration
+// Apply shared Stonecutter matrix
 apply(from = "stonecutter.gradle.kts")
