@@ -1,33 +1,39 @@
-plugins {
+﻿plugins {
     id("java")
-    id("base")
+    id("base") // clean, assemble
+    id("net.minecraftforge.gradle") version "[6.0,6.2)"
     id("maven-publish")
-    id("net.minecraftforge.gradle") version "6.0.+"
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(17))
+    }
     withSourcesJar()
 }
 
 group = "com.theexpanse"
-version = providers.gradleProperty("modVersion").getOrElse("0.1.0")
-
-base.archivesName.set("the_expanse")
+version = project.findProperty("modVersion") ?: "0.1.0"
+base {
+    archivesName.set("the_expanse")
+}
 
 repositories {
     mavenCentral()
     maven("https://maven.minecraftforge.net")
 }
 
+minecraft {
+    mappings("official", project.mcVersion as String)
+}
+
 dependencies {
-    minecraft("net.minecraftforge:forge:${providers.gradleProperty("mcVersion").get()}-${providers.gradleProperty("loaderVersion").get()}")
+    minecraft("net.minecraftforge:forge:-")
 }
 
 tasks.jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(sourceSets.main.get().output)
     from("src/main/resources")
+    archiveBaseName.set("the_expanse")
     manifest {
         attributes(
             "Specification-Title" to "the_expanse",
@@ -40,19 +46,10 @@ tasks.jar {
     }
 }
 
-// ForgeGradle wires reobf automatically in most setups; fall back if absent.
-val reobfJar = tasks.findByName("reobfJar") ?: tasks.register("reobfJar") {
-    dependsOn(tasks.jar)
-}
-
-tasks.named("build") {
-    dependsOn(tasks.jar, reobfJar)
-}
-
 tasks.register("buildMod") {
     group = "build"
-    description = "Builds distributable mod jar (includes reobf when available)"
-    dependsOn("build")
+    description = "Build distributable mod jar"
+    dependsOn("jar")
 }
 
 publishing {

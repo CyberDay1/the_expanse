@@ -1,19 +1,22 @@
-plugins {
+﻿plugins {
     id("java")
-    id("base")
-    id("maven-publish")
+    id("base") // clean, assemble
     id("net.neoforged.gradle.userdev") version "7.0.190"
+    id("maven-publish")
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
     withSourcesJar()
 }
 
 group = "com.theexpanse"
-version = providers.gradleProperty("modVersion").getOrElse("0.1.0")
-
-base.archivesName.set("the_expanse")
+version = project.findProperty("modVersion") ?: "0.1.0"
+base {
+    archivesName.set("the_expanse")
+}
 
 repositories {
     mavenCentral()
@@ -21,13 +24,12 @@ repositories {
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${providers.gradleProperty("loaderVersion").get()}")
+    implementation("net.neoforged:neoforge:")
 }
 
 tasks.jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(sourceSets.main.get().output)
     from("src/main/resources")
+    archiveBaseName.set("the_expanse")
     manifest {
         attributes(
             "Specification-Title" to "the_expanse",
@@ -40,19 +42,14 @@ tasks.jar {
     }
 }
 
-// Ensure a jar is produced and reobfuscated when available.
 val reobfJar = tasks.findByName("reobfJar") ?: tasks.register("reobfJar") {
     dependsOn(tasks.jar)
 }
 
-tasks.named("build") {
-    dependsOn(tasks.jar, reobfJar)
-}
-
 tasks.register("buildMod") {
     group = "build"
-    description = "Builds distributable mod jar (includes reobf when available)"
-    dependsOn("build")
+    description = "Build distributable mod jar"
+    dependsOn(tasks.jar, reobfJar)
 }
 
 publishing {
