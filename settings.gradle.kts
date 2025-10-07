@@ -4,6 +4,7 @@ import groovy.json.JsonSlurper
 import java.io.File
 
 private val stonecutterConfigFile: File = settings.settingsDir.resolve("stonecutter.json")
+private val NEOFORGE_BUILD_SCRIPT = "build.neoforge.gradle.kts"
 
 @Suppress("UNCHECKED_CAST")
 private fun loadStonecutterConfig(): MutableMap<String, Any?> {
@@ -32,6 +33,7 @@ private fun updateStonecutterConfig(block: MutableMap<String, Any?>.() -> Unit) 
 
 private class StonecutterVersionDsl {
     val extra: MutableMap<String, Any?> = linkedMapOf()
+    var buildscript: String? = null
 }
 
 private class StonecutterVersionsDsl {
@@ -39,7 +41,10 @@ private class StonecutterVersionsDsl {
 
     fun register(name: String, block: StonecutterVersionDsl.() -> Unit) {
         val dsl = StonecutterVersionDsl().apply(block)
-        versions[name] = linkedMapOf("replace" to LinkedHashMap(dsl.extra))
+        val entry = LinkedHashMap<String, Any?>()
+        entry["replace"] = LinkedHashMap(dsl.extra)
+        dsl.buildscript?.let { entry["buildscript"] = it }
+        versions[name] = entry
     }
 
     fun asMap(): Map<String, Map<String, Any?>> = LinkedHashMap(versions)
@@ -75,50 +80,62 @@ plugins {
 rootProject.name = "the_expanse"
 
 stonecutter {
+    shared {
+        centralScript.set("stonecutter.gradle.kts")
+    }
     active("1.21.1-neoforge")
 
     versions {
         register("1.21.1-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.1"
             extra["NEOFORGE_VERSION"] = "21.1.209"
             extra["PACK_FORMAT"] = "48"
         }
         register("1.21.2-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.2"
             extra["NEOFORGE_VERSION"] = "21.2.84"
             extra["PACK_FORMAT"] = "57"
         }
         register("1.21.3-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.3"
             extra["NEOFORGE_VERSION"] = "21.3.64"
             extra["PACK_FORMAT"] = "57"
         }
         register("1.21.4-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.4"
             extra["NEOFORGE_VERSION"] = "21.4.154"
             extra["PACK_FORMAT"] = "61"
         }
         register("1.21.5-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.5"
             extra["NEOFORGE_VERSION"] = "21.5.72"
             extra["PACK_FORMAT"] = "71"
         }
         register("1.21.6-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.6"
             extra["NEOFORGE_VERSION"] = "21.6.43"
             extra["PACK_FORMAT"] = "80"
         }
         register("1.21.7-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.7"
             extra["NEOFORGE_VERSION"] = "21.7.12"
             extra["PACK_FORMAT"] = "81"
         }
         register("1.21.8-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.8"
             extra["NEOFORGE_VERSION"] = "21.8.17"
             extra["PACK_FORMAT"] = "81"
         }
         register("1.21.9-neoforge") {
+            buildscript = NEOFORGE_BUILD_SCRIPT
             extra["MC_VERSION"] = "1.21.9"
             extra["NEOFORGE_VERSION"] = "21.9.6"
             extra["PACK_FORMAT"] = "88"
