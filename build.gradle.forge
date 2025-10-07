@@ -1,34 +1,33 @@
 plugins {
-    id 'java'
-    id 'base' // provides clean
-    id 'net.minecraftforge.gradle' version '6.0.+' // ForgeGradle
+    id("dev.isxander.modstitch") version "0.5.15-unstable"
 }
 
-java {
-    toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
-    }
+modstitch {
+    loader.set("forge")
+    minecraft.set(providers.gradleProperty("mcVersion"))
+    modVersion.set(providers.gradleProperty("modVersion"))
+    group.set("com.theexpanse")
+    archivesName.set("the_expanse")
 }
 
 repositories {
     mavenCentral()
-    maven { url = 'https://maven.minecraftforge.net' }
-}
-
-minecraft {
-    // ForgeGradle config
-    mappings channel: 'official', version: project.mcVersion
+    maven("https://maven.minecraftforge.net")
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${project.mcVersion}-${project.loaderVersion}"
+    // Forge userdev is injected by modstitch
 }
 
-tasks.named('jar') {
-    from sourceSets.main.output
-    archiveBaseName.set("the_expanse-${project.mcVersion}-${project.loader}")
-}
-
-artifacts {
-    archives tasks.jar
+tasks.jar {
+    manifest {
+        attributes(
+            "Specification-Title" to "the_expanse",
+            "Specification-Vendor" to "CyberDay1",
+            "Specification-Version" to project.version,
+            "Implementation-Title" to "the_expanse",
+            "Implementation-Version" to project.version,
+            "Implementation-Vendor" to "CyberDay1"
+        )
+    }
 }

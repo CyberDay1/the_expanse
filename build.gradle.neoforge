@@ -1,17 +1,14 @@
 plugins {
-    id("java")
-    id("net.neoforged.gradle.userdev") version "7.0.190"
-    id("maven-publish")
+    id("dev.isxander.modstitch") version "0.5.15-unstable"
 }
 
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-    withSourcesJar()
+modstitch {
+    loader.set("neoforge")
+    minecraft.set(providers.gradleProperty("mcVersion"))
+    modVersion.set(providers.gradleProperty("modVersion"))
+    group.set("com.theexpanse")
+    archivesName.set("the_expanse")
 }
-
-group = "com.theexpanse"
-version = "0.1.0"
-base.archivesName.set("the_expanse")
 
 repositories {
     mavenCentral()
@@ -19,32 +16,18 @@ repositories {
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${project.loaderVersion}")
+    // NeoForge userdev is injected by modstitch
 }
 
 tasks.jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(sourceSets.main.get().output)
-    from("src/main/resources")
     manifest {
         attributes(
             "Specification-Title" to "the_expanse",
+            "Specification-Vendor" to "CyberDay1",
+            "Specification-Version" to project.version,
             "Implementation-Title" to "the_expanse",
             "Implementation-Version" to project.version,
             "Implementation-Vendor" to "CyberDay1"
         )
-    }
-}
-
-tasks.named("build") {
-    dependsOn("jar")
-}
-
-publishing {
-    publications {
-        create<MavenPublication>("mavenJava") {
-            artifact(tasks["jar"])
-            artifact(tasks["sourcesJar"])
-        }
     }
 }
