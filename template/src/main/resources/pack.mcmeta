@@ -1,6 +1,6 @@
-{
+﻿{
   "pack": {
     "pack_format": ${packFormat},
-    "description": "The Expanse — Expanded build height and depth for Overworld, Nether, and End"
+    "description": "The Expanse (Minecraft ${mcVersion}, NeoForge ${neoVersion})"
   }
 }

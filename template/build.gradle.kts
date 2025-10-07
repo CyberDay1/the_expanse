@@ -6,52 +6,54 @@ plugins {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(
-            project.findProperty("JAVA_VERSION")?.toString()?.toInt() ?: 21
-        )
+        languageVersion = JavaLanguageVersion.of(21)
     }
     withSourcesJar()
 }
 
-group = project.findProperty("MOD_GROUP") as String? ?: "com.theexpanse"
-version = project.findProperty("MOD_VERSION") as String? ?: "0.1.0"
-
+group = "com.theexpanse"
+version = "0.1.0"
 base {
-    archivesName.set(project.findProperty("MOD_NAME") as String? ?: "the_expanse")
+    archivesName.set("the_expanse")
 }
 
 repositories {
     mavenCentral()
-    maven { url = uri("https://maven.neoforged.net/releases") }
+    maven("https://maven.neoforged.net/releases")
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${project.findProperty("NEOFORGE_VERSION")}")
+    implementation("net.neoforged:neoforge:${property("NEOFORGE_VERSION")}")
 }
 
+// Expand tokens in resources (mods.toml, pack.mcmeta, etc.)
 tasks.processResources {
     inputs.property("version", project.version)
-    inputs.property("packFormat", project.findProperty("PACK_FORMAT") ?: "48")
+    inputs.property("mcVersion", property("MC_VERSION"))
+    inputs.property("neoVersion", property("NEOFORGE_VERSION"))
 
-    filesMatching(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")) {
+    filesMatching("META-INF/neoforge.mods.toml") {
         expand(
-            mapOf(
-                "version" to project.version,
-                "packFormat" to (project.findProperty("PACK_FORMAT") ?: "48")
-            )
+            "version" to project.version,
+            "mcVersion" to property("MC_VERSION"),
+            "neoVersion" to property("NEOFORGE_VERSION")
+        )
+    }
+
+    filesMatching("pack.mcmeta") {
+        expand(
+            "version" to project.version,
+            "mcVersion" to property("MC_VERSION"),
+            "neoVersion" to property("NEOFORGE_VERSION"),
+            "packFormat" to property("PACK_FORMAT")
         )
     }
 }
 
-tasks.jar {
-    from("src/main/resources")
-    manifest {
-        attributes(
-            "Specification-Title" to (project.findProperty("MOD_NAME") ?: "the_expanse"),
-            "Specification-Vendor" to "CyberDay1",
-            "Specification-Version" to project.version,
-            "Implementation-Title" to (project.findProperty("MOD_NAME") ?: "the_expanse"),
-            "Implementation-Version" to project.version,
-        )
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifact(tasks["jar"])
+        }
     }
 }
