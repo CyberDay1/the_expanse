@@ -1,32 +1,37 @@
-plugins {
+﻿plugins {
     id("java")
-    id("base")
     id("maven-publish")
-    id("net.neoforged.gradle.userdev") version "7.0.190"
+    id("net.neoforged.gradle.userdev") version "7.0.190" apply false
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
     withSourcesJar()
 }
 
 group = "com.theexpanse"
-version = providers.gradleProperty("modVersion").getOrElse("0.1.0")
-
-base.archivesName.set("the_expanse")
+version = "0.1.0"
+base {
+    archivesName.set("the_expanse")
+}
 
 repositories {
     mavenCentral()
     maven("https://maven.neoforged.net/releases")
+    maven("https://maven.minecraftforge.net")
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${providers.gradleProperty("loaderVersion").get()}")
+    if (project.hasProperty("loader") && project.property("loader") == "forge") {
+        "minecraft"("net.minecraftforge:forge:${project.property("mcVersion")}-${project.property("loaderVersion")}")
+    } else {
+        implementation("net.neoforged:neoforge:${project.property("loaderVersion")}")
+    }
 }
 
 tasks.jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    from(sourceSets.main.get().output)
     from("src/main/resources")
     manifest {
         attributes(
@@ -40,19 +45,10 @@ tasks.jar {
     }
 }
 
-// Ensure a jar is produced and reobfuscated when available.
-val reobfJar = tasks.findByName("reobfJar") ?: tasks.register("reobfJar") {
-    dependsOn(tasks.jar)
-}
-
-tasks.named("build") {
-    dependsOn(tasks.jar, reobfJar)
-}
-
 tasks.register("buildMod") {
     group = "build"
-    description = "Builds distributable mod jar (includes reobf when available)"
-    dependsOn("build")
+    description = "Builds the distributable mod jar"
+    dependsOn(tasks.jar, tasks.named("sourcesJar"))
 }
 
 publishing {
