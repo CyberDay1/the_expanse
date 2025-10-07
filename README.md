@@ -17,3 +17,9 @@ Run the audit client for a given variant:
 ```
 
 Audit reports are archived to `reports/parity/` as configured.
+
+## Gradle wrapper JAR
+
+This repository omits `gradle/wrapper/gradle-wrapper.jar` from version control to comply with contribution rules that forbid binary uploads.
+If you need to use the wrapper scripts, regenerate the JAR locally by running `gradle wrapper` with a compatible Gradle installation.
+
