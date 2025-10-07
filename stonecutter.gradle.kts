@@ -1,9 +1,20 @@
 plugins {
-    id("dev.kikugie.stonecutter")
+    id("dev.kayla.stonecutter")
 }
-stonecutter active "1.20.1-forge"
+
+val activeVariant = providers.fileContents(layout.projectDirectory.file("stonecutter.json"))
+    .asText
+    .map { text ->
+        "\"default\"\\s*:\\s*\"([^\"]+)\"".toRegex()
+            .find(text)
+            ?.groupValues
+            ?.get(1)
+            ?: error("stonecutter.json must define a default variant")
+    }
+
+stonecutter active activeVariant.get()
 
 stonecutter registerChiseled tasks.register("chiseledBuild", stonecutter.chiseled) {
-    group = "project"
+    group = "build"
     ofTask("build")
 }

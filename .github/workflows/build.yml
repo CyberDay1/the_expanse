@@ -1,0 +1,38 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - variant: ":1.21.1-neoforge"
+            stonecutter: "1.21.1-neoforge"
+          - variant: ":1.21.4-neoforge"
+            stonecutter: "1.21.4-neoforge"
+    name: Build ${{ matrix.variant }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Configure Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-disabled: true
+
+      - name: Run chiseled build
+        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.stonecutter }}
