@@ -2,9 +2,23 @@ import dev.kikugie.stonecutter.settings.StonecutterSettingsExtension
 import groovy.json.JsonOutput
 import groovy.json.JsonSlurper
 import java.io.File
+import java.util.Properties
 
 private val stonecutterConfigFile: File = settings.settingsDir.resolve("stonecutter.json")
+private val versionsDirectory: File = settings.settingsDir.resolve("versions")
 private val NEOFORGE_BUILD_SCRIPT = "build.neoforge.gradle.kts"
+private val DEFAULT_VARIANT = "1.21.1-neoforge"
+private val SUPPORTED_VARIANTS = listOf(
+    "1.21.1-neoforge",
+    "1.21.2-neoforge",
+    "1.21.3-neoforge",
+    "1.21.4-neoforge",
+    "1.21.5-neoforge",
+    "1.21.6-neoforge",
+    "1.21.7-neoforge",
+    "1.21.8-neoforge",
+    "1.21.9-neoforge",
+)
 
 @Suppress("UNCHECKED_CAST")
 private fun loadStonecutterConfig(): MutableMap<String, Any?> {
@@ -29,6 +43,18 @@ private fun updateStonecutterConfig(block: MutableMap<String, Any?>.() -> Unit) 
     val config = loadStonecutterConfig()
     config.block()
     saveStonecutterConfig(config)
+}
+
+private fun loadVariantProperties(variant: String): Map<String, String> {
+    val propertiesFile = versionsDirectory.resolve("$variant/gradle.properties")
+    require(propertiesFile.isFile) { "Missing gradle.properties for variant '$variant'" }
+
+    val properties = Properties()
+    propertiesFile.inputStream().use { properties.load(it) }
+
+    return properties.entries.associate { (key, value) ->
+        key.toString() to value.toString()
+    }
 }
 
 private class StonecutterVersionDsl {
@@ -83,62 +109,16 @@ stonecutter {
     shared {
         centralScript.set("stonecutter.gradle.kts")
     }
-    active("1.21.1-neoforge")
+    active(DEFAULT_VARIANT)
 
     versions {
-        register("1.21.1-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.1"
-            extra["NEOFORGE_VERSION"] = "21.1.209"
-            extra["PACK_FORMAT"] = "48"
-        }
-        register("1.21.2-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.2"
-            extra["NEOFORGE_VERSION"] = "21.2.84"
-            extra["PACK_FORMAT"] = "57"
-        }
-        register("1.21.3-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.3"
-            extra["NEOFORGE_VERSION"] = "21.3.64"
-            extra["PACK_FORMAT"] = "57"
-        }
-        register("1.21.4-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.4"
-            extra["NEOFORGE_VERSION"] = "21.4.154"
-            extra["PACK_FORMAT"] = "61"
-        }
-        register("1.21.5-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.5"
-            extra["NEOFORGE_VERSION"] = "21.5.72"
-            extra["PACK_FORMAT"] = "71"
-        }
-        register("1.21.6-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.6"
-            extra["NEOFORGE_VERSION"] = "21.6.43"
-            extra["PACK_FORMAT"] = "80"
-        }
-        register("1.21.7-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.7"
-            extra["NEOFORGE_VERSION"] = "21.7.12"
-            extra["PACK_FORMAT"] = "81"
-        }
-        register("1.21.8-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.8"
-            extra["NEOFORGE_VERSION"] = "21.8.17"
-            extra["PACK_FORMAT"] = "81"
-        }
-        register("1.21.9-neoforge") {
-            buildscript = NEOFORGE_BUILD_SCRIPT
-            extra["MC_VERSION"] = "1.21.9"
-            extra["NEOFORGE_VERSION"] = "21.9.6"
-            extra["PACK_FORMAT"] = "88"
+        SUPPORTED_VARIANTS.forEach { variant ->
+            register(variant) {
+                buildscript = NEOFORGE_BUILD_SCRIPT
+                loadVariantProperties(variant).forEach { (key, value) ->
+                    extra[key] = value
+                }
+            }
         }
     }
 }
