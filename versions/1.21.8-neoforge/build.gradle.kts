@@ -1,7 +1,8 @@
 plugins {
     id("java")
-    id("net.neoforged.gradle.userdev") version "7.0.190"
+    id("base")
     id("maven-publish")
+    id("net.neoforged.gradle.userdev") version "7.0.190"
 }
 
 java {
@@ -10,7 +11,8 @@ java {
 }
 
 group = "com.theexpanse"
-version = "0.1.0"
+version = providers.gradleProperty("modVersion").getOrElse("0.1.0")
+
 base.archivesName.set("the_expanse")
 
 repositories {
@@ -19,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${project.loaderVersion}")
+    implementation("net.neoforged:neoforge:${providers.gradleProperty("loaderVersion").get()}")
 }
 
 tasks.jar {
@@ -29,6 +31,8 @@ tasks.jar {
     manifest {
         attributes(
             "Specification-Title" to "the_expanse",
+            "Specification-Vendor" to "CyberDay1",
+            "Specification-Version" to project.version,
             "Implementation-Title" to "the_expanse",
             "Implementation-Version" to project.version,
             "Implementation-Vendor" to "CyberDay1"
@@ -36,8 +40,19 @@ tasks.jar {
     }
 }
 
+// Ensure a jar is produced and reobfuscated when available.
+val reobfJar = tasks.findByName("reobfJar") ?: tasks.register("reobfJar") {
+    dependsOn(tasks.jar)
+}
+
 tasks.named("build") {
-    dependsOn("jar")
+    dependsOn(tasks.jar, reobfJar)
+}
+
+tasks.register("buildMod") {
+    group = "build"
+    description = "Builds distributable mod jar (includes reobf when available)"
+    dependsOn("build")
 }
 
 publishing {
