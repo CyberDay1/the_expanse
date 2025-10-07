@@ -78,7 +78,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.2.+"
       }
     },
     "1.21.3-neoforge": {
@@ -88,7 +88,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.3.+"
       }
     },
     "1.21.4-neoforge": {
@@ -98,7 +98,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.4.+"
       }
     },
     "1.21.5-neoforge": {
@@ -108,7 +108,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.5.+"
       }
     },
     "1.21.6-neoforge": {
@@ -118,7 +118,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.6.+"
       }
     },
     "1.21.7-neoforge": {
@@ -128,7 +128,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.7.+"
       }
     },
     "1.21.8-neoforge": {
@@ -138,7 +138,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.8.+"
       }
     },
     "1.21.9-neoforge": {
@@ -148,7 +148,7 @@
         "BUILD_SCRIPT": "build.gradle.neoforge",
         "PACK_FORMAT": "48",
         "LOADER_FILE": "neoforge.mods.toml",
-        "loaderVersion": "21.1.209"
+        "loaderVersion": "21.9.+"
       }
     }
   },

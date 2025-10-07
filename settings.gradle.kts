@@ -13,6 +13,7 @@ plugins {
 
 rootProject.name = "expanse_heights"
 
+// Register subprojects from the version descriptor
 stonecutter {
-    json(file("stonecutter.json"))
+    create(rootProject, file("stonecutter.versions.json"))
 }
