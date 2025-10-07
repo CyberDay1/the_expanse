@@ -14,7 +14,7 @@ plugins {
 rootProject.name = "expanse_heights"
 
 stonecutter {
-    versions("stonecutter.versions.json")
-    // optionally pick a default:
-    // default("1.21.1-neoforge")
+    create(rootProject.file("stonecutter.versions.json"))
+    // You can still enable a default version here if needed:
+    // enable("1.21.1-neoforge")
 }
