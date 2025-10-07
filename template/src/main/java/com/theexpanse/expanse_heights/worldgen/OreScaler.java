@@ -1,6 +1,6 @@
 package com.theexpanse.expanse_heights.worldgen;
 
-import com.cyberday1.expanseheights.ExpanseHeights;
+import com.theexpanse.expanseheights.ExpanseHeights;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;

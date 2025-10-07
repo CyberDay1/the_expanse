@@ -1,4 +1,4 @@
-package com.cyberday1.expanseheights;
+package com.theexpanse.expanseheights;
 
 import net.neoforged.fml.common.Mod;
 

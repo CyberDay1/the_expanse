@@ -11,10 +11,15 @@ java {
     withSourcesJar()
 }
 
-group = "com.theexpanse"
-version = "0.1.0"
+val modGroup = (project.findProperty("MOD_GROUP") as String?) ?: "com.theexpanse"
+val modVersion = (project.findProperty("MOD_VERSION") as String?) ?: "0.1.0"
+val modName = (project.findProperty("MOD_NAME") as String?) ?: "the_expanse"
+val neoForgeVersion = (project.findProperty("NEOFORGE_VERSION") as String?) ?: "21.1.209"
+
+group = modGroup
+version = modVersion
 base {
-    archivesName.set("the_expanse")
+    archivesName.set(modName)
 }
 
 repositories {
@@ -24,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${project.findProperty("NEOFORGE_VERSION") ?: "21.1.209"}")
+    implementation("net.neoforged:neoforge:$neoForgeVersion")
 }
 
 tasks.processResources {
