@@ -1,0 +1,9 @@
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
+
+stonecutter {
+    versions("stonecutter.versions.json")
+    // If you want a default version, uncomment:
+    // default("1.21.1-neoforge")
+}

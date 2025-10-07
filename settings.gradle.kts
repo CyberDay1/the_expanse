@@ -1,10 +1,3 @@
-import dev.kikugie.stonecutter.settings.StonecutterSettingsExtension
-import java.io.File
-
-fun StonecutterSettingsExtension.versions(path: File) {
-    create(rootProject, path)
-}
-
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -21,5 +14,7 @@ plugins {
 rootProject.name = "expanse_heights"
 
 stonecutter {
-    versions(file("stonecutter.versions.json"))
+    versions("stonecutter.versions.json")
+    // optionally pick a default:
+    // default("1.21.1-neoforge")
 }
