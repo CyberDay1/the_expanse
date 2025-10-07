@@ -31,3 +31,15 @@ tasks.jar {
         )
     }
 }
+
+val reobfJar = tasks.findByName("reobfJar")
+
+tasks.register("buildMod") {
+    group = "build"
+    description = "Assembles and reobfuscates the NeoForge mod jar"
+    if (reobfJar != null) {
+        dependsOn(reobfJar)
+    } else {
+        dependsOn(tasks.build)
+    }
+}

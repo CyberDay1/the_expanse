@@ -1,3 +1,10 @@
+import dev.kikugie.stonecutter.settings.StonecutterSettingsExtension
+import java.io.File
+
+fun StonecutterSettingsExtension.versions(path: File) {
+    create(rootProject, path)
+}
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -11,10 +18,8 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
-
 rootProject.name = "expanse_heights"
 
-// Register subprojects from the version descriptor
 stonecutter {
-    create(rootProject, file("stonecutter.versions.json"))
+    versions(file("stonecutter.versions.json"))
 }
