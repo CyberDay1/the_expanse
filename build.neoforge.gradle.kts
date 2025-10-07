@@ -1,7 +1,30 @@
+import org.gradle.api.Project
+import java.util.Properties
+
 plugins {
     id("net.neoforged.gradle.userdev") version "7.0.190"
     id("maven-publish")
 }
+
+val configurableProperties = Properties().apply {
+    val configFile = rootProject.file("configurable.properties")
+    if (configFile.exists()) {
+        configFile.inputStream().use { load(it) }
+    }
+}
+
+fun Project.resolveToggle(key: String, default: Boolean): Boolean {
+    val cliOverride = findProperty(key)?.toString()?.lowercase()
+    val fileValue = configurableProperties.getProperty(key)?.lowercase()
+    val resolved = cliOverride ?: fileValue
+    return resolved?.let { it == "true" } ?: default
+}
+
+val enableDatagen = project.resolveToggle("enableDatagen", true)
+val useMixins = project.resolveToggle("useMixins", false)
+
+extensions.extraProperties["enableDatagen"] = enableDatagen
+extensions.extraProperties["useMixins"] = useMixins
 
 repositories {
     mavenCentral()
@@ -40,6 +63,22 @@ publishing {
     publications {
         create<MavenPublication>("mavenJava") {
             artifact(tasks["jar"])
+        }
+    }
+}
+
+if (!enableDatagen) {
+    tasks.configureEach {
+        if (name.contains("datagen", ignoreCase = true)) {
+            enabled = false
+        }
+    }
+}
+
+if (!useMixins) {
+    tasks.configureEach {
+        if (name.contains("mixin", ignoreCase = true)) {
+            enabled = false
         }
     }
 }
