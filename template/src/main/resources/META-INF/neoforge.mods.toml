@@ -1,0 +1,19 @@
+modLoader="javafml"
+loaderVersion="[1,)"
+
+[[mods]]
+  modId="the_expanse"
+  version="${version}"
+  displayName="The Expanse"
+  description="Extends the Overworld, Nether, and End world heights."
+  authors="CyberDay1"
+
+[[dependencies.the_expanse]]
+  modId="neoforge"
+  type="required"
+  versionRange="[21.1,)"
+[[dependencies.the_expanse]]
+  modId="minecraft"
+  type="required"
+  versionRange="[1.21.1,1.22)"
+

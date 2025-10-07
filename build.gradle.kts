@@ -1,6 +1,10 @@
 plugins {
-    // Provides `clean` task
     id("base")
 }
+allprojects {
+    repositories {
+        mavenCentral()
+        maven { url = uri("https://maven.neoforged.net/releases") }
+    }
+}
 
-// no other config needed here; subprojects handle Forge/NeoForge builds
