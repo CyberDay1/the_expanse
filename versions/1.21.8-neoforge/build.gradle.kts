@@ -1,18 +1,19 @@
 ﻿plugins {
     id("java")
+    id("base") // clean, assemble
+    id("net.neoforged.gradle.userdev") version "7.0.190"
     id("maven-publish")
-    id("net.neoforged.gradle.userdev") version "7.0.190" apply false
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
     withSourcesJar()
 }
 
 group = "com.theexpanse"
-version = "0.1.0"
+version = project.findProperty("modVersion") ?: "0.1.0"
 base {
     archivesName.set("the_expanse")
 }
@@ -20,19 +21,15 @@ base {
 repositories {
     mavenCentral()
     maven("https://maven.neoforged.net/releases")
-    maven("https://maven.minecraftforge.net")
 }
 
 dependencies {
-    if (project.hasProperty("loader") && project.property("loader") == "forge") {
-        "minecraft"("net.minecraftforge:forge:${project.property("mcVersion")}-${project.property("loaderVersion")}")
-    } else {
-        implementation("net.neoforged:neoforge:${project.property("loaderVersion")}")
-    }
+    implementation("net.neoforged:neoforge:")
 }
 
 tasks.jar {
     from("src/main/resources")
+    archiveBaseName.set("the_expanse")
     manifest {
         attributes(
             "Specification-Title" to "the_expanse",
@@ -45,10 +42,14 @@ tasks.jar {
     }
 }
 
+val reobfJar = tasks.findByName("reobfJar") ?: tasks.register("reobfJar") {
+    dependsOn(tasks.jar)
+}
+
 tasks.register("buildMod") {
     group = "build"
-    description = "Builds the distributable mod jar"
-    dependsOn(tasks.jar, tasks.named("sourcesJar"))
+    description = "Build distributable mod jar"
+    dependsOn(tasks.jar, reobfJar)
 }
 
 publishing {
