@@ -31,3 +31,9 @@ tasks.jar {
         )
     }
 }
+
+tasks.register("buildMod") {
+    group = "build"
+    description = "Assembles and reobfuscates the Forge mod jar"
+    dependsOn(tasks.build)
+}
