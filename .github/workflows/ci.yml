@@ -45,6 +45,9 @@ jobs:
       - name: Run validation tests
         run: ./gradlew check -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
 
+      - name: Run static analysis
+        run: ./gradlew spotlessCheck checkstyleMain detektMain -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
+
       - name: Upload test reports on failure
         if: failure()
         uses: actions/upload-artifact@v4
