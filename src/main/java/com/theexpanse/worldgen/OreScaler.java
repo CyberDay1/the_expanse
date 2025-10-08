@@ -11,7 +11,9 @@ import net.minecraft.core.HolderSet;
 import net.minecraft.core.Registry;
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.packs.resources.PreparableReloadListener;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
 import net.minecraft.tags.TagKey;
@@ -20,9 +22,9 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
+import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.event.AddReloadListenerEvent;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -44,29 +46,39 @@ public final class OreScaler {
         TagKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath("forge", "ores"));
 
     private static final MethodHandle BIND_VALUE = findBindValueHandle();
+    private static final Class<?> LEGACY_EVENT_CLASS =
+        findClass("net.neoforged.neoforge.event.AddReloadListenerEvent");
+    private static final Class<?> MODERN_EVENT_CLASS =
+        findClass("net.neoforged.neoforge.event.AddServerReloadListenersEvent");
+    private static final MethodHandle LEGACY_ADD_LISTENER = findLegacyAddListenerHandle();
+    private static final MethodHandle LEGACY_GET_ACCESS = findLegacyAccessHandle();
+    private static final MethodHandle MODERN_ADD_LISTENER = findModernAddListenerHandle();
+    private static final MethodHandle MODERN_GET_ACCESS = findModernAccessHandle();
+    private static final MethodHandle REGISTRY_OR_THROW = findRegistryOrThrowHandle();
+    private static final MethodHandle LOOKUP_OR_THROW = findLookupOrThrowHandle();
+    private static final MethodHandle REGISTRY_GET_TAG = findRegistryGetTagHandle();
+    private static final MethodHandle REGISTRY_GET = findRegistryGetHandle();
+    private static final ResourceLocation LISTENER_ID =
+        ResourceLocation.fromNamespaceAndPath(TheExpanse.MOD_ID, "ore_scaler");
 
     private OreScaler() {
     }
 
     @SubscribeEvent
-    public static void onReload(AddReloadListenerEvent event) {
-        final RegistryAccess access = event.getRegistryAccess();
-        event.addListener(new SimplePreparableReloadListener<Void>() {
-            @Override
-            protected Void prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
-                return null;
-            }
+    public static void onReload(Event rawEvent) {
+        if (LEGACY_EVENT_CLASS != null && LEGACY_EVENT_CLASS.isInstance(rawEvent)) {
+            handleLegacyReload(rawEvent);
+            return;
+        }
 
-            @Override
-            protected void apply(Void unused, ResourceManager resourceManager, ProfilerFiller profiler) {
-                scaleOrePlacements(access);
-            }
-        });
+        if (MODERN_EVENT_CLASS != null && MODERN_EVENT_CLASS.isInstance(rawEvent)) {
+            handleModernReload(rawEvent);
+        }
     }
 
     private static void scaleOrePlacements(RegistryAccess access) {
-        Registry<PlacedFeature> registry = access.registryOrThrow(Registries.PLACED_FEATURE);
-        Optional<HolderSet.Named<PlacedFeature>> ores = registry.getTag(ORE_TAG);
+        Registry<PlacedFeature> registry = resolvePlacedFeatureRegistry(access);
+        Optional<HolderSet.Named<PlacedFeature>> ores = resolveOreTag(registry);
         if (ores.isEmpty()) {
             return;
         }
@@ -187,6 +199,87 @@ public final class OreScaler {
         return Mth.clamp(rounded, NEW_MIN, NEW_MAX);
     }
 
+    private static Registry<PlacedFeature> resolvePlacedFeatureRegistry(RegistryAccess access) {
+        try {
+            if (LOOKUP_OR_THROW != null) {
+                return (Registry<PlacedFeature>) LOOKUP_OR_THROW.invoke(access, Registries.PLACED_FEATURE);
+            }
+            if (REGISTRY_OR_THROW != null) {
+                return (Registry<PlacedFeature>) REGISTRY_OR_THROW.invoke(access, Registries.PLACED_FEATURE);
+            }
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to resolve placed feature registry", throwable);
+        }
+        throw new IllegalStateException("No compatible RegistryAccess lookup method is available");
+    }
+
+    private static Optional<HolderSet.Named<PlacedFeature>> resolveOreTag(Registry<PlacedFeature> registry) {
+        try {
+            if (REGISTRY_GET_TAG != null) {
+                return (Optional<HolderSet.Named<PlacedFeature>>) REGISTRY_GET_TAG.invoke(registry, ORE_TAG);
+            }
+            if (REGISTRY_GET != null) {
+                return (Optional<HolderSet.Named<PlacedFeature>>) REGISTRY_GET.invoke(registry, ORE_TAG);
+            }
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to resolve ore placed feature tag", throwable);
+        }
+        return Optional.empty();
+    }
+
+    private static void handleLegacyReload(Object rawEvent) {
+        RegistryAccess access = extractRegistryAccess(LEGACY_GET_ACCESS, rawEvent);
+        if (access == null || LEGACY_ADD_LISTENER == null) {
+            return;
+        }
+
+        PreparableReloadListener listener = createReloadListener(access);
+        try {
+            LEGACY_ADD_LISTENER.invoke(rawEvent, listener);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to register ore scaler reload listener", throwable);
+        }
+    }
+
+    private static void handleModernReload(Object rawEvent) {
+        RegistryAccess access = extractRegistryAccess(MODERN_GET_ACCESS, rawEvent);
+        if (access == null || MODERN_ADD_LISTENER == null) {
+            return;
+        }
+
+        PreparableReloadListener listener = createReloadListener(access);
+        try {
+            MODERN_ADD_LISTENER.invoke(rawEvent, LISTENER_ID, listener);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to register ore scaler reload listener", throwable);
+        }
+    }
+
+    private static PreparableReloadListener createReloadListener(final RegistryAccess access) {
+        return new SimplePreparableReloadListener<Void>() {
+            @Override
+            protected Void prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
+                return null;
+            }
+
+            @Override
+            protected void apply(Void unused, ResourceManager resourceManager, ProfilerFiller profiler) {
+                scaleOrePlacements(access);
+            }
+        };
+    }
+
+    private static RegistryAccess extractRegistryAccess(MethodHandle handle, Object event) {
+        if (handle == null) {
+            return null;
+        }
+        try {
+            return (RegistryAccess) handle.invoke(event);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Failed to read registry access from reload event", throwable);
+        }
+    }
+
     private static MethodHandle findBindValueHandle() {
         try {
             MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
@@ -195,6 +288,60 @@ public final class OreScaler {
             return lookup.findVirtual(Holder.Reference.class, "bindValue", signature);
         } catch (NoSuchMethodException | IllegalAccessException ex) {
             throw new IllegalStateException("Failed to access Holder.Reference#bindValue", ex);
+        }
+    }
+
+    private static Class<?> findClass(String name) {
+        try {
+            return Class.forName(name);
+        } catch (ClassNotFoundException ignored) {
+            return null;
+        }
+    }
+
+    private static MethodHandle findLegacyAddListenerHandle() {
+        return findVirtual(LEGACY_EVENT_CLASS, "addListener", void.class, PreparableReloadListener.class);
+    }
+
+    private static MethodHandle findLegacyAccessHandle() {
+        return findVirtual(LEGACY_EVENT_CLASS, "getRegistryAccess", RegistryAccess.class);
+    }
+
+    private static MethodHandle findModernAddListenerHandle() {
+        return findVirtual(
+            MODERN_EVENT_CLASS, "addListener", void.class, ResourceLocation.class, PreparableReloadListener.class);
+    }
+
+    private static MethodHandle findModernAccessHandle() {
+        return findVirtual(MODERN_EVENT_CLASS, "getRegistryAccess", RegistryAccess.class);
+    }
+
+    private static MethodHandle findRegistryOrThrowHandle() {
+        return findVirtual(RegistryAccess.class, "registryOrThrow", Registry.class, ResourceKey.class);
+    }
+
+    private static MethodHandle findLookupOrThrowHandle() {
+        return findVirtual(RegistryAccess.class, "lookupOrThrow", Registry.class, ResourceKey.class);
+    }
+
+    private static MethodHandle findRegistryGetTagHandle() {
+        return findVirtual(Registry.class, "getTag", Optional.class, TagKey.class);
+    }
+
+    private static MethodHandle findRegistryGetHandle() {
+        return findVirtual(Registry.class, "get", Optional.class, TagKey.class);
+    }
+
+    private static MethodHandle findVirtual(
+        Class<?> owner, String name, Class<?> returnType, Class<?>... parameterTypes) {
+        if (owner == null) {
+            return null;
+        }
+        try {
+            MethodType signature = MethodType.methodType(returnType, parameterTypes);
+            return MethodHandles.lookup().findVirtual(owner, name, signature);
+        } catch (NoSuchMethodException | IllegalAccessException ignored) {
+            return null;
         }
     }
 
