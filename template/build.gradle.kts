@@ -1,5 +1,6 @@
 import org.gradle.api.tasks.JavaExec
 plugins {
+    id("net.neoforged.moddev") version "1.+"
     id("java")
 }
 
