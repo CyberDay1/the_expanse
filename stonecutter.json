@@ -3,73 +3,73 @@
     "variants": {
         "1.21.1-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.1",
                 "NEOFORGE_VERSION": "21.1.209",
-                "PACK_FORMAT": "48"
+                "PACK_FORMAT": "48",
+                "MC_VERSION": "1.21.1"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.2-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.2",
                 "NEOFORGE_VERSION": "21.2.84",
-                "PACK_FORMAT": "57"
+                "PACK_FORMAT": "57",
+                "MC_VERSION": "1.21.2"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.3-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.3",
                 "NEOFORGE_VERSION": "21.3.64",
-                "PACK_FORMAT": "57"
+                "PACK_FORMAT": "57",
+                "MC_VERSION": "1.21.3"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.4-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.4",
                 "NEOFORGE_VERSION": "21.4.154",
-                "PACK_FORMAT": "61"
+                "PACK_FORMAT": "61",
+                "MC_VERSION": "1.21.4"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.5-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.5",
                 "NEOFORGE_VERSION": "21.5.72",
-                "PACK_FORMAT": "71"
+                "PACK_FORMAT": "71",
+                "MC_VERSION": "1.21.5"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.6-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.6",
                 "NEOFORGE_VERSION": "21.6.43",
-                "PACK_FORMAT": "80"
+                "PACK_FORMAT": "80",
+                "MC_VERSION": "1.21.6"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.7-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.7",
                 "NEOFORGE_VERSION": "21.7.12",
-                "PACK_FORMAT": "81"
+                "PACK_FORMAT": "81",
+                "MC_VERSION": "1.21.7"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.8-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.8",
                 "NEOFORGE_VERSION": "21.8.17",
-                "PACK_FORMAT": "81"
+                "PACK_FORMAT": "81",
+                "MC_VERSION": "1.21.8"
             },
             "buildscript": "build.neoforge.gradle.kts"
         },
         "1.21.9-neoforge": {
             "replace": {
-                "MC_VERSION": "1.21.9",
                 "NEOFORGE_VERSION": "21.9.6",
-                "PACK_FORMAT": "88"
+                "PACK_FORMAT": "88",
+                "MC_VERSION": "1.21.9"
             },
             "buildscript": "build.neoforge.gradle.kts"
         }
