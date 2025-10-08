@@ -3,7 +3,7 @@ import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.findByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
@@ -75,17 +75,24 @@ dependencies {
 
 spotless {
     java {
-        target("src/**/*.java")
+        target("src/**/*.java", "${rootProject.projectDir}/src/**/*.java")
         licenseHeaderFile(rootProject.file("config/spotless/license-header.java"), "(package|import)")
-        indentWithSpaces(4)
+        googleJavaFormat("1.17.0")
+        removeUnusedImports()
+        importOrder("", "java", "javax", "org", "com")
         trimTrailingWhitespace()
         endWithNewline()
     }
 
     kotlin {
-        target("src/**/*.kt")
+        target("src/**/*.kt", "${rootProject.projectDir}/src/**/*.kt")
         licenseHeaderFile(rootProject.file("config/spotless/license-header.kt"), "(package|import)")
-        indentWithSpaces(4)
+        ktlint().editorConfigOverride(
+            mapOf(
+                "indent_size" to "4",
+                "continuation_indent_size" to "4"
+            )
+        )
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -93,12 +100,18 @@ spotless {
     kotlinGradle {
         target(
             "*.gradle.kts",
+            "../*.gradle.kts",
             "buildSrc/**/*.gradle.kts",
             "template/**/*.gradle.kts",
             "versions/**/*.gradle.kts"
         )
         targetExclude("**/build/**", "**/.gradle/**")
-        indentWithSpaces(4)
+        ktlint().editorConfigOverride(
+            mapOf(
+                "indent_size" to "4",
+                "continuation_indent_size" to "4"
+            )
+        )
         trimTrailingWhitespace()
         endWithNewline()
     }
@@ -110,9 +123,11 @@ checkstyle {
     isIgnoreFailures = false
 }
 
+val detektConfig = rootProject.files("config/detekt/detekt.yml")
+
 detekt {
     buildUponDefaultConfig = true
-    config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+    config.setFrom(detektConfig)
 }
 
 tasks.withType<Detekt>().configureEach {
@@ -124,6 +139,21 @@ tasks.withType<Detekt>().configureEach {
     }
 }
 
+tasks.register<Detekt>("detektMain") {
+    description = "Runs Detekt analysis on the main Kotlin sources."
+    group = "verification"
+    buildUponDefaultConfig = true
+    config.setFrom(detektConfig)
+    setSource(
+        files(
+            "src/main/kotlin",
+            rootProject.layout.projectDirectory.dir("src/main/kotlin")
+        )
+    )
+    include("**/*.kt", "**/*.kts")
+    exclude("**/build/**", "**/.gradle/**")
+}
+
 tasks.withType<Checkstyle>().configureEach {
     reports {
         xml.required.set(true)
@@ -131,8 +161,18 @@ tasks.withType<Checkstyle>().configureEach {
     }
 }
 
+tasks.named<Checkstyle>("checkstyleMain") {
+    setDependsOn(emptyList<Any>())
+    classpath = files()
+    val sourceSets = extensions.findByType<org.gradle.api.tasks.SourceSetContainer>()
+    source = sourceSets?.named("main")?.get()?.allJava ?: fileTree(rootProject.layout.projectDirectory.dir("src/main/java")) {
+        include("**/*.java")
+        exclude("**/build/**", "**/.gradle/**")
+    }
+}
+
 tasks.named("check") {
-    dependsOn("spotlessCheck", "detekt")
+    dependsOn("spotlessCheck", "checkstyleMain", "detektMain")
 }
 
 tasks.withType<Test>().configureEach {
