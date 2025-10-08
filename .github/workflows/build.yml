@@ -13,12 +13,17 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        include:
-          - variant: ":1.21.1-neoforge"
-            stonecutter: "1.21.1-neoforge"
-          - variant: ":1.21.4-neoforge"
-            stonecutter: "1.21.4-neoforge"
-    name: Build ${{ matrix.variant }}
+        variant:
+          - 1.21.1-neoforge
+          - 1.21.2-neoforge
+          - 1.21.3-neoforge
+          - 1.21.4-neoforge
+          - 1.21.5-neoforge
+          - 1.21.6-neoforge
+          - 1.21.7-neoforge
+          - 1.21.8-neoforge
+          - 1.21.9-neoforge
+    name: Build :${{ matrix.variant }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -35,4 +40,4 @@ jobs:
           cache-disabled: true
 
       - name: Run chiseled build
-        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.stonecutter }}
+        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.variant }}
