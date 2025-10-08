@@ -203,7 +203,7 @@ class DatapackValidationTest {
                 .filter(Files::isRegularFile)
                 .filter(path -> path.toString().endsWith(".json"))
                 .collect(Collectors.toMap(
-                    path -> relativizeBase.relativize(path).toString().replace('\', '/'),
+                    path -> relativizeBase.relativize(path).toString().replace('\\', '/'),
                     DatapackValidationTest::parseJson,
                     (existing, replacement) -> replacement,
                     TreeMap::new
