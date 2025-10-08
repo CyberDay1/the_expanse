@@ -1,9 +1,14 @@
 import org.gradle.api.Project
+import org.gradle.jvm.toolchain.JavaLanguageVersion
 import java.util.Properties
 
 plugins {
     id("net.neoforged.gradle.userdev") version "7.0.190"
     id("maven-publish")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 val configurableProperties = Properties().apply {
@@ -26,35 +31,39 @@ val useMixins = project.resolveToggle("useMixins", false)
 extensions.extraProperties["enableDatagen"] = enableDatagen
 extensions.extraProperties["useMixins"] = useMixins
 
+val mcVersion = project.property("MC_VERSION").toString()
+val neoForgeVersion = project.property("NEOFORGE_VERSION").toString()
+val packFormat = project.property("PACK_FORMAT").toString()
+
 repositories {
     mavenCentral()
     maven("https://maven.neoforged.net/releases")
 }
 
 dependencies {
-    implementation("net.neoforged:neoforge:${property("NEOFORGE_VERSION")}")
+    implementation("net.neoforged:neoforge:$neoForgeVersion")
 }
 
 // Expand tokens in resources (mods.toml, pack.mcmeta, etc.)
 tasks.processResources {
     inputs.property("version", project.version)
-    inputs.property("mcVersion", property("MC_VERSION"))
-    inputs.property("neoVersion", property("NEOFORGE_VERSION"))
+    inputs.property("mcVersion", mcVersion)
+    inputs.property("neoVersion", neoForgeVersion)
 
     filesMatching("META-INF/neoforge.mods.toml") {
         expand(
             "version" to project.version,
-            "mcVersion" to property("MC_VERSION"),
-            "neoVersion" to property("NEOFORGE_VERSION")
+            "mcVersion" to mcVersion,
+            "neoVersion" to neoForgeVersion
         )
     }
 
     filesMatching("pack.mcmeta") {
         expand(
             "version" to project.version,
-            "mcVersion" to property("MC_VERSION"),
-            "neoVersion" to property("NEOFORGE_VERSION"),
-            "packFormat" to property("PACK_FORMAT")
+            "mcVersion" to mcVersion,
+            "neoVersion" to neoForgeVersion,
+            "packFormat" to packFormat
         )
     }
 }

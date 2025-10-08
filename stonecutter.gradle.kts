@@ -1,39 +1,38 @@
+import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
+import org.gradle.kotlin.dsl.getByType
 import java.util.Properties
 
-private const val DEFAULT_VARIANT = "1.21.1-neoforge"
-private val SUPPORTED_VARIANTS = listOf(
-    "1.21.1-neoforge",
-    "1.21.2-neoforge",
-    "1.21.3-neoforge",
-    "1.21.4-neoforge",
-    "1.21.5-neoforge",
-    "1.21.6-neoforge",
-    "1.21.7-neoforge",
-    "1.21.8-neoforge",
-    "1.21.9-neoforge",
-)
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
 
-private fun loadVariantProperties(name: String): Map<String, String> {
-    val properties = Properties()
-    val propertiesFile = settingsDir.resolve("versions/$name/gradle.properties")
-    require(propertiesFile.isFile) { "Missing gradle.properties for variant '$name'" }
-    propertiesFile.inputStream().use { properties.load(it) }
-    return properties.entries.associate { (key, value) ->
-        key.toString() to value.toString()
+private val DEFAULT_VARIANT = "1.21.1-neoforge"
+
+val requestedActive = providers.gradleProperty("stonecutter.active").orElse(DEFAULT_VARIANT)
+
+val stonecutter: StonecutterControllerExtension = extensions.getByType()
+
+stonecutter active requestedActive
+
+stonecutter.parameters {
+    val propertiesFile = node.project.projectDir.resolve("gradle.properties")
+    if (propertiesFile.isFile) {
+        Properties().apply {
+            propertiesFile.inputStream().use(::load)
+        }.forEach { (key, value) ->
+            node.project.extensions.extraProperties[key.toString()] = value
+        }
     }
 }
 
-stonecutter {
-    active(DEFAULT_VARIANT)
+tasks.register("chiseledBuild") {
+    group = "project"
+    description = "Builds the Stonecutter variant selected via -Pstonecutter.active (defaults to $DEFAULT_VARIANT)."
 
-    versions {
-        SUPPORTED_VARIANTS.forEach { variant ->
-            register(variant) {
-                buildscript("build.neoforge.gradle.kts")
-                loadVariantProperties(variant).forEach { (key, value) ->
-                    extra(key, value)
-                }
-            }
-        }
+    val variant = requestedActive.get()
+    checkNotNull(stonecutter.versions.find { it.project == variant }) {
+        "Unknown Stonecutter variant '$variant'."
     }
+
+    dependsOn(":$variant:build")
 }
