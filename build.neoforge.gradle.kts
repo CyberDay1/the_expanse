@@ -1,8 +1,7 @@
 import org.gradle.api.Project
 import org.gradle.api.plugins.quality.Checkstyle
-import org.gradle.api.tasks.JavaExec
-import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
@@ -69,6 +68,9 @@ repositories {
 dependencies {
     implementation("net.neoforged:neoforge:$neoForgeVersion")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("com.google.code.gson:gson:2.11.0")
 }
 
 spotless {
@@ -133,19 +135,8 @@ tasks.named("check") {
     dependsOn("spotlessCheck", "detekt")
 }
 
-val sourceSets = extensions.getByType<SourceSetContainer>()
-
-val datapackValidationTest = tasks.register<JavaExec>("datapackValidationTest") {
-    group = "verification"
-    description = "Validates Patchouli cross-link metadata for JEI HUD overlays."
-    classpath = sourceSets.named("test").get().runtimeClasspath
-    mainClass.set("com.theexpanse.datapack.DatapackValidationTest")
-    workingDir = projectDir
-    dependsOn(tasks.named("testClasses"))
-}
-
-tasks.matching { it.name == "check" }.configureEach {
-    dependsOn(datapackValidationTest)
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
 }
 
 val ciBuild = providers.environmentVariable("CI").map { it.equals("true", ignoreCase = true) }.orElse(false)
