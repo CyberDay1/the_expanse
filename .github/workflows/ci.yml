@@ -48,10 +48,12 @@ jobs:
       - name: Run static analysis
         run: ./gradlew spotlessCheck checkstyleMain detektMain -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
 
-      - name: Upload test reports on failure
-        if: failure()
+      - name: Upload test reports and worldgen snapshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ matrix.mc_version }}
-          path: build/reports/tests
-          if-no-files-found: ignore
+          name: reports-${{ matrix.mc_version }}
+          if-no-files-found: warn
+          path: |
+            build/reports/tests
+            src/main/resources/data/the_expanse/worldgen
