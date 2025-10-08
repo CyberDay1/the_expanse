@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DatapackValidationTest {
-    private static final Path PROJECT_ROOT = Paths.get("").toAbsolutePath();
+    private static final Path PROJECT_ROOT = locateProjectRoot();
     private static final Path BASE_RESOURCES = PROJECT_ROOT.resolve("src/main/resources");
     private static final Path VERSIONS_DIR = PROJECT_ROOT.resolve("versions");
 
@@ -89,7 +89,8 @@ class DatapackValidationTest {
 
         for (String variant : listVariants()) {
             Path variantResources = resolveVariantResources(variant);
-            Map<String, JsonElement> candidate = loadMergedJson(BASE_RESOURCES, variantResources, dimensionTypeRelativeRoot);
+            Map<String, JsonElement> candidate = loadMergedJson(
+                BASE_RESOURCES, variantResources, dimensionTypeRelativeRoot);
             assertEquals(baseline, candidate, () -> "Dimension type definitions diverged for " + variant);
         }
     }
@@ -137,7 +138,8 @@ class DatapackValidationTest {
             .collect(Collectors.toCollection(ArrayList::new));
 
         Assumptions.assumeFalse(oreScalingPlaced.isEmpty(),
-            "No ore_scaling placed features present under " + worldgenRelativeRoot + ". Add datapack entries to enable this validation.");
+            "No ore_scaling placed features present under " + worldgenRelativeRoot
+                + ". Add datapack entries to enable this validation.");
 
         for (Map.Entry<String, JsonElement> entry : oreScalingPlaced) {
             JsonObject placed = entry.getValue().getAsJsonObject();
@@ -217,6 +219,17 @@ class DatapackValidationTest {
         } catch (IOException exception) {
             throw new IllegalStateException("Failed to read JSON from " + path, exception);
         }
+    }
+
+    private static Path locateProjectRoot() {
+        Path current = Paths.get("").toAbsolutePath();
+        while (current != null) {
+            if (Files.exists(current.resolve("settings.gradle.kts"))) {
+                return current;
+            }
+            current = current.getParent();
+        }
+        throw new IllegalStateException("Unable to resolve project root from working directory");
     }
 
     private static Path selectDataRoot(Path resourcesRoot, Path primary, Path fallback) throws IOException {
