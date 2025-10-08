@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        variant:
+        stonecutter:
           - 1.21.1-neoforge
           - 1.21.2-neoforge
           - 1.21.3-neoforge
@@ -23,7 +23,7 @@ jobs:
           - 1.21.7-neoforge
           - 1.21.8-neoforge
           - 1.21.9-neoforge
-    name: Build :${{ matrix.variant }}
+    name: Build :${{ matrix.stonecutter }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -39,19 +39,21 @@ jobs:
         with:
           cache-disabled: true
 
-      - name: Run Gradle checks
-        run: ./gradlew --no-daemon --no-build-cache --rerun-tasks --warning-mode=fail check -Pstonecutter.active=${{ matrix.variant }}
-
       - name: Validate dependency locks
-        run: ./gradlew --no-daemon --warning-mode=fail verifyDependencyLocks -Pstonecutter.active=${{ matrix.variant }}
+        run: ./gradlew --no-daemon --warning-mode=fail verifyDependencyLocks -Pstonecutter.active=${{ matrix.stonecutter }}
 
-      - name: Upload test reports
+      - name: Run chiseled build
+        run: ./gradlew --no-daemon --warning-mode=fail chiseledBuild -Pstonecutter.active=${{ matrix.stonecutter }}
+
+      - name: Run validation checks
+        run: ./gradlew --no-daemon --warning-mode=fail check -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+
+      - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-reports-${{ matrix.variant }}
-          path: build/reports/tests
-          if-no-files-found: ignore
-
-      - name: Run chiseled build
-        run: ./gradlew --no-daemon --warning-mode=fail chiseledBuild -Pstonecutter.active=${{ matrix.variant }}
+          name: reports-${{ matrix.stonecutter }}
+          path: |
+            build/reports/tests
+            versions/${{ matrix.stonecutter }}/build/reports/tests
+            src/main/resources/data/the_expanse/worldgen
