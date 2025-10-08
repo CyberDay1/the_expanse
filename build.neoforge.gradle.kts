@@ -1,4 +1,5 @@
 import org.gradle.api.Project
+import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.tasks.JavaExec
 import org.gradle.api.tasks.SourceSetContainer
 import org.gradle.api.tasks.compile.JavaCompile
@@ -7,11 +8,15 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
+import io.gitlab.arturbosch.detekt.Detekt
 import java.util.Properties
 
 plugins {
     id("net.neoforged.gradle.userdev") version "7.0.190"
     id("maven-publish")
+    id("checkstyle")
+    id("com.diffplug.spotless") version "6.25.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
 }
 
 java {
@@ -49,6 +54,69 @@ repositories {
 
 dependencies {
     implementation("net.neoforged:neoforge:$neoForgeVersion")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
+}
+
+spotless {
+    java {
+        target("src/**/*.java")
+        licenseHeaderFile(rootProject.file("config/spotless/license-header.java"), "(package|import)")
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    kotlin {
+        target("src/**/*.kt")
+        licenseHeaderFile(rootProject.file("config/spotless/license-header.kt"), "(package|import)")
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+
+    kotlinGradle {
+        target(
+            "*.gradle.kts",
+            "buildSrc/**/*.gradle.kts",
+            "template/**/*.gradle.kts",
+            "versions/**/*.gradle.kts"
+        )
+        targetExclude("**/build/**", "**/.gradle/**")
+        indentWithSpaces(4)
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+}
+
+checkstyle {
+    toolVersion = "10.17.0"
+    configDirectory.set(rootProject.layout.projectDirectory.dir("config/checkstyle"))
+    isIgnoreFailures = false
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+}
+
+tasks.withType<Detekt>().configureEach {
+    reports {
+        html.required.set(true)
+        txt.required.set(false)
+        xml.required.set(true)
+        sarif.required.set(false)
+    }
+}
+
+tasks.withType<Checkstyle>().configureEach {
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
+}
+
+tasks.named("check") {
+    dependsOn("spotlessCheck", "detekt")
 }
 
 val sourceSets = extensions.getByType<SourceSetContainer>()
