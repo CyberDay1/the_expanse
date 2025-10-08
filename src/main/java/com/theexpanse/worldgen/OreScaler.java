@@ -4,6 +4,7 @@ import com.theexpanse.TheExpanse;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.minecraft.core.Holder;
 import net.minecraft.core.HolderSet;
@@ -20,14 +21,18 @@ import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.Mod;
+import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.AddReloadListenerEvent;
+
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MethodType;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Mod.EventBusSubscriber(modid = TheExpanse.MOD_ID, bus = Mod.EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = TheExpanse.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class OreScaler {
     private static final int NEW_MIN = -256;
     private static final int NEW_MAX = 2288;
@@ -36,7 +41,9 @@ public final class OreScaler {
     private static final int VANILLA_MAX = VANILLA_MIN + VANILLA_RANGE;
 
     private static final TagKey<PlacedFeature> ORE_TAG =
-        TagKey.create(Registries.PLACED_FEATURE, new ResourceLocation("forge", "ores"));
+        TagKey.create(Registries.PLACED_FEATURE, ResourceLocation.fromNamespaceAndPath("forge", "ores"));
+
+    private static final MethodHandle BIND_VALUE = findBindValueHandle();
 
     private OreScaler() {
     }
@@ -84,7 +91,7 @@ public final class OreScaler {
 
             if (changed) {
                 PlacedFeature replacement = new PlacedFeature(feature.feature(), List.copyOf(updated));
-                reference.bindValue(replacement);
+                bindReferenceValue(reference, replacement);
             }
         }
     }
@@ -98,7 +105,8 @@ public final class OreScaler {
     }
 
     private static HeightRangePlacement scaleHeightRange(HeightRangePlacement original) {
-        Optional<JsonElement> encoded = HeightRangePlacement.CODEC.encodeStart(JsonOps.INSTANCE, original).result();
+        Codec<HeightRangePlacement> codec = HeightRangePlacement.CODEC.codec();
+        Optional<JsonElement> encoded = codec.encodeStart(JsonOps.INSTANCE, original).result();
         if (encoded.isEmpty()) {
             return null;
         }
@@ -108,7 +116,7 @@ public final class OreScaler {
             return null;
         }
 
-        return HeightRangePlacement.CODEC.parse(JsonOps.INSTANCE, json).result().orElse(null);
+        return codec.parse(JsonOps.INSTANCE, json).result().orElse(null);
     }
 
     private static boolean scaleAnchors(JsonElement element) {
@@ -177,5 +185,24 @@ public final class OreScaler {
         double scaled = (originalY / (double) VANILLA_RANGE) * NEW_MAX;
         int rounded = (int) Math.round(scaled);
         return Mth.clamp(rounded, NEW_MIN, NEW_MAX);
+    }
+
+    private static MethodHandle findBindValueHandle() {
+        try {
+            MethodHandles.Lookup lookup = MethodHandles.privateLookupIn(
+                Holder.Reference.class, MethodHandles.lookup());
+            MethodType signature = MethodType.methodType(void.class, Object.class);
+            return lookup.findVirtual(Holder.Reference.class, "bindValue", signature);
+        } catch (NoSuchMethodException | IllegalAccessException ex) {
+            throw new IllegalStateException("Failed to access Holder.Reference#bindValue", ex);
+        }
+    }
+
+    private static void bindReferenceValue(Holder.Reference<PlacedFeature> reference, PlacedFeature replacement) {
+        try {
+            BIND_VALUE.invokeExact(reference, (Object) replacement);
+        } catch (Throwable throwable) {
+            throw new IllegalStateException("Unable to rebind placed feature", throwable);
+        }
     }
 }
