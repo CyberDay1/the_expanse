@@ -37,10 +37,13 @@ jobs:
           java-version: 21
 
       - name: Validate configuration
-        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace
+        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
 
       - name: Build with Gradle
-        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace
+        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
+
+      - name: Run validation tests
+        run: ./gradlew check -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
 
       - name: Upload test reports on failure
         if: failure()
