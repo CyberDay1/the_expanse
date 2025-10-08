@@ -19,6 +19,20 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
+
+tasks.register("verifyDependencyLocks") {
+    group = "verification"
+    description = "Ensures dependency lockfiles are up-to-date and honored."
+    doLast {
+        configurations
+            .filter { it.isCanBeResolved }
+            .forEach { it.resolve() }
+    }
+}
+
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }

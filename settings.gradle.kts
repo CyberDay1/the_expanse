@@ -16,6 +16,20 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
+gradle.settingsEvaluated {
+    if (System.getenv("CI")?.equals("true", ignoreCase = true) == true) {
+        val startParameters = gradle.startParameter
+        if (startParameters.isWriteDependencyLocks || startParameters.lockedDependenciesToUpdate.isNotEmpty()) {
+            error("Dependency lock updates are not permitted in CI runs.")
+        }
+    }
+    gradle.rootProject {
+        dependencyLocking {
+            lockAllConfigurations()
+        }
+    }
+}
+
 rootProject.name = "the_expanse"
 
 val supportedVariants = listOf(
