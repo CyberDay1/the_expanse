@@ -39,5 +39,16 @@ jobs:
         with:
           cache-disabled: true
 
+      - name: Run Gradle checks
+        run: ./gradlew --no-daemon --no-build-cache --rerun-tasks --warning-mode=fail check -Pstonecutter.active=${{ matrix.variant }}
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.variant }}
+          path: build/reports/tests
+          if-no-files-found: ignore
+
       - name: Run chiseled build
-        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.variant }}
+        run: ./gradlew --no-daemon --warning-mode=fail chiseledBuild -Pstonecutter.active=${{ matrix.variant }}

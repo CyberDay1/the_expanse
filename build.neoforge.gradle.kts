@@ -1,5 +1,12 @@
 import org.gradle.api.Project
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSetContainer
+import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
 import java.util.Properties
 
 plugins {
@@ -42,6 +49,29 @@ repositories {
 
 dependencies {
     implementation("net.neoforged:neoforge:$neoForgeVersion")
+}
+
+val sourceSets = extensions.getByType<SourceSetContainer>()
+
+val datapackValidationTest = tasks.register<JavaExec>("datapackValidationTest") {
+    group = "verification"
+    description = "Validates Patchouli cross-link metadata for JEI HUD overlays."
+    classpath = sourceSets.named("test").get().runtimeClasspath
+    mainClass.set("com.theexpanse.datapack.DatapackValidationTest")
+    workingDir = projectDir
+    dependsOn(tasks.named("testClasses"))
+}
+
+tasks.matching { it.name == "check" }.configureEach {
+    dependsOn(datapackValidationTest)
+}
+
+val ciBuild = providers.environmentVariable("CI").map { it.equals("true", ignoreCase = true) }.orElse(false)
+
+tasks.withType<JavaCompile>().configureEach {
+    if (ciBuild.orNull == true && !options.compilerArgs.contains("-Werror")) {
+        options.compilerArgs.add("-Werror")
+    }
 }
 
 // Expand tokens in resources (mods.toml, pack.mcmeta, etc.)
