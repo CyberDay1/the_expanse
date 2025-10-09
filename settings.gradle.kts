@@ -1,3 +1,8 @@
+import org.gradle.api.Action
+import org.gradle.api.artifacts.verification.DependencyVerificationMode
+import org.gradle.api.initialization.Settings
+import org.gradle.kotlin.dsl.dependencyLocking
+
 pluginManagement {
     repositories {
         gradlePluginPortal()
@@ -14,6 +19,39 @@ pluginManagement {
 
 plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
+}
+
+class DependencyVerificationSpec(private val settings: Settings) {
+    fun verify() {
+        val dependencyVerificationMethod = settings::class.java.methods.firstOrNull { method ->
+            method.name == "dependencyVerification" && method.parameterTypes.singleOrNull() == Action::class.java
+        }
+        if (dependencyVerificationMethod != null) {
+            val enableVerificationAction = object : Action<Any> {
+                override fun execute(target: Any) {
+                    val verifyMethod = target::class.java.methods.firstOrNull { method ->
+                        method.name == "verify" && method.parameterCount == 0
+                    }
+                    if (verifyMethod != null) {
+                        verifyMethod.invoke(target)
+                    } else {
+                        settings.gradle.startParameter.dependencyVerificationMode = DependencyVerificationMode.STRICT
+                    }
+                }
+            }
+            dependencyVerificationMethod.invoke(settings, enableVerificationAction)
+        } else {
+            settings.gradle.startParameter.dependencyVerificationMode = DependencyVerificationMode.STRICT
+        }
+    }
+}
+
+fun Settings.dependencyVerification(configuration: DependencyVerificationSpec.() -> Unit) {
+    DependencyVerificationSpec(this).apply(configuration)
+}
+
+dependencyVerification {
+    verify()
 }
 
 gradle.settingsEvaluated {

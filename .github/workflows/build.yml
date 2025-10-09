@@ -40,16 +40,16 @@ jobs:
           cache-disabled: true
 
       - name: Validate dependency locks
-        run: ./gradlew --no-daemon --warning-mode=fail verifyDependencyLocks -Pstonecutter.active=${{ matrix.stonecutter }}
+        run: ./gradlew --no-daemon --verify --warning-mode=fail verifyDependencyLocks -Pstonecutter.active=${{ matrix.stonecutter }}
 
       - name: Run chiseled build
-        run: ./gradlew --no-daemon --warning-mode=fail chiseledBuild -Pstonecutter.active=${{ matrix.stonecutter }}
+        run: ./gradlew --no-daemon --verify --warning-mode=fail chiseledBuild -Pstonecutter.active=${{ matrix.stonecutter }}
 
       - name: Run validation checks
-        run: ./gradlew --no-daemon --warning-mode=fail check -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+        run: ./gradlew --no-daemon --verify --warning-mode=fail check -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
 
       - name: Run datapack runtime validation
-        run: ./gradlew --no-daemon --warning-mode=fail datapackRuntimeTest -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+        run: ./gradlew --no-daemon --verify --warning-mode=fail datapackRuntimeTest -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
 
       - name: Upload reports
         if: always()
