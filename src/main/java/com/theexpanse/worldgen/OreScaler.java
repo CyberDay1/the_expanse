@@ -24,7 +24,7 @@ import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
 import net.neoforged.bus.api.Event;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.common.NeoForge;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
@@ -34,7 +34,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@EventBusSubscriber(modid = TheExpanse.MOD_ID, bus = EventBusSubscriber.Bus.GAME)
 public final class OreScaler {
     private static final int NEW_MIN = -256;
     private static final int NEW_MAX = 2288;
@@ -62,6 +61,10 @@ public final class OreScaler {
         ResourceLocation.fromNamespaceAndPath(TheExpanse.MOD_ID, "ore_scaler");
 
     private OreScaler() {
+    }
+
+    public static void register() {
+        NeoForge.EVENT_BUS.addListener(OreScaler::onReload);
     }
 
     @SubscribeEvent

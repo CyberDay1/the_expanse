@@ -9,8 +9,42 @@ permissions:
   contents: read
 
 jobs:
+  sanity:
+    name: Sanity Validation :${{ matrix.mc_version }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        mc_version:
+          - 1.21.1-neoforge
+          - 1.21.2-neoforge
+          - 1.21.3-neoforge
+          - 1.21.4-neoforge
+          - 1.21.5-neoforge
+          - 1.21.6-neoforge
+          - 1.21.7-neoforge
+          - 1.21.8-neoforge
+          - 1.21.9-neoforge
+    env:
+      STONECUTTER_DISABLE_PUBLISH: "true"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Sanity - help
+        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
+
+      - name: Sanity - chiseledBuild
+        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
+
   build:
     name: CI :${{ matrix.mc_version }}
+    needs: sanity
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -37,16 +71,16 @@ jobs:
           java-version: 21
 
       - name: Validate configuration
-        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
+        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
       - name: Build with Gradle
-        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
+        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
       - name: Run Gradle check
-        run: ./gradlew check -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace -Werror
+        run: ./gradlew check -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace -Werror --console=plain
 
       - name: Run static analysis
-        run: ./gradlew spotlessCheck checkstyleMain detektMain -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail
+        run: ./gradlew spotlessCheck checkstyleMain detektMain -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
       - name: Upload test reports and worldgen snapshots
         if: always()
