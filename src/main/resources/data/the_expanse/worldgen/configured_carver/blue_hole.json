@@ -2,10 +2,26 @@
   "type": "the_expanse:blue_hole",
   "config": {
     "probability": 0.0015,
-    "y": { "type": "minecraft:uniform", "value": { "min_inclusive": -20, "max_inclusive": 40 } },
+    "y": {
+      "type": "minecraft:uniform",
+      "min_inclusive": { "absolute": -20 },
+      "max_inclusive": { "absolute": 40 }
+    },
     "yScale": 1.0,
-    "lava_level": { "type": "minecraft:constant", "value": -54 },
-    "aquifers_enabled": true,
-    "debug_settings": { }
+    "lava_level": { "absolute": -54 },
+    "debug_settings": {},
+    "replaceable": "#minecraft:overworld_carver_replaceables",
+    "horizontal_radius_multiplier": {
+      "type": "minecraft:constant",
+      "value": 1.15
+    },
+    "vertical_radius_multiplier": {
+      "type": "minecraft:constant",
+      "value": 1.1
+    },
+    "floor_level": {
+      "type": "minecraft:constant",
+      "value": -0.6
+    }
   }
 }

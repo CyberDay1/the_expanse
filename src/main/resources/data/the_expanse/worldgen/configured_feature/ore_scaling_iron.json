@@ -6,7 +6,7 @@
     "targets": [
       {
         "target": {
-          "type": "minecraft:tag_match",
+          "predicate_type": "minecraft:tag_match",
           "tag": "minecraft:stone_ore_replaceables"
         },
         "state": {

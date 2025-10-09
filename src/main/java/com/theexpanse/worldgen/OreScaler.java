@@ -22,8 +22,6 @@ import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.levelgen.placement.HeightRangePlacement;
 import net.minecraft.world.level.levelgen.placement.PlacedFeature;
 import net.minecraft.world.level.levelgen.placement.PlacementModifier;
-import net.neoforged.bus.api.Event;
-import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.common.NeoForge;
 
 import java.lang.invoke.MethodHandle;
@@ -33,6 +31,7 @@ import java.lang.invoke.MethodType;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public final class OreScaler {
     private static final int NEW_MIN = -256;
@@ -64,19 +63,8 @@ public final class OreScaler {
     }
 
     public static void register() {
-        NeoForge.EVENT_BUS.addListener(OreScaler::onReload);
-    }
-
-    @SubscribeEvent
-    public static void onReload(Event rawEvent) {
-        if (LEGACY_EVENT_CLASS != null && LEGACY_EVENT_CLASS.isInstance(rawEvent)) {
-            handleLegacyReload(rawEvent);
-            return;
-        }
-
-        if (MODERN_EVENT_CLASS != null && MODERN_EVENT_CLASS.isInstance(rawEvent)) {
-            handleModernReload(rawEvent);
-        }
+        registerListener(MODERN_EVENT_CLASS, OreScaler::handleModernReload);
+        registerListener(LEGACY_EVENT_CLASS, OreScaler::handleLegacyReload);
     }
 
     private static void scaleOrePlacements(RegistryAccess access) {
@@ -255,6 +243,21 @@ public final class OreScaler {
             MODERN_ADD_LISTENER.invoke(rawEvent, LISTENER_ID, listener);
         } catch (Throwable throwable) {
             throw new IllegalStateException("Failed to register ore scaler reload listener", throwable);
+        }
+    }
+
+    private static void registerListener(Class<?> eventClass, Consumer<Object> handler) {
+        if (eventClass == null) {
+            return;
+        }
+
+        try {
+            var addListener = NeoForge.EVENT_BUS.getClass().getMethod("addListener", Class.class, Consumer.class);
+            @SuppressWarnings("rawtypes")
+            Consumer consumer = handler::accept;
+            addListener.invoke(NeoForge.EVENT_BUS, eventClass, consumer);
+        } catch (ReflectiveOperationException ex) {
+            throw new IllegalStateException("Failed to register reload listener for " + eventClass.getName(), ex);
         }
     }
 
