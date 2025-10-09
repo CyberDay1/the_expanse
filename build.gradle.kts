@@ -53,4 +53,9 @@ stonecutter {
         set("NEOFORGE_VERSION", "21.9.16-beta")
         set("PACK_FORMAT", "88")
     }
+    create("1.21.10-neoforge") {
+        set("MC_VERSION", "1.21.10")
+        set("NEOFORGE_VERSION", "21.10.5-beta")
+        set("PACK_FORMAT", "88")
+    }
 }
