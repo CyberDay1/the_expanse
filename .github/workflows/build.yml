@@ -55,5 +55,8 @@ jobs:
           name: reports-${{ matrix.stonecutter }}
           path: |
             build/reports/tests
+            build/test-results/test
             versions/${{ matrix.stonecutter }}/build/reports/tests
+            versions/${{ matrix.stonecutter }}/build/test-results/test
             src/main/resources/data/the_expanse/worldgen
+          if-no-files-found: ignore

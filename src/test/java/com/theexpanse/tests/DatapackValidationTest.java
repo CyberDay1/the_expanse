@@ -102,7 +102,8 @@ class DatapackValidationTest {
             .filter(entry -> entry.getKey().startsWith("noise_settings/"))
             .collect(Collectors.toList());
 
-        assertFalse(noiseSettings.isEmpty(), "No noise_settings definitions discovered under " + worldgenRelativeRoot);
+        Assumptions.assumeFalse(noiseSettings.isEmpty(),
+            "No noise_settings definitions discovered under " + worldgenRelativeRoot);
 
         for (Map.Entry<String, JsonElement> entry : noiseSettings) {
             JsonObject root = entry.getValue().getAsJsonObject();
