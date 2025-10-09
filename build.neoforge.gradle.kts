@@ -1,4 +1,6 @@
 import org.gradle.api.Project
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.GradleException
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.testing.Test
@@ -8,7 +10,13 @@ import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import io.gitlab.arturbosch.detekt.Detekt
+import net.neoforged.gradle.dsl.common.runs.run.Run
+import org.gradle.api.tasks.JavaExec
+import java.io.File
 import java.util.Properties
+import java.util.concurrent.Executors
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.atomic.AtomicBoolean
 
 plugins {
     id("net.neoforged.gradle.userdev") version "7.0.190"
@@ -59,6 +67,17 @@ extensions.extraProperties["useMixins"] = useMixins
 val mcVersion = project.property("MC_VERSION").toString()
 val neoForgeVersion = project.property("NEOFORGE_VERSION").toString()
 val packFormat = project.property("PACK_FORMAT").toString()
+
+@Suppress("UNCHECKED_CAST")
+val runs = extensions.getByName("runs") as NamedDomainObjectContainer<Run>
+val datapackRuntimeRunDir = layout.buildDirectory.dir("datapackRuntime/server")
+
+val datapackRuntimeRun = runs.register("datapackRuntime") {
+    run("server")
+    arguments.add("--nogui")
+    shouldExportToIDE(false)
+    workingDirectory(datapackRuntimeRunDir.get().asFile)
+}
 
 repositories {
     mavenCentral()
@@ -173,6 +192,148 @@ tasks.named<Checkstyle>("checkstyleMain") {
 
 tasks.named("check") {
     dependsOn("spotlessCheck", "checkstyleMain", "detektMain")
+}
+
+val datapackRuntimeLog = layout.buildDirectory.file("datapackRuntime/server/logs/datapack-runtime.log")
+
+tasks.register("datapackRuntimeTest") {
+    group = "verification"
+    description = "Starts a headless NeoForge server to validate bundled datapacks."
+    dependsOn("build", "testClasses")
+    outputs.file(datapackRuntimeLog)
+
+    doLast {
+        val runTask = project.tasks.named<JavaExec>("runDatapackRuntime").get()
+        val runDir = datapackRuntimeRunDir.get().asFile
+
+        if (runDir.exists()) {
+            runDir.deleteRecursively()
+        }
+        runDir.mkdirs()
+
+        val logsDir = File(runDir, "logs")
+        logsDir.mkdirs()
+        val logFile = datapackRuntimeLog.get().asFile
+
+        val eulaFile = File(runDir, "eula.txt")
+        eulaFile.writeText("eula=true\n")
+
+        val serverProperties = File(runDir, "server.properties")
+        serverProperties.writeText(
+            """
+                allow-flight=true
+                difficulty=peaceful
+                enable-command-block=false
+                enforce-secure-profile=false
+                gamemode=creative
+                level-name=datapack_runtime
+                max-players=1
+                motd=The Expanse Datapack Validation
+                online-mode=false
+                simulation-distance=4
+                spawn-animals=false
+                spawn-monsters=false
+                view-distance=4
+            """.trimIndent() + "\n"
+        )
+
+        val javaExecutableName = if (System.getProperty("os.name").lowercase().contains("win")) "java.exe" else "java"
+        val javaExecutable = runTask.javaLauncher.orNull?.executablePath?.asFile?.absolutePath
+            ?: runTask.executable
+            ?: File(System.getProperty("java.home"), "bin/$javaExecutableName").absolutePath
+
+        val command = mutableListOf<String>()
+        command += javaExecutable
+        command.addAll(runTask.allJvmArgs)
+        command += listOf("-cp", runTask.classpath.asPath)
+        command += runTask.mainClass.get()
+        runTask.args?.let { command.addAll(it) }
+
+        val processBuilder = ProcessBuilder(command)
+            .directory(runTask.workingDir ?: runDir)
+            .redirectErrorStream(true)
+
+        val environment = processBuilder.environment()
+        environment.putAll(runTask.environment.mapValues { it.value?.toString() ?: "" })
+
+        val process = processBuilder.start()
+        val stdinWriter = process.outputStream.bufferedWriter()
+        val stopSent = AtomicBoolean(false)
+        val failureDetected = AtomicBoolean(false)
+        val datapackFailureDetected = AtomicBoolean(false)
+
+        val readerExecutor = Executors.newSingleThreadExecutor()
+        val readerFuture = readerExecutor.submit<Unit> {
+            logFile.bufferedWriter().use { writer ->
+                process.inputStream.bufferedReader().use { reader ->
+                    while (true) {
+                        val line = reader.readLine() ?: break
+                        writer.appendLine(line)
+                        writer.flush()
+
+                        val normalized = line.lowercase()
+                        if (!stopSent.get() && normalized.contains("done") && normalized.contains("for help")) {
+                            synchronized(stdinWriter) {
+                                stdinWriter.write("stop\n")
+                                stdinWriter.flush()
+                            }
+                            stopSent.set(true)
+                        }
+
+                        if (normalized.contains("[error]") ||
+                            normalized.contains("/error]") ||
+                            normalized.contains("encountered an unexpected exception") ||
+                            normalized.contains("caught exception") ||
+                            normalized.contains("fatal") ||
+                            normalized.contains("missing required registry")
+                        ) {
+                            failureDetected.set(true)
+                        }
+
+                        if (normalized.contains("failed to reload data packs") ||
+                            normalized.contains("errors in currently selected datapacks") ||
+                            normalized.contains("couldn't load data pack") ||
+                            normalized.contains("invalid datapack")
+                        ) {
+                            datapackFailureDetected.set(true)
+                        }
+                    }
+                }
+            }
+        }
+
+        val finished = process.waitFor(180, TimeUnit.SECONDS)
+        if (!finished) {
+            if (!stopSent.get()) {
+                synchronized(stdinWriter) {
+                    stdinWriter.write("stop\n")
+                    stdinWriter.flush()
+                }
+                stopSent.set(true)
+            }
+            if (!process.waitFor(30, TimeUnit.SECONDS)) {
+                process.destroyForcibly()
+            }
+        }
+
+        readerFuture.get()
+        readerExecutor.shutdown()
+        readerExecutor.awaitTermination(30, TimeUnit.SECONDS)
+        stdinWriter.close()
+
+        val exitCode = process.exitValue()
+        if (!finished || exitCode != 0) {
+            throw GradleException("Datapack runtime server exited abnormally (code $exitCode). See log at ${logFile.absolutePath}.")
+        }
+
+        if (datapackFailureDetected.get()) {
+            throw GradleException("Datapack runtime validation reported datapack loading failures. See log at ${logFile.absolutePath}.")
+        }
+
+        if (failureDetected.get()) {
+            throw GradleException("Datapack runtime validation detected server errors. See log at ${logFile.absolutePath}.")
+        }
+    }
 }
 
 tasks.withType<Test>().configureEach {
