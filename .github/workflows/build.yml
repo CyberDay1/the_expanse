@@ -48,6 +48,9 @@ jobs:
       - name: Run validation checks
         run: ./gradlew --no-daemon --warning-mode=fail check -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
 
+      - name: Run datapack runtime validation
+        run: ./gradlew --no-daemon --warning-mode=fail datapackRuntimeTest -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -59,4 +62,12 @@ jobs:
             versions/${{ matrix.stonecutter }}/build/reports/tests
             versions/${{ matrix.stonecutter }}/build/test-results/test
             src/main/resources/data/the_expanse/worldgen
+          if-no-files-found: ignore
+
+      - name: Upload datapack runtime logs
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: datapack-runtime-logs-${{ matrix.stonecutter }}
+          path: versions/${{ matrix.stonecutter }}/build/datapackRuntime/server/logs
           if-no-files-found: ignore
