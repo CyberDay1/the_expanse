@@ -2,10 +2,40 @@
   "type": "the_expanse:massive_ravine",
   "config": {
     "probability": 0.0006,
-    "y": { "type": "minecraft:uniform", "value": { "min_inclusive": -30, "max_inclusive": 80 } },
+    "y": {
+      "type": "minecraft:uniform",
+      "min_inclusive": { "absolute": -30 },
+      "max_inclusive": { "absolute": 80 }
+    },
     "yScale": 2.5,
-    "lava_level": { "type": "minecraft:constant", "value": -54 },
-    "aquifers_enabled": true,
-    "debug_settings": { }
+    "lava_level": { "absolute": -54 },
+    "debug_settings": {},
+    "replaceable": "#minecraft:overworld_carver_replaceables",
+    "vertical_rotation": {
+      "type": "minecraft:uniform",
+      "min_inclusive": -0.05,
+      "max_exclusive": 0.05
+    },
+    "shape": {
+      "distance_factor": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 0.75,
+        "max_exclusive": 1.1
+      },
+      "thickness": {
+        "type": "minecraft:trapezoid",
+        "min": 0.0,
+        "max": 9.0,
+        "plateau": 3.0
+      },
+      "width_smoothness": 3,
+      "horizontal_radius_factor": {
+        "type": "minecraft:uniform",
+        "min_inclusive": 1.0,
+        "max_exclusive": 1.6
+      },
+      "vertical_radius_default_factor": 1.35,
+      "vertical_radius_center_factor": 0.0
+    }
   }
 }

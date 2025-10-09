@@ -8,24 +8,24 @@ import net.minecraft.world.level.levelgen.carver.CaveCarverConfiguration;
 import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
 import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import net.neoforged.neoforge.registries.RegistryObject;
 
 public final class CarverRegistry {
-    private CarverRegistry() {}
+    private CarverRegistry() { }
 
     public static final DeferredRegister<WorldCarver<?>> CARVERS =
             DeferredRegister.create(Registries.CARVER, TheExpanse.MOD_ID);
 
     // canyon-derived
-    public static final RegistryObject<WorldCarver<CanyonCarverConfiguration>> MEGA_OCEAN_RAVINE =
+    public static final DeferredHolder<WorldCarver<?>, WorldCarver<CanyonCarverConfiguration>> MEGA_OCEAN_RAVINE =
             CARVERS.register("mega_ocean_ravine", MegaOceanRavineCarver::new);
 
-    public static final RegistryObject<WorldCarver<CanyonCarverConfiguration>> MASSIVE_RAVINE =
+    public static final DeferredHolder<WorldCarver<?>, WorldCarver<CanyonCarverConfiguration>> MASSIVE_RAVINE =
             CARVERS.register("massive_ravine", MassiveRavineCarver::new);
 
     // custom vertical “blue hole”
-    public static final RegistryObject<WorldCarver<CaveCarverConfiguration>> BLUE_HOLE =
+    public static final DeferredHolder<WorldCarver<?>, WorldCarver<CaveCarverConfiguration>> BLUE_HOLE =
             CARVERS.register("blue_hole", BlueHoleCarver::new);
 
     public static void register(IEventBus modBus) {

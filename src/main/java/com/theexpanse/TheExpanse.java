@@ -1,8 +1,9 @@
 package com.theexpanse;
 
 import net.minecraft.resources.ResourceLocation;
+import net.neoforged.bus.api.IEventBus;
+import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.fml.javafmlmod.FMLJavaModLoadingContext;
 
 import com.theexpanse.worldgen.OreScaler;
 import com.theexpanse.worldgen.carver.CarverRegistry;
@@ -11,8 +12,8 @@ import com.theexpanse.worldgen.carver.CarverRegistry;
 public final class TheExpanse {
     public static final String MOD_ID = "the_expanse";
 
-    public TheExpanse() {
-        CarverRegistry.register(FMLJavaModLoadingContext.get().getModEventBus());
+    public TheExpanse(IEventBus modBus, ModContainer container) {
+        CarverRegistry.register(modBus);
         OreScaler.register();
     }
 

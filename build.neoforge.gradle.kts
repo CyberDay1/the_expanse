@@ -68,6 +68,9 @@ val mcVersion = project.property("MC_VERSION").toString()
 val neoForgeVersion = project.property("NEOFORGE_VERSION").toString()
 val packFormat = project.property("PACK_FORMAT").toString()
 
+group = "com.theexpanse"
+version = "$mcVersion-$neoForgeVersion"
+
 @Suppress("UNCHECKED_CAST")
 val runs = extensions.getByName("runs") as NamedDomainObjectContainer<Run>
 val datapackRuntimeRunDir = layout.buildDirectory.dir("datapackRuntime/server")
@@ -290,12 +293,15 @@ tasks.register("datapackRuntimeTest") {
                             stopSent.set(true)
                         }
 
-                        if (normalized.contains("[error]") ||
+                        val isIgnorableAuthlibError = normalized.contains("yggdrasilserviceskeyinfo")
+
+                        if ((normalized.contains("[error]") ||
                             normalized.contains("/error]") ||
                             normalized.contains("encountered an unexpected exception") ||
                             normalized.contains("caught exception") ||
                             normalized.contains("fatal") ||
-                            normalized.contains("missing required registry")
+                            normalized.contains("missing required registry")) &&
+                            !isIgnorableAuthlibError
                         ) {
                             failureDetected.set(true)
                         }
