@@ -2,7 +2,7 @@
 
 ## Multi-Version Builds with Stonecutter
 
-The active variant defaults to the value declared in [`stonecutter.json`](stonecutter.json). Build it with:
+The active variant defaults to the value declared in [`stonecutter.gradle.kts`](stonecutter.gradle.kts). Build it with:
 
 ```bash
 ./gradlew chiseledBuild

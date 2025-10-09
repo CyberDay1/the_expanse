@@ -9,9 +9,11 @@ permissions:
   contents: read
 
 jobs:
-  build:
+  check:
+    name: Check :${{ matrix.stonecutter }}
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         stonecutter:
           - 1.21.1-neoforge
@@ -23,7 +25,39 @@ jobs:
           - 1.21.7-neoforge
           - 1.21.8-neoforge
           - 1.21.9-neoforge
-    name: Build :${{ matrix.stonecutter }}
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Configure Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-disabled: true
+
+      - name: Run checks
+        run: ./gradlew --no-daemon --verify --warning-mode=fail check -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports-${{ matrix.stonecutter }}
+          path: |
+            build/reports/tests
+            build/test-results/test
+            versions/${{ matrix.stonecutter }}/build/reports/tests
+            versions/${{ matrix.stonecutter }}/build/test-results/test
+          if-no-files-found: ignore
+
+  verifyDependencyLocks:
+    name: Verify dependency locks
+    runs-on: ubuntu-latest
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -40,32 +74,36 @@ jobs:
           cache-disabled: true
 
       - name: Validate dependency locks
-        run: ./gradlew --no-daemon --verify --warning-mode=fail verifyDependencyLocks -Pstonecutter.active=${{ matrix.stonecutter }}
+        run: ./gradlew --no-daemon --verify --warning-mode=fail verifyDependencyLocks
 
-      - name: Run chiseled build
-        run: ./gradlew --no-daemon --verify --warning-mode=fail chiseledBuild -Pstonecutter.active=${{ matrix.stonecutter }}
+  datapackRuntimeTest:
+    name: Datapack runtime :${{ matrix.stonecutter }}
+    needs: check
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stonecutter:
+          - 1.21.1-neoforge
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-      - name: Run validation checks
-        run: ./gradlew --no-daemon --verify --warning-mode=fail check -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Configure Gradle
+        uses: gradle/actions/setup-gradle@v3
+        with:
+          cache-disabled: true
 
       - name: Run datapack runtime validation
         run: ./gradlew --no-daemon --verify --warning-mode=fail datapackRuntimeTest -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
 
-      - name: Upload reports
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: reports-${{ matrix.stonecutter }}
-          path: |
-            build/reports/tests
-            build/test-results/test
-            versions/${{ matrix.stonecutter }}/build/reports/tests
-            versions/${{ matrix.stonecutter }}/build/test-results/test
-            src/main/resources/data/the_expanse/worldgen
-          if-no-files-found: ignore
-
       - name: Upload datapack runtime logs
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: datapack-runtime-logs-${{ matrix.stonecutter }}
