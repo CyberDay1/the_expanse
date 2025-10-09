@@ -1,0 +1,14 @@
+{
+  "type": "neoforge:add_carvers",
+  "biomes": [
+    "minecraft:warm_ocean",
+    "minecraft:lukewarm_ocean",
+    "minecraft:deep_lukewarm_ocean",
+    "minecraft:deep_ocean",
+    "minecraft:deep_warm_ocean"
+  ],
+  "step": "air",
+  "carvers": [
+    "the_expanse:blue_hole"
+  ]
+}
