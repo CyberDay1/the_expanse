@@ -1,0 +1,11 @@
+{
+  "type": "the_expanse:massive_ravine",
+  "config": {
+    "probability": 0.0006,
+    "y": { "type": "minecraft:uniform", "value": { "min_inclusive": -30, "max_inclusive": 80 } },
+    "yScale": 2.5,
+    "lava_level": { "type": "minecraft:constant", "value": -54 },
+    "aquifers_enabled": true,
+    "debug_settings": { }
+  }
+}

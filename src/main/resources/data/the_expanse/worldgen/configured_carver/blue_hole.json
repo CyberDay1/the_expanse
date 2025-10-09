@@ -1,0 +1,11 @@
+{
+  "type": "the_expanse:blue_hole",
+  "config": {
+    "probability": 0.0015,
+    "y": { "type": "minecraft:uniform", "value": { "min_inclusive": -20, "max_inclusive": 40 } },
+    "yScale": 1.0,
+    "lava_level": { "type": "minecraft:constant", "value": -54 },
+    "aquifers_enabled": true,
+    "debug_settings": { }
+  }
+}

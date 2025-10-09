@@ -1,0 +1,13 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": [
+    "minecraft:warm_ocean",
+    "minecraft:lukewarm_ocean",
+    "minecraft:deep_warm_ocean",
+    "minecraft:deep_lukewarm_ocean"
+  ],
+  "features": [
+    "the_expanse:coral_in_ravines"
+  ],
+  "step": "vegetal_decoration"
+}
