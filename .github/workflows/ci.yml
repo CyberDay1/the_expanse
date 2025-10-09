@@ -37,10 +37,10 @@ jobs:
           java-version: 21
 
       - name: Sanity - help
-        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
+        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --verify --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
       - name: Sanity - chiseledBuild
-        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
+        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --verify --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
   build:
     name: CI :${{ matrix.mc_version }}
@@ -71,16 +71,16 @@ jobs:
           java-version: 21
 
       - name: Validate configuration
-        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
+        run: ./gradlew help -Pstonecutter.active=${{ matrix.mc_version }} --verify --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
       - name: Build with Gradle
-        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
+        run: ./gradlew chiseledBuild -Pstonecutter.active=${{ matrix.mc_version }} --verify --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
       - name: Run Gradle check
-        run: ./gradlew check -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace -Werror --console=plain
+        run: ./gradlew check -Pstonecutter.active=${{ matrix.mc_version }} --verify --stacktrace -Werror --console=plain
 
       - name: Run static analysis
-        run: ./gradlew spotlessCheck checkstyleMain detektMain -Pstonecutter.active=${{ matrix.mc_version }} --stacktrace --no-build-cache --warning-mode=fail --console=plain
+        run: ./gradlew spotlessCheck checkstyleMain detektMain -Pstonecutter.active=${{ matrix.mc_version }} --verify --stacktrace --no-build-cache --warning-mode=fail --console=plain
 
       - name: Upload test reports and worldgen snapshots
         if: always()
