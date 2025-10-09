@@ -199,7 +199,7 @@ val datapackRuntimeLog = layout.buildDirectory.file("datapackRuntime/server/logs
 tasks.register("datapackRuntimeTest") {
     group = "verification"
     description = "Starts a headless NeoForge server to validate bundled datapacks."
-    dependsOn("build", "testClasses")
+    dependsOn("build", "testClasses", "writeMinecraftClasspathServer", "writeMinecraftClasspathDatapackRuntime")
     outputs.file(datapackRuntimeLog)
 
     doLast {
@@ -245,9 +245,19 @@ tasks.register("datapackRuntimeTest") {
         val command = mutableListOf<String>()
         command += javaExecutable
         command.addAll(runTask.allJvmArgs)
+        command.addAll(
+            listOf(
+                "--add-opens=java.base/java.lang.invoke=ALL-UNNAMED",
+                "--add-opens=java.base/java.lang.reflect=ALL-UNNAMED",
+                "--add-opens=java.base/java.io=ALL-UNNAMED"
+            )
+        )
         command += listOf("-cp", runTask.classpath.asPath)
         command += runTask.mainClass.get()
         runTask.args?.let { command.addAll(it) }
+
+        logger.lifecycle("Datapack runtime JVM args: {}", runTask.allJvmArgs.joinToString(" "))
+        logger.lifecycle("Datapack runtime command: {}", command.joinToString(" ").take(500))
 
         val processBuilder = ProcessBuilder(command)
             .directory(runTask.workingDir ?: runDir)
@@ -393,5 +403,13 @@ if (!useMixins) {
         if (name.contains("mixin", ignoreCase = true)) {
             enabled = false
         }
+    }
+}
+
+val shouldDownloadAssets = gradle.startParameter.taskNames.any { it.contains("datapackRuntimeTest") }
+
+tasks.configureEach {
+    if (name.endsWith("DownloadAssets")) {
+        enabled = shouldDownloadAssets
     }
 }

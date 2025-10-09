@@ -36,3 +36,9 @@ tasks.register("chiseledBuild") {
 
     dependsOn(":$variant:build")
 }
+
+tasks.register("checkAllVariants") {
+    group = "verification"
+    description = "Runs the `check` task for every configured Stonecutter variant."
+    dependsOn(stonecutter.versions.map { ":${it.project}:check" })
+}
