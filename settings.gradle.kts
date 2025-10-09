@@ -80,6 +80,7 @@ val supportedVariants = listOf(
     "1.21.7-neoforge",
     "1.21.8-neoforge",
     "1.21.9-neoforge",
+    "1.21.10-neoforge",
 )
 
 val defaultVariant = "1.21.1-neoforge"
