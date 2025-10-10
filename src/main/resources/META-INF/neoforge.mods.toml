@@ -1,5 +1,5 @@
-modLoader = "javafml"
-loaderVersion = "[10,)"
+modLoader = "neoforge"
+loaderVersion = "[1.21,)"
 license = "MIT"
 
 [[mods]]
@@ -11,17 +11,16 @@ description = '''
 Expands Minecraft's world height, carvers, and ore distributions.
 '''
 
-# Dependencies
 [[dependencies.the_expanse]]
 modId = "neoforge"
 mandatory = true
-versionRange = "[${neoVersion},)"
+versionRange = "[21.1,)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.the_expanse]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[${mcVersion}]"
+versionRange = "[1.21.1,1.22)"
 ordering = "NONE"
 side = "BOTH"

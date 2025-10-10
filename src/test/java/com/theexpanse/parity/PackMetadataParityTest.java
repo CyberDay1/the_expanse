@@ -38,7 +38,7 @@ class PackMetadataParityTest {
             "No processed resources were generated for variant " + variant);
 
         validatePackMetadata(buildRoot.resolve("pack.mcmeta"), properties);
-        validateModsToml(buildRoot.resolve("META-INF/neoforge.mods.toml"), properties);
+        validateModsToml(buildRoot.resolve("META-INF/neoforge.neoforge.mods.toml"), properties);
     }
 
     private static void validatePackMetadata(Path packPath, Properties properties) throws IOException {
@@ -68,15 +68,15 @@ class PackMetadataParityTest {
 
     private static void validateModsToml(Path modsToml, Properties properties) throws IOException {
         Assumptions.assumeTrue(Files.isRegularFile(modsToml),
-            "Processed neoforge.mods.toml not found at " + modsToml);
+            "Processed neoforge.neoforge.mods.toml not found at " + modsToml);
 
         String content = Files.readString(modsToml);
-        assertFalse(content.contains("${"), "Unexpanded token detected in neoforge.mods.toml");
+        assertFalse(content.contains("${"), "Unexpanded token detected in neoforge.neoforge.mods.toml");
 
         Matcher versionMatcher = VERSION_PATTERN.matcher(content);
-        assertTrue(versionMatcher.find(), "Version entry was not located in neoforge.mods.toml");
+        assertTrue(versionMatcher.find(), "Version entry was not located in neoforge.neoforge.mods.toml");
         String version = versionMatcher.group(1).trim();
-        assertFalse(version.isBlank(), "Version in neoforge.mods.toml may not be blank");
+        assertFalse(version.isBlank(), "Version in neoforge.neoforge.mods.toml may not be blank");
 
         String mcVersion = properties.getProperty("MC_VERSION");
         String neoVersion = properties.getProperty("NEOFORGE_VERSION");

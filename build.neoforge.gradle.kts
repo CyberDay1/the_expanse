@@ -364,13 +364,13 @@ tasks.withType<JavaCompile>().configureEach {
     }
 }
 
-// Expand tokens in resources (mods.toml, pack.mcmeta, etc.)
+// Expand tokens in resources (neoforge.mods.toml, pack.mcmeta, etc.)
 tasks.processResources {
     inputs.property("version", project.version)
     inputs.property("mcVersion", mcVersion)
     inputs.property("neoVersion", neoForgeVersion)
 
-    filesMatching("META-INF/neoforge.mods.toml") {
+    filesMatching("META-INF/neoforge.neoforge.mods.toml") {
         expand(
             "version" to project.version,
             "mcVersion" to mcVersion,
