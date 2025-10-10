@@ -5,6 +5,7 @@ plugins {
 stonecutter {
     shared {
         set("JAVA_VERSION", "21")
+        set("MC_VERSION_NEXT", "1.22")
     }
     kotlin.set(false)
 
