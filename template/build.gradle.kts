@@ -1,28 +1,40 @@
-import org.gradle.api.tasks.JavaExec
 plugins {
-    id("net.neoforged.moddev") version "1.+"
     id("java")
+    id("net.neoforged.gradle") version "6.0.18"
 }
 
-group = "com.theexpanse"
-version = "0.1.0"
-base {
-    archivesName.set("the_expanse")
+// --- Apply Java 21 toolchain to mod template ---
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(21)
 }
 
-repositories {
-    mavenCentral()
+// --- Base mod metadata ---
+group = "com.cyberday"
+version = "1.0.0"
+
+// --- NeoForge configuration ---
+minecraft {
+    mappings("official", stonecutter["MC_VERSION"])
 }
 
-
-val datapackValidationTest by tasks.registering(JavaExec::class) {
-    group = "verification"
-    description = "Validates Patchouli cross-link metadata for JEI HUD overlays."
-    classpath = sourceSets["test"].runtimeClasspath
-    mainClass.set("com.theexpanse.datapack.DatapackValidationTest")
-    workingDir = project.projectDir
+dependencies {
+    implementation("net.neoforged:neoforge:${stonecutter["NEOFORGE_VERSION"]}")
 }
 
-tasks.named("check") {
-    dependsOn(datapackValidationTest)
+// --- Enforce proper jar naming after Stonecutter version injection ---
+afterEvaluate {
+    tasks.withType<Jar>().configureEach {
+        val mcVersion = project.name.substringBefore("-")
+        archiveBaseName.set("the_expanse")
+        archiveVersion.set(mcVersion)
+        destinationDirectory.set(layout.buildDirectory.dir("libs/${mcVersion}"))
+    }
+
+    // Also override the project version to keep it consistent
+    version = project.name.substringBefore("-")
 }

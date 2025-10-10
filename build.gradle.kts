@@ -2,6 +2,17 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
+// --- Global Java 21 toolchain enforcement ---
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+tasks.withType<JavaCompile>().configureEach {
+    options.release.set(21)
+}
+
+// --- Stonecutter configuration ---
 stonecutter {
     shared {
         set("JAVA_VERSION", "21")
@@ -58,5 +69,19 @@ stonecutter {
         set("MC_VERSION", "1.21.10")
         set("NEOFORGE_VERSION", "21.10.5-beta")
         set("PACK_FORMAT", "88")
+    }
+}
+
+// --- Dependency lock issue mitigation ---
+configurations.all {
+    resolutionStrategy {
+        force(
+            "io.netty:netty-transport-native-epoll:4.1.107.Final",
+            "io.netty:netty-transport:4.1.107.Final",
+            "io.netty:netty-buffer:4.1.107.Final",
+            "io.netty:netty-common:4.1.107.Final",
+            "io.netty:netty-resolver:4.1.107.Final",
+            "io.netty:netty-codec:4.1.107.Final"
+        )
     }
 }
