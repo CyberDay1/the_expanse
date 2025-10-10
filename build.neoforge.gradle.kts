@@ -89,6 +89,14 @@ repositories {
     maven("https://maven.neoforged.net/releases")
 }
 
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty") {
+            useVersion("4.1.118.Final")
+        }
+    }
+}
+
 dependencies {
     implementation("net.neoforged:neoforge:$neoForgeVersion")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
