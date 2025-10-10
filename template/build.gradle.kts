@@ -16,7 +16,7 @@ tasks.withType<JavaCompile>().configureEach {
 // --- Base mod metadata ---
 group = "com.cyberday"
 
-// Dynamically infer the version from the Stonecutter project name BEFORE NeoForge sets up
+// Dynamically infer MC version from the project name
 val mcVersion = project.name.substringBefore("-")
 version = mcVersion
 
@@ -29,11 +29,13 @@ dependencies {
     implementation("net.neoforged:neoforge:${stonecutter["NEOFORGE_VERSION"]}")
 }
 
-// --- Enforce consistent JAR naming ---
-tasks.withType<Jar>().configureEach {
-    val modName = "the_expanse"
-    val mcVersionLocal = project.name.substringBefore("-")
-    archiveBaseName.set(modName)
-    archiveVersion.set(mcVersionLocal)
-    destinationDirectory.set(layout.buildDirectory.dir("libs/$mcVersionLocal"))
+// --- Enforce consistent JAR naming (AFTER all plugins configure) ---
+gradle.projectsEvaluated {
+    tasks.withType<Jar>().configureEach {
+        val modName = "the_expanse"
+        val mcVersionLocal = project.name.substringBefore("-")
+        archiveBaseName.set(modName)
+        archiveVersion.set(mcVersionLocal)
+        destinationDirectory.set(layout.buildDirectory.dir("libs/$mcVersionLocal"))
+    }
 }
