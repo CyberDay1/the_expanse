@@ -1,6 +1,30 @@
 import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
+import dev.kikugie.stonecutter.process.SCPrepareTask
+import org.gradle.api.tasks.Copy
+import org.gradle.api.tasks.Sync
 import org.gradle.kotlin.dsl.getByType
 import java.util.Properties
+
+private val STONECUTTER_TEMPLATE_INCLUDES = listOf(
+    "**/*.java",
+    "**/*.kt",
+    "**/*.kts",
+    "**/*.groovy",
+    "**/*.gradle",
+    "**/*.scala",
+    "**/*.sc",
+    "**/*.json",
+    "**/*.json5",
+    "**/*.hjson",
+    "**/*.properties",
+    "**/*.mcmeta",
+    "**/*.toml"
+)
+
+private fun String.stonecutterSourceSet(prefix: String): String {
+    val suffix = removePrefix(prefix)
+    return if (suffix.isEmpty()) "main" else suffix.replaceFirstChar { it.lowercase() }
+}
 
 plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
@@ -22,6 +46,45 @@ stonecutter.parameters {
         }.forEach { (key, value) ->
             node.project.extensions.extraProperties[key.toString()] = value
         }
+    }
+
+    val templateRoot = node.project.rootProject.layout.projectDirectory.dir("template/src")
+
+    node.project.tasks.withType(SCPrepareTask::class.java).configureEach {
+        val sourceSet = name.stonecutterSourceSet("stonecutterPrepare")
+        val templateDir = templateRoot.dir(sourceSet)
+        if (!templateDir.asFile.exists()) {
+            return@configureEach
+        }
+
+        root.set(templateDir.asFile)
+        source.setFrom(node.project.rootProject.fileTree(templateDir) {
+            STONECUTTER_TEMPLATE_INCLUDES.forEach { include(it) }
+        })
+    }
+
+    node.project.tasks.withType(Sync::class.java).configureEach {
+        if (!name.startsWith("stonecutterGenerate")) return@configureEach
+
+        val sourceSet = name.stonecutterSourceSet("stonecutterGenerate")
+        val templateDir = templateRoot.dir(sourceSet)
+        if (!templateDir.asFile.exists()) {
+            return@configureEach
+        }
+
+        from(templateDir)
+    }
+
+    node.project.tasks.withType(Copy::class.java).configureEach {
+        if (!name.startsWith("stonecutterMerge")) return@configureEach
+
+        val sourceSet = name.stonecutterSourceSet("stonecutterMerge")
+        val templateDir = templateRoot.dir(sourceSet)
+        if (!templateDir.asFile.exists()) {
+            return@configureEach
+        }
+
+        into(templateDir)
     }
 }
 

@@ -40,6 +40,12 @@ jobs:
         with:
           cache-disabled: true
 
+      - name: Validate Gradle help
+        run: ./gradlew --no-daemon --verify --warning-mode=fail help -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+
+      - name: Build active variant
+        run: ./gradlew --no-daemon --verify --warning-mode=fail chiseledBuild -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
+
       - name: Run checks
         run: ./gradlew --no-daemon --verify --warning-mode=fail check -Pstonecutter.active=${{ matrix.stonecutter }} --stacktrace
 

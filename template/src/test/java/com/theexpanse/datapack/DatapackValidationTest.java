@@ -17,10 +17,13 @@ import java.util.stream.Stream;
  * Lightweight datapack validation to ensure JEI cross-links remain consistent.
  */
 public final class DatapackValidationTest {
-    private static final Pattern EXTRA_RECIPE_PATTERN = Pattern.compile("\\\"extra_recipe_categories\\\"\\s*:\\s*\\[(.*?)\\]", Pattern.DOTALL);
+    private static final Pattern EXTRA_RECIPE_PATTERN = Pattern.compile(
+        "\\\"extra_recipe_categories\\\"\\s*:\\s*\\[(.*?)\\]",
+        Pattern.DOTALL);
     private static final Pattern OVERLAY_KEY_PATTERN = Pattern.compile("\\\"jei:cyclic:hud_overlay\\\"");
     private static final Pattern TRANSLATION_KEY_PATTERN = Pattern.compile("cyclic\\.overlay\\.patchouli\\.link");
-    private static final Pattern LANG_ENTRY_PATTERN = Pattern.compile("\\\"cyclic\\.overlay\\.patchouli\\.link\\\"\\s*:\\s*\\\"[^\\\"]+\\\"");
+    private static final Pattern LANG_ENTRY_PATTERN = Pattern.compile(
+        "\\\"cyclic\\.overlay\\.patchouli\\.link\\\"\\s*:\\s*\\\"[^\\\"]+\\\"");
 
     private DatapackValidationTest() {
     }
@@ -57,10 +60,12 @@ public final class DatapackValidationTest {
             throw new IllegalStateException("Missing localization for cyclic.overlay.patchouli.link in " + langFile);
         }
         if (langCount > 1) {
-            throw new IllegalStateException("Duplicate localization keys for cyclic.overlay.patchouli.link in " + langFile);
+            throw new IllegalStateException("Duplicate localization keys for cyclic.overlay.patchouli.link in "
+                + langFile);
         }
 
-        System.out.println("DatapackValidationTest: " + machineEntries.size() + " machine overlay entries validated successfully.");
+        System.out.println("DatapackValidationTest: " + machineEntries.size()
+            + " machine overlay entries validated successfully.");
     }
 
     private static void validateEntry(Path entry) throws IOException {

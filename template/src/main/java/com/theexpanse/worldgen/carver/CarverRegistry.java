@@ -3,13 +3,16 @@ package com.theexpanse.worldgen.carver;
 import com.theexpanse.TheExpanse;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.levelgen.carver.*;
+import net.minecraft.world.level.levelgen.carver.CanyonCarverConfiguration;
+import net.minecraft.world.level.levelgen.carver.CarverConfiguration;
+import net.minecraft.world.level.levelgen.carver.ConfiguredWorldCarver;
+import net.minecraft.world.level.levelgen.carver.WorldCarver;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 public final class CarverRegistry {
-    private CarverRegistry() {}
+    private CarverRegistry() { }
 
     // Create the main carver registry for this mod
     public static final DeferredRegister<WorldCarver<?>> CARVERS =

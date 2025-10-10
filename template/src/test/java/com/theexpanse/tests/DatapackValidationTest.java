@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DatapackValidationTest {
     private static final Path PROJECT_ROOT = locateProjectRoot();
-    private static final Path BASE_RESOURCES = PROJECT_ROOT.resolve("src/main/resources");
+    private static final Path BASE_RESOURCES = PROJECT_ROOT.resolve("template/src/main/resources");
     private static final Path VERSIONS_DIR = PROJECT_ROOT.resolve("versions");
 
     private static Path worldgenRelativeRoot;
