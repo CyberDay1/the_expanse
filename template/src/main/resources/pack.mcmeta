@@ -1,0 +1,8 @@
+{
+  "pack": {
+    "pack_format": ${PACK_FORMAT},
+    "min_format": ${PACK_FORMAT},
+    "max_format": ${PACK_FORMAT},
+    "description": "The Expanse v${MOD_VERSION} (Minecraft ${MC_VERSION}, NeoForge ${NEOFORGE_VERSION})"
+  }
+}

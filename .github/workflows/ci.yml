@@ -90,4 +90,4 @@ jobs:
           if-no-files-found: warn
           path: |
             build/reports/tests
-            src/main/resources/data/the_expanse/worldgen
+            template/src/main/resources/data/the_expanse/worldgen

@@ -67,9 +67,10 @@ extensions.extraProperties["useMixins"] = useMixins
 val mcVersion = project.property("MC_VERSION").toString()
 val neoForgeVersion = project.property("NEOFORGE_VERSION").toString()
 val packFormat = project.property("PACK_FORMAT").toString()
+val modVersion = project.property("MOD_VERSION").toString()
 
 group = "com.theexpanse"
-version = "$mcVersion-$neoForgeVersion"
+version = modVersion
 
 @Suppress("UNCHECKED_CAST")
 val runs = extensions.getByName("runs") as NamedDomainObjectContainer<Run>
@@ -97,7 +98,7 @@ dependencies {
 
 spotless {
     java {
-        target("src/**/*.java", "${rootProject.projectDir}/src/**/*.java")
+        target("template/src/**/*.java", "${rootProject.projectDir}/template/src/**/*.java")
         licenseHeaderFile(rootProject.file("config/spotless/license-header.java"), "(package|import)")
         googleJavaFormat("1.17.0")
         removeUnusedImports()
@@ -107,7 +108,7 @@ spotless {
     }
 
     kotlin {
-        target("src/**/*.kt", "${rootProject.projectDir}/src/**/*.kt")
+        target("template/src/**/*.kt", "${rootProject.projectDir}/template/src/**/*.kt")
         licenseHeaderFile(rootProject.file("config/spotless/license-header.kt"), "(package|import)")
         ktlint().editorConfigOverride(
             mapOf(
@@ -168,8 +169,8 @@ tasks.register<Detekt>("detektMain") {
     config.setFrom(detektConfig)
     setSource(
         files(
-            "src/main/kotlin",
-            rootProject.layout.projectDirectory.dir("src/main/kotlin")
+            "template/src/main/kotlin",
+            rootProject.layout.projectDirectory.dir("template/src/main/kotlin")
         )
     )
     include("**/*.kt", "**/*.kts")
@@ -187,7 +188,7 @@ tasks.named<Checkstyle>("checkstyleMain") {
     setDependsOn(emptyList<Any>())
     classpath = files()
     val sourceSets = extensions.findByType<org.gradle.api.tasks.SourceSetContainer>()
-    source = sourceSets?.named("main")?.get()?.allJava ?: fileTree(rootProject.layout.projectDirectory.dir("src/main/java")) {
+    source = sourceSets?.named("main")?.get()?.allJava ?: fileTree(rootProject.layout.projectDirectory.dir("template/src/main/java")) {
         include("**/*.java")
         exclude("**/build/**", "**/.gradle/**")
     }
@@ -366,24 +367,29 @@ tasks.withType<JavaCompile>().configureEach {
 
 // Expand tokens in resources (neoforge.mods.toml, pack.mcmeta, etc.)
 tasks.processResources {
-    inputs.property("version", project.version)
+    inputs.property("modVersion", modVersion)
     inputs.property("mcVersion", mcVersion)
     inputs.property("neoVersion", neoForgeVersion)
+    inputs.property("packFormat", packFormat)
 
-    filesMatching("META-INF/neoforge.neoforge.mods.toml") {
+    filesMatching("META-INF/neoforge.mods.toml") {
         expand(
-            "version" to project.version,
-            "mcVersion" to mcVersion,
-            "neoVersion" to neoForgeVersion
+            mapOf(
+                "MOD_VERSION" to modVersion,
+                "MC_VERSION" to mcVersion,
+                "NEOFORGE_VERSION" to neoForgeVersion
+            )
         )
     }
 
     filesMatching("pack.mcmeta") {
         expand(
-            "version" to project.version,
-            "mcVersion" to mcVersion,
-            "neoVersion" to neoForgeVersion,
-            "packFormat" to packFormat
+            mapOf(
+                "MOD_VERSION" to modVersion,
+                "MC_VERSION" to mcVersion,
+                "NEOFORGE_VERSION" to neoForgeVersion,
+                "PACK_FORMAT" to packFormat
+            )
         )
     }
 }

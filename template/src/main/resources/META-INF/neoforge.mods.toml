@@ -1,10 +1,10 @@
 modLoader = "neoforge"
-loaderVersion = "[1.21,)"
+loaderVersion = "[${NEOFORGE_VERSION},)"
 license = "MIT"
 
 [[mods]]
 modId = "the_expanse"
-version = "${version}"
+version = "${MOD_VERSION}"
 displayName = "The Expanse"
 authors = "CyberDay1"
 description = '''
@@ -14,13 +14,14 @@ Expands Minecraft's world height, carvers, and ore distributions.
 [[dependencies.the_expanse]]
 modId = "neoforge"
 mandatory = true
-versionRange = "[21.1,)"
+versionRange = "[${NEOFORGE_VERSION},)"
 ordering = "NONE"
 side = "BOTH"
 
 [[dependencies.the_expanse]]
 modId = "minecraft"
 mandatory = true
-versionRange = "[1.21.1,1.22)"
+# // TODO migrate placeholder for minecraft upper bound once future target is known
+versionRange = "[${MC_VERSION},1.22)"
 ordering = "NONE"
 side = "BOTH"

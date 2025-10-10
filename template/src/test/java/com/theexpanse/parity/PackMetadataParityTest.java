@@ -80,11 +80,17 @@ class PackMetadataParityTest {
 
         String mcVersion = properties.getProperty("MC_VERSION");
         String neoVersion = properties.getProperty("NEOFORGE_VERSION");
+        String modVersion = properties.getProperty("MOD_VERSION");
         assertNotNull(mcVersion, "MC_VERSION property is not defined for the active variant");
         assertNotNull(neoVersion, "NEOFORGE_VERSION property is not defined for the active variant");
+        assertNotNull(modVersion, "MOD_VERSION property is not defined for the active variant");
 
-        assertTrue(content.contains("versionRange = \"[" + mcVersion + "]\""),
-            "Minecraft dependency range did not match variant value");
+        assertEquals(modVersion, version,
+            "Processed mods.toml did not contain the configured MOD_VERSION");
+        assertTrue(content.contains("loaderVersion = \"[" + neoVersion + ",)\""),
+            "Loader version did not match the NeoForge version");
+        assertTrue(content.contains("versionRange = \"[" + mcVersion + ","),
+            "Minecraft dependency range did not include the configured MC_VERSION");
         assertTrue(content.contains("versionRange = \"[" + neoVersion + ",)\""),
             "NeoForge dependency range did not match variant value");
     }
