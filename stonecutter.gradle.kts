@@ -30,7 +30,7 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
-private val DEFAULT_VARIANT = "1.21.1-neoforge"
+private val DEFAULT_VARIANT = "1.21.1"
 
 val requestedActive = providers.gradleProperty("stonecutter.active").orElse(DEFAULT_VARIANT)
 
@@ -53,9 +53,7 @@ stonecutter.parameters {
     node.project.tasks.withType(SCPrepareTask::class.java).configureEach {
         val sourceSet = name.stonecutterSourceSet("stonecutterPrepare")
         val templateDir = templateRoot.dir(sourceSet)
-        if (!templateDir.asFile.exists()) {
-            return@configureEach
-        }
+        if (!templateDir.asFile.exists()) return@configureEach
 
         root.set(templateDir.asFile)
         source.setFrom(node.project.rootProject.fileTree(templateDir) {
@@ -68,9 +66,7 @@ stonecutter.parameters {
 
         val sourceSet = name.stonecutterSourceSet("stonecutterGenerate")
         val templateDir = templateRoot.dir(sourceSet)
-        if (!templateDir.asFile.exists()) {
-            return@configureEach
-        }
+        if (!templateDir.asFile.exists()) return@configureEach
 
         from(templateDir)
     }
@@ -80,9 +76,7 @@ stonecutter.parameters {
 
         val sourceSet = name.stonecutterSourceSet("stonecutterMerge")
         val templateDir = templateRoot.dir(sourceSet)
-        if (!templateDir.asFile.exists()) {
-            return@configureEach
-        }
+        if (!templateDir.asFile.exists()) return@configureEach
 
         into(templateDir)
     }
