@@ -3,24 +3,25 @@ plugins {
     id("net.neoforged.gradle") version "6.0.18"
 }
 
-// --- Apply Java 21 toolchain to mod template ---
+// ───────────────────────────────
+//  Java toolchain
+// ───────────────────────────────
 java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
-    }
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(21)
 }
 
-// --- Base mod metadata ---
+// ───────────────────────────────
+//  Base mod metadata
+// ───────────────────────────────
 group = "com.cyberday"
+version = "1.0.0" // overridden later
 
-// Dynamically infer MC version from the project name
-val mcVersion = project.name.substringBefore("-")
-version = mcVersion
-
-// --- NeoForge configuration ---
+// ───────────────────────────────
+//  NeoForge setup
+// ───────────────────────────────
 minecraft {
     mappings("official", stonecutter["MC_VERSION"])
 }
@@ -29,13 +30,34 @@ dependencies {
     implementation("net.neoforged:neoforge:${stonecutter["NEOFORGE_VERSION"]}")
 }
 
-// --- Enforce consistent JAR naming (AFTER all plugins configure) ---
-gradle.projectsEvaluated {
-    tasks.withType<Jar>().configureEach {
-        val modName = "the_expanse"
-        val mcVersionLocal = project.name.substringBefore("-")
-        archiveBaseName.set(modName)
-        archiveVersion.set(mcVersionLocal)
-        destinationDirectory.set(layout.buildDirectory.dir("libs/$mcVersionLocal"))
+// ───────────────────────────────
+//  Custom JAR task (per-version)
+// ───────────────────────────────
+tasks.register<Jar>("assembleMod") {
+    val mcVersion = stonecutter["MC_VERSION"]
+    val modName = "the_expanse"
+
+    group = "build"
+    description = "Assembles the $modName mod JAR for Minecraft $mcVersion."
+
+    from(sourceSets.main.get().output)
+
+    // Set clean naming
+    archiveBaseName.set(modName)
+    archiveVersion.set(mcVersion)
+    destinationDirectory.set(layout.buildDirectory.dir("libs/final"))
+
+    manifest {
+        attributes(
+            "Implementation-Title" to modName,
+            "Implementation-Version" to mcVersion,
+            "Specification-Title" to "Minecraft Mod",
+            "Specification-Version" to "NeoForge"
+        )
     }
+}
+
+// Run our custom JAR after standard build
+tasks.named("build").configure {
+    finalizedBy("assembleMod")
 }
