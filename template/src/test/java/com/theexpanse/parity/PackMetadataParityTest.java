@@ -79,9 +79,11 @@ class PackMetadataParityTest {
         assertFalse(version.isBlank(), "Version in neoforge.neoforge.mods.toml may not be blank");
 
         String mcVersion = properties.getProperty("MC_VERSION");
+        String mcVersionNext = properties.getProperty("MC_VERSION_NEXT");
         String neoVersion = properties.getProperty("NEOFORGE_VERSION");
         String modVersion = properties.getProperty("MOD_VERSION");
         assertNotNull(mcVersion, "MC_VERSION property is not defined for the active variant");
+        assertNotNull(mcVersionNext, "MC_VERSION_NEXT property is not defined for the active variant");
         assertNotNull(neoVersion, "NEOFORGE_VERSION property is not defined for the active variant");
         assertNotNull(modVersion, "MOD_VERSION property is not defined for the active variant");
 
@@ -91,7 +93,15 @@ class PackMetadataParityTest {
             "Loader version did not match the NeoForge version");
         assertTrue(content.contains("versionRange = \"[" + mcVersion + ","),
             "Minecraft dependency range did not include the configured MC_VERSION");
+        assertTrue(
+            content.contains("," + mcVersionNext + ")\""),
+            "Minecraft upper version did not match MC_VERSION_NEXT"
+        );
         assertTrue(content.contains("versionRange = \"[" + neoVersion + ",)\""),
             "NeoForge dependency range did not match variant value");
+
+        System.out.println(
+            "Verified Minecraft version range: [" + mcVersion + "," + mcVersionNext + ")"
+        );
     }
 }

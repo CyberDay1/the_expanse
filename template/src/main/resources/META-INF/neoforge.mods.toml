@@ -21,7 +21,6 @@ side = "BOTH"
 [[dependencies.the_expanse]]
 modId = "minecraft"
 mandatory = true
-# // TODO migrate placeholder for minecraft upper bound once future target is known
-versionRange = "[${MC_VERSION},1.22)"
+versionRange = "[${MC_VERSION},${MC_VERSION_NEXT})"
 ordering = "NONE"
 side = "BOTH"

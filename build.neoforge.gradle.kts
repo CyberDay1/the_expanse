@@ -65,6 +65,7 @@ extensions.extraProperties["enableDatagen"] = enableDatagen
 extensions.extraProperties["useMixins"] = useMixins
 
 val mcVersion = project.property("MC_VERSION").toString()
+val mcVersionNext = project.property("MC_VERSION_NEXT").toString()
 val neoForgeVersion = project.property("NEOFORGE_VERSION").toString()
 val packFormat = project.property("PACK_FORMAT").toString()
 val modVersion = project.property("MOD_VERSION").toString()
@@ -369,6 +370,7 @@ tasks.withType<JavaCompile>().configureEach {
 tasks.processResources {
     inputs.property("modVersion", modVersion)
     inputs.property("mcVersion", mcVersion)
+    inputs.property("mcVersionNext", mcVersionNext)
     inputs.property("neoVersion", neoForgeVersion)
     inputs.property("packFormat", packFormat)
 
@@ -377,6 +379,7 @@ tasks.processResources {
             mapOf(
                 "MOD_VERSION" to modVersion,
                 "MC_VERSION" to mcVersion,
+                "MC_VERSION_NEXT" to mcVersionNext,
                 "NEOFORGE_VERSION" to neoForgeVersion
             )
         )
