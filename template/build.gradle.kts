@@ -1,3 +1,10 @@
+// ─────────────────────────────────────────────────────────────
+// Hook root build to build.neoforge.gradle.kts
+// ─────────────────────────────────────────────────────────────
+apply(from = "build.neoforge.gradle.kts")
+
+
+
 plugins {
     id("java")
     id("net.neoforged.gradle") version "6.0.18"
