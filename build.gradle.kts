@@ -1,2 +1,2 @@
-// Root build file — delegates to NeoForge build script
-apply(from = "build.neoforge.gradle.kts")
+﻿// Root build file — delegates to NeoForge build logic
+apply(from = \"build.neoforge.gradle.kts\")

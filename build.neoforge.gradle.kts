@@ -1,142 +1,260 @@
-// ─────────────────────────────────────────────
-// Root-only tasks: Safe Deep Clean, Assemble All Mods, Fast Rebuild
-// ─────────────────────────────────────────────
-if (project == rootProject) {
+import org.gradle.api.Project
+import org.gradle.api.NamedDomainObjectContainer
+import org.gradle.api.GradleException
+import org.gradle.api.plugins.quality.Checkstyle
+import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
+import org.gradle.jvm.toolchain.JavaLanguageVersion
+import org.gradle.kotlin.dsl.findByType
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.withType
+import io.gitlab.arturbosch.detekt.Detekt
+import net.neoforged.gradle.dsl.common.runs.run.Run
+import org.gradle.api.tasks.JavaExec
+import org.gradle.jvm.tasks.Jar
+import java.io.File
+import java.util.Properties
 
-    // ─────────────────────────────────────────────
-    // Safe Deep Clean (preserves version folders)
-    // ─────────────────────────────────────────────
-    tasks.register("deepClean") {
-        group = "build"
-        description = "Safely removes Gradle caches and build outputs without deleting version folders or configs."
+plugins {
+    id("net.neoforged.gradle.userdev") version "7.0.190"
+    id("maven-publish")
+    id("checkstyle")
+    id("com.diffplug.spotless") version "6.25.0"
+    id("io.gitlab.arturbosch.detekt") version "1.23.6"
+}
 
-        doLast {
-            // Root-level cleanup targets
-            val rootTargets = listOf(
-                rootProject.file(".gradle"),
-                rootProject.file("build"),
-                rootProject.file("out"),
-                rootProject.file("logs")
+dependencyLocking { lockAllConfigurations() }
+
+tasks.register("verifyDependencyLocks") {
+    group = "verification"
+    description = "Ensures dependency lockfiles are up-to-date and honored."
+    doLast { configurations.filter { it.isCanBeResolved }.forEach { it.resolve() } }
+}
+
+java { toolchain.languageVersion.set(JavaLanguageVersion.of(21)) }
+
+// ─── Configurable properties ─────────────────────────────────────
+val configurableProperties = Properties().apply {
+    val configFile = rootProject.file("configurable.properties")
+    if (configFile.exists()) configFile.inputStream().use { load(it) }
+}
+
+fun Project.resolveToggle(key: String, default: Boolean): Boolean {
+    val cliOverride = findProperty(key)?.toString()?.lowercase()
+    val fileValue = configurableProperties.getProperty(key)?.lowercase()
+    val resolved = cliOverride ?: fileValue
+    return resolved?.let { it == "true" } ?: default
+}
+
+val enableDatagen = project.resolveToggle("enableDatagen", true)
+val useMixins = project.resolveToggle("useMixins", false)
+extensions.extraProperties["enableDatagen"] = enableDatagen
+extensions.extraProperties["useMixins"] = useMixins
+
+// ─── Metadata ─────────────────────────────────────────────────────
+val mcVersion = project.findProperty("MC_VERSION")?.toString() ?: "unspecified"
+val mcVersionNext = project.findProperty("MC_VERSION_NEXT")?.toString() ?: "unspecified"
+val neoForgeVersion = project.findProperty("NEOFORGE_VERSION")?.toString() ?: "unspecified"
+val packFormat = project.findProperty("PACK_FORMAT")?.toString() ?: "0"
+val modVersion = project.findProperty("MOD_VERSION")?.toString() ?: "0.0.0"
+val loaderTag = "neoforge"
+
+group = "com.theexpanse"
+version = modVersion
+
+@Suppress("UNCHECKED_CAST")
+val runs = extensions.getByName("runs") as NamedDomainObjectContainer<Run>
+val datapackRuntimeRunDir = layout.buildDirectory.dir("datapackRuntime/server")
+
+runs.register("datapackRuntime") {
+    run("server")
+    arguments.add("--nogui")
+    shouldExportToIDE(false)
+    workingDirectory(datapackRuntimeRunDir.get().asFile)
+}
+
+// ─── Dependencies ──────────────────────────────────────────────────
+repositories {
+    mavenCentral()
+    maven("https://maven.neoforged.net/releases")
+    maven("https://repo.spongepowered.org/maven")
+}
+
+dependencies {
+    implementation("org.spongepowered:mixin:0.15.2") {
+        isTransitive = false
+    }
+}
+
+configurations.all {
+    resolutionStrategy.eachDependency {
+        if (requested.group == "io.netty") useVersion("4.1.118.Final")
+    }
+}
+
+dependencies {
+    implementation("net.neoforged:neoforge:$neoForgeVersion")
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("com.google.code.gson:gson:2.11.0")
+}
+
+// ─── Code Quality ──────────────────────────────────────────────────
+spotless {
+    java {
+        target("template/src/**/*.java")
+        googleJavaFormat("1.17.0")
+        removeUnusedImports()
+        importOrder("", "java", "javax", "org", "com")
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
+    kotlinGradle {
+        target("*.gradle.kts", "../*.gradle.kts", "template/**/*.gradle.kts", "versions/**/*.gradle.kts")
+        ktlint()
+    }
+}
+
+checkstyle {
+    toolVersion = "10.17.0"
+    configDirectory.set(rootProject.layout.projectDirectory.dir("config/checkstyle"))
+    isIgnoreFailures = false
+}
+
+detekt {
+    buildUponDefaultConfig = true
+    config.setFrom(rootProject.files("config/detekt/detekt.yml"))
+}
+
+tasks.withType<Detekt>().configureEach {
+    reports { html.required.set(true); xml.required.set(true) }
+}
+
+// ─── Resource Token Expansion (safe fallback) ─────────────────────
+tasks.processResources {
+    val modVersion = project.findProperty("MOD_VERSION")?.toString() ?: "0.0.0"
+    val mcVersion = project.findProperty("MC_VERSION")?.toString() ?: "unknown"
+    val neoForgeVersion = project.findProperty("NEOFORGE_VERSION")?.toString() ?: "?"
+    val packFormat = project.findProperty("PACK_FORMAT")?.toString() ?: "0"
+    val mcVersionNext = project.findProperty("MC_VERSION_NEXT")?.toString() ?: "unspecified"
+
+    filesMatching("META-INF/neoforge.mods.toml") {
+        expand(
+            mapOf(
+                "MOD_VERSION" to modVersion,
+                "MC_VERSION" to mcVersion,
+                "MC_VERSION_NEXT" to mcVersionNext,
+                "NEOFORGE_VERSION" to neoForgeVersion
             )
-
-            // Internal build outputs inside each version folder
-            val versionBuilds = rootProject.file("versions")
-                .listFiles()
-                ?.filter { it.isDirectory }
-                ?.flatMap { versionDir ->
-                    listOf(
-                        File(versionDir, "build"),
-                        File(versionDir, ".gradle"),
-                        File(versionDir, "out")
-                    )
-                } ?: emptyList()
-
-            // Combine and delete
-            val allTargets = rootTargets + versionBuilds
-
-            println("🧹 Starting safe deep clean...")
-            allTargets.forEach { dir ->
-                if (dir.exists()) {
-                    println("   - Deleting ${dir.absolutePath}")
-                    dir.deleteRecursively()
-                }
-            }
-
-            println("✅ Safe deep clean complete. Version source folders preserved.")
-        }
+        )
     }
 
-    // ─────────────────────────────────────────────
-    // Assemble All Mods (full clean + multi-version build)
-    // ─────────────────────────────────────────────
-    tasks.register("assembleAllMods") {
-        group = "build"
-        description = "Performs a safe deep clean and then builds all Stonecutter version variants of The Expanse."
+    filesMatching("pack.mcmeta") {
+        expand(
+            mapOf(
+                "MOD_VERSION" to modVersion,
+                "MC_VERSION" to mcVersion,
+                "MC_VERSION_NEXT" to mcVersionNext,
+                "NEOFORGE_VERSION" to neoForgeVersion,
+                "PACK_FORMAT" to packFormat
+            )
+        )
+    }
+}
 
-        // Optional CLI override: -PskipClean=true
-        val skipClean = project.findProperty("skipClean")?.toString()?.equals("true", true) == true
-        if (!skipClean) dependsOn(rootProject.tasks.named("deepClean"))
+// ─── Jar Naming ────────────────────────────────────────────────────
+tasks.withType<Jar>().configureEach {
+    val modName = "the_expanse"
+    val mcVersionTag = project.findProperty("MC_VERSION")?.toString()
+        ?: project.name.substringBefore("-")
 
-        doLast {
-            val subprojectsToBuild = rootProject.subprojects.filter {
-                it.name.matches(Regex("""\d+\.\d+(\.\d+)?"""))
-            }
+    archiveBaseName.set("$modName-$loaderTag")
+    archiveVersion.set(mcVersionTag)
+    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs/final"))
 
-            val isWindows = System.getProperty("os.name").lowercase().contains("win")
-            val gradlewCmd = if (isWindows) "gradlew.bat" else "./gradlew"
-            val finalDir = rootProject.layout.buildDirectory.dir("libs/final").get().asFile
-
-            println("🚀 Starting builds for ${subprojectsToBuild.size} versions...")
-            subprojectsToBuild.parallelStream().forEach { sub ->
-                val result = project.providers.exec {
-                    if (isWindows)
-                        commandLine("cmd", "/c", gradlewCmd, ":${sub.name}:assembleMod", "--no-daemon")
-                    else
-                        commandLine("bash", "-c", "$gradlewCmd :${sub.name}:assembleMod --no-daemon")
-
-                    workingDir(rootProject.projectDir)
-                }.result.get()
-
-                if (result.exitValue != 0) {
-                    println("❌ Failed to build ${sub.name}, skipping...")
-                } else {
-                    val buildDir = File(sub.projectDir, "build/libs/final")
-                    if (buildDir.exists()) {
-                        buildDir.listFiles { f -> f.extension == "jar" }?.forEach { jar ->
-                            val dest = File(finalDir, jar.name)
-                            jar.copyTo(dest, overwrite = true)
-                            println("📦 Copied ${jar.name} → ${dest.path}")
-                        }
-                    }
-                }
-            }
-
-            println("✅ All possible builds complete! Check build/libs/final/")
+    doLast {
+        val outFile = archiveFile.get().asFile
+        val renamed = File(destinationDirectory.get().asFile, "$modName-$loaderTag-$mcVersionTag.jar")
+        if (outFile.exists() && outFile.name != renamed.name) {
+            outFile.copyTo(renamed, overwrite = true)
+            outFile.delete()
+            println("✅ Renamed ${outFile.name} → ${renamed.name}")
         }
     }
+}
 
-    // ─────────────────────────────────────────────
-    // Fast Rebuild (no clean, just rebuild)
-    // ─────────────────────────────────────────────
-    tasks.register("fastRebuild") {
-        group = "build"
-        description = "Rebuilds all Stonecutter subprojects without cleaning or removing caches."
+tasks.register("assembleMod") {
+    group = "build"
+    description = "Assembles the The Expanse mod JAR with clean naming"
+    dependsOn("jar")
+}
 
-        doLast {
-            val subprojectsToBuild = rootProject.subprojects.filter {
-                it.name.matches(Regex("""\d+\.\d+(\.\d+)?"""))
+// ───────────────────────────────────────────────
+// Deep clean task (safe version)
+// ───────────────────────────────────────────────
+tasks.register("deepClean") {
+    group = "maintenance"
+    description = "Removes Gradle caches, build outputs, and temporary files safely."
+
+    doLast {
+        val targets = listOf(
+            ".gradle",
+            "build",
+            "stonecutter-cache"
+        ) + file("versions").listFiles()?.map { "${it.path}/build" }.orEmpty()
+
+        targets.forEach { path ->
+            val f = file(path)
+            if (f.exists()) {
+                println("🧹 Deleting ${f.absolutePath}")
+                f.deleteRecursively()
             }
-
-            val isWindows = System.getProperty("os.name").lowercase().contains("win")
-            val gradlewCmd = if (isWindows) "gradlew.bat" else "./gradlew"
-            val finalDir = rootProject.layout.buildDirectory.dir("libs/final").get().asFile
-
-            println("⚡ Fast rebuild: skipping clean. Building modified versions...")
-            subprojectsToBuild.parallelStream().forEach { sub ->
-                val result = project.providers.exec {
-                    if (isWindows)
-                        commandLine("cmd", "/c", gradlewCmd, ":${sub.name}:build", "--no-daemon", "--parallel")
-                    else
-                        commandLine("bash", "-c", "$gradlewCmd :${sub.name}:build --no-daemon --parallel")
-
-                    workingDir(rootProject.projectDir)
-                }.result.get()
-
-                if (result.exitValue != 0) {
-                    println("❌ Failed to rebuild ${sub.name}, skipping...")
-                } else {
-                    val buildDir = File(sub.projectDir, "build/libs/final")
-                    if (buildDir.exists()) {
-                        buildDir.listFiles { f -> f.extension == "jar" }?.forEach { jar ->
-                            val dest = File(finalDir, jar.name)
-                            jar.copyTo(dest, overwrite = true)
-                            println("📦 Updated ${jar.name} → ${dest.path}")
-                        }
-                    }
-                }
-            }
-
-            println("✅ Fast rebuild complete! JARs available in build/libs/final/")
         }
+        println("✅ Deep clean complete.")
+    }
+}
+
+// ───────────────────────────────────────────────
+// Global assembleAllMods task (root-safe)
+// ───────────────────────────────────────────────
+tasks.register("assembleAllMods") {
+    group = "build"
+    description = "Runs deep clean, then builds all Stonecutter NeoForge mod versions."
+
+    dependsOn("deepClean")
+
+    doLast {
+        println("🧱 Performing deep clean + build...")
+
+        val isWindows = System.getProperty("os.name").lowercase().contains("win")
+        val gradlewCmd = if (isWindows) "gradlew.bat" else "./gradlew"
+        val variants = file("versions").listFiles()?.filter { it.isDirectory }?.map { it.name } ?: emptyList()
+
+        if (variants.isEmpty()) {
+            println("⚠️ No version folders found under /versions — skipping multi-build.")
+            return@doLast
+        }
+
+        variants.forEach { ver ->
+            println("🚀 Building $ver...")
+            exec {
+                workingDir = rootProject.projectDir
+                commandLine = if (isWindows)
+                    listOf("cmd", "/c", gradlewCmd, ":$ver:assembleMod", "--no-daemon")
+                else
+                    listOf("bash", "-c", "$gradlewCmd :$ver:assembleMod --no-daemon")
+            }
+        }
+
+        println("✅ All versions built successfully! Check build/libs/final/")
+    }
+}
+
+// ─── Publishing ───────────────────────────────────────────────────
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") { artifact(tasks["jar"]) }
     }
 }
