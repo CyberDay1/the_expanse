@@ -27,16 +27,35 @@ fun deps(key: String) = providers.gradleProperty("deps.$key").orElse(
 )
 
 val neoForgeVersionProvider = deps("neoforge")
+val configuredVersionsProvider = providers.gradleProperty("versionsList")
+    .map { raw ->
+        raw.split(';')
+            .map(String::trim)
+            .filter(String::isNotBlank)
+    }
+val configuredVersions = configuredVersionsProvider.orElse(emptyList()).get()
+check(configuredVersions.isNotEmpty()) {
+    "No Stonecutter versions were provided via the 'versionsList' property."
+}
+val primaryVersion = configuredVersions.first()
 val datapackRuntimeRunDir = layout.buildDirectory.dir("datapackRuntime/server")
 
 neoForge {
-    version = neoForgeVersionProvider.get()
+    version = neoForgeVersionProvider
     runs {
         create("datapackRuntime") {
             server()
             programArgument("--nogui")
             disableIdeRun()
             gameDirectory.set(datapackRuntimeRunDir)
+        }
+    }
+}
+
+allprojects {
+    tasks.configureEach {
+        if (name.equals("deepclean", ignoreCase = true)) {
+            enabled = false
         }
     }
 }
@@ -196,6 +215,24 @@ tasks.register("assembleMod") {
     group = "build"
     description = "Assembles the The Expanse mod JAR with clean naming"
     dependsOn("jar")
+}
+
+tasks.register("buildApp") {
+    group = "build"
+    description = "Builds the primary Stonecutter variant ($primaryVersion)."
+    dependsOn(":$primaryVersion:build")
+}
+
+tasks.register("buildAllApp") {
+    group = "build"
+    description = "Builds every configured Stonecutter variant."
+    dependsOn(configuredVersions.map { ":$it:build" })
+}
+
+tasks.register("allClean") {
+    group = "build"
+    description = "Cleans all configured Stonecutter variants."
+    dependsOn(configuredVersions.map { ":$it:clean" })
 }
 
 // ───────────────────────────────────────────────

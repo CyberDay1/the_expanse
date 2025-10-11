@@ -71,20 +71,20 @@ gradle.settingsEvaluated {
 
 rootProject.name = "the_expanse"
 
-val supportedVariants = listOf(
-    "1.21.1-neoforge",
-    "1.21.2",
-    "1.21.3",
-    "1.21.4",
-    "1.21.5",
-    "1.21.6",
-    "1.21.7",
-    "1.21.8",
-    "1.21.9",
-    "1.21.10",
-)
+val supportedVariants = providers.gradleProperty("versionsList")
+    .map { raw ->
+        raw.split(';')
+            .map(String::trim)
+            .filter(String::isNotBlank)
+    }
+    .orElse(emptyList())
+    .get()
 
-val defaultVariant = "1.21.1-neoforge"
+check(supportedVariants.isNotEmpty()) {
+    "No Stonecutter variants declared via the 'versionsList' property."
+}
+
+val defaultVariant = supportedVariants.first()
 val requestedVariant = providers.gradleProperty("stonecutter.active")
     .orElse(defaultVariant)
     .get()
