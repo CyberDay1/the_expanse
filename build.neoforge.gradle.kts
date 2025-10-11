@@ -1,17 +1,12 @@
 import org.gradle.api.Project
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.GradleException
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import io.gitlab.arturbosch.detekt.Detekt
 import net.neoforged.gradle.dsl.common.runs.run.Run
-import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 import java.util.Properties
@@ -24,6 +19,9 @@ plugins {
     id("io.gitlab.arturbosch.detekt") version "1.23.6"
 }
 
+// ─────────────────────────────────────────────
+// Dependency Locking
+// ─────────────────────────────────────────────
 dependencyLocking { lockAllConfigurations() }
 
 tasks.register("verifyDependencyLocks") {
@@ -32,9 +30,14 @@ tasks.register("verifyDependencyLocks") {
     doLast { configurations.filter { it.isCanBeResolved }.forEach { it.resolve() } }
 }
 
+// ─────────────────────────────────────────────
+// Java Toolchain
+// ─────────────────────────────────────────────
 java { toolchain.languageVersion.set(JavaLanguageVersion.of(21)) }
 
-// ─── Configurable properties ─────────────────────────────────────
+// ─────────────────────────────────────────────
+// Configurable properties
+// ─────────────────────────────────────────────
 val configurableProperties = Properties().apply {
     val configFile = rootProject.file("configurable.properties")
     if (configFile.exists()) configFile.inputStream().use { load(it) }
@@ -48,11 +51,13 @@ fun Project.resolveToggle(key: String, default: Boolean): Boolean {
 }
 
 val enableDatagen = project.resolveToggle("enableDatagen", true)
-val useMixins = project.resolveToggle("useMixins", true) // forced ON
+val useMixins = project.resolveToggle("useMixins", true) // Force mixins ON
 extensions.extraProperties["enableDatagen"] = enableDatagen
 extensions.extraProperties["useMixins"] = useMixins
 
-// ─── Metadata ─────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Minecraft + Mod Metadata
+// ─────────────────────────────────────────────
 val mcVersion = project.property("MC_VERSION").toString()
 val mcVersionNext = project.findProperty("MC_VERSION_NEXT")?.toString() ?: "unspecified"
 val neoForgeVersion = project.property("NEOFORGE_VERSION").toString()
@@ -74,22 +79,14 @@ runs.register("datapackRuntime") {
     workingDirectory(datapackRuntimeRunDir.get().asFile)
 }
 
-// ─── Dependencies ──────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Repositories and Dependencies
+// ─────────────────────────────────────────────
 repositories {
-    mavenCentral()
     maven("https://maven.neoforged.net/releases")
-    maven("https://repo.spongepowered.org/maven") // ✅ Added for Mixin
-}
-
-dependencies {
-    implementation("org.spongepowered:mixin:0.15.2") {
-        isTransitive = false
-    }
-    implementation("net.neoforged:neoforge:$neoForgeVersion")
-    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
-    testImplementation("com.google.code.gson:gson:2.11.0")
+    maven("https://libraries.minecraft.net/")
+    mavenCentral()
+    mavenLocal()
 }
 
 configurations.all {
@@ -98,7 +95,18 @@ configurations.all {
     }
 }
 
-// ─── Code Quality ──────────────────────────────────────────────────
+dependencies {
+    implementation("net.neoforged:neoforge:$neoForgeVersion")
+
+    detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.6")
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testImplementation("com.google.code.gson:gson:2.11.0")
+}
+
+// ─────────────────────────────────────────────
+// Code Quality
+// ─────────────────────────────────────────────
 spotless {
     java {
         target("template/src/**/*.java")
@@ -129,7 +137,9 @@ tasks.withType<Detekt>().configureEach {
     reports { html.required.set(true); xml.required.set(true) }
 }
 
-// ─── Resource Token Expansion (fixed placeholders) ─────────────────────
+// ─────────────────────────────────────────────
+// Resource Token Expansion (Fixed)
+// ─────────────────────────────────────────────
 tasks.processResources {
     val modVersion = project.findProperty("MOD_VERSION")?.toString() ?: "1.0.0"
     val mcVersion = project.findProperty("MC_VERSION")?.toString() ?: "unknown"
@@ -161,7 +171,9 @@ tasks.processResources {
     }
 }
 
-// ─── Jar Naming ────────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Jar Naming
+// ─────────────────────────────────────────────
 tasks.withType<Jar>().configureEach {
     val modName = "the_expanse"
     val mcVersionTag = project.findProperty("MC_VERSION")?.toString()
@@ -188,7 +200,68 @@ tasks.register("assembleMod") {
     dependsOn("jar")
 }
 
-// ─── Publishing ───────────────────────────────────────────────────
+// ─────────────────────────────────────────────
+// Deep Clean (Clears Caches + Version Repos)
+// ─────────────────────────────────────────────
+tasks.register("deepClean") {
+    group = "build"
+    description = "Removes Gradle caches, version repos, and build outputs for a truly clean rebuild."
+
+    doLast {
+        val dirsToDelete = listOf(
+            rootProject.file(".gradle"),
+            rootProject.file("build")
+        ) + rootProject.file("versions").listFiles()?.mapNotNull {
+            it.takeIf { sub -> sub.isDirectory && File(sub, ".gradle").exists() }
+        }.orEmpty()
+
+        dirsToDelete.forEach {
+            if (it.exists()) {
+                println("🧹 Deleting ${it.absolutePath}")
+                it.deleteRecursively()
+            }
+        }
+        println("✅ Deep clean complete.")
+    }
+}
+
+// ─────────────────────────────────────────────
+// Build All Versions (with optional skip-clean)
+// ─────────────────────────────────────────────
+tasks.register("assembleAllMods") {
+    group = "build"
+    description = "Builds all Stonecutter version variants of The Expanse. Use -PskipClean=true to skip deep cleaning."
+
+    val skipClean = project.findProperty("skipClean")?.toString()?.equals("true", ignoreCase = true) == true
+    if (!skipClean) dependsOn("deepClean")
+
+    doLast {
+        println(if (skipClean) "⚙️ Skipping deep clean (per -PskipClean flag)" else "🧱 Performing deep clean + build...")
+
+        val isWindows = System.getProperty("os.name").lowercase().contains("win")
+        val gradlewCmd = if (isWindows) "gradlew.bat" else "./gradlew"
+
+        rootProject.subprojects
+            .filter { it.name.matches(Regex("""\d+\.\d+(\.\d+)?""")) }
+            .forEach { sub ->
+                println("🚀 Building ${sub.name}...")
+                project.providers.exec {
+                    if (isWindows) {
+                        commandLine("cmd", "/c", gradlewCmd, ":${sub.name}:assembleMod", "--no-daemon")
+                    } else {
+                        commandLine("bash", "-c", "$gradlewCmd :${sub.name}:assembleMod --no-daemon")
+                    }
+                    workingDir(rootProject.projectDir)
+                }.result.get()
+            }
+
+        println("✅ All versions built successfully! Check build/libs/final/")
+    }
+}
+
+// ─────────────────────────────────────────────
+// Publishing
+// ─────────────────────────────────────────────
 publishing {
     publications {
         create<MavenPublication>("mavenJava") { artifact(tasks["jar"]) }
