@@ -1,3 +1,6 @@
+plugins {
+    id("dev.kikugie.stonecutter") version "0.7.10"
+}
 import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
 import dev.kikugie.stonecutter.process.SCPrepareTask
 import org.gradle.api.tasks.Copy
@@ -18,9 +21,6 @@ private fun String.stonecutterSourceSet(prefix: String): String {
     return if (suffix.isEmpty()) "main" else suffix.replaceFirstChar { it.lowercase() }
 }
 
-plugins {
-    id("dev.kikugie.stonecutter") version "0.7.10"
-}
 
 private val DEFAULT_VARIANT = "1.21.1"
 val requestedActive = providers.gradleProperty("stonecutter.active").orElse(DEFAULT_VARIANT)
