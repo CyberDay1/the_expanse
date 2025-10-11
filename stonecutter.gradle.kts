@@ -2,23 +2,15 @@ import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
 import dev.kikugie.stonecutter.process.SCPrepareTask
 import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.Sync
+import org.gradle.api.tasks.bundling.Jar
 import org.gradle.kotlin.dsl.getByType
+import org.gradle.kotlin.dsl.dependencies
 import java.util.Properties
 
 private val STONECUTTER_TEMPLATE_INCLUDES = listOf(
-    "**/*.java",
-    "**/*.kt",
-    "**/*.kts",
-    "**/*.groovy",
-    "**/*.gradle",
-    "**/*.scala",
-    "**/*.sc",
-    "**/*.json",
-    "**/*.json5",
-    "**/*.hjson",
-    "**/*.properties",
-    "**/*.mcmeta",
-    "**/*.toml"
+    "**/*.java", "**/*.kt", "**/*.kts", "**/*.groovy", "**/*.gradle",
+    "**/*.scala", "**/*.sc", "**/*.json", "**/*.json5", "**/*.hjson",
+    "**/*.properties", "**/*.mcmeta", "**/*.toml"
 )
 
 private fun String.stonecutterSourceSet(prefix: String): String {
@@ -37,6 +29,7 @@ val stonecutter: StonecutterControllerExtension = extensions.getByType()
 stonecutter active requestedActive
 
 stonecutter.parameters {
+    // Load gradle.properties into extra properties for template use
     val propertiesFile = node.project.projectDir.resolve("gradle.properties")
     if (propertiesFile.isFile) {
         Properties().apply {
@@ -76,26 +69,27 @@ stonecutter.parameters {
     }
 }
 
-// === Per-version NeoForge setup ===
-stonecutter.versions.forEach { version ->
-    val name = version.project
-    project(":$name") {
+// Per-version configuration
+stonecutter.versions.forEach { v ->
+    val proj = v.project // e.g. "1.21.2"
+    project(":$proj") {
         apply(plugin = "java")
+        apply(plugin = "net.neoforged.gradle")
 
-        repositories {
-            maven("https://maven.neoforged.net/releases")
-            mavenCentral()
+        java {
+            toolchain.languageVersion.set(JavaLanguageVersion.of(21))
         }
 
-        // Read mcVersion and NEOFORGE from version properties
-        val mcVer = version.properties["mcVersion"] ?: DEFAULT_VARIANT
-        val neoForgeVer = version.properties["NEOFORGE"] ?: error("Missing NEOFORGE for $name")
+        // Read version-specific data from stonecutter.json
+        val mcVer = v.data["mcVersion"] ?: proj
+        val neoForgeVer = v.data["NEOFORGE"] ?: error("Missing NEOFORGE for $proj")
 
         dependencies {
+            // NeoForge brings Minecraft + mappings onto the classpath via the plugin
             add("implementation", "net.neoforged:neoforge:$neoForgeVer")
         }
 
-        tasks.withType<Jar> {
+        tasks.withType<Jar>().configureEach {
             archiveBaseName.set("the_expanse-$mcVer")
         }
 
@@ -110,12 +104,10 @@ stonecutter.versions.forEach { version ->
 tasks.register("chiseledBuild") {
     group = "project"
     description = "Builds the Stonecutter variant selected via -Pstonecutter.active (defaults to $DEFAULT_VARIANT)."
-
     val variant = requestedActive.get()
     checkNotNull(stonecutter.versions.find { it.project == variant }) {
         "Unknown Stonecutter variant '$variant'."
     }
-
     dependsOn(":$variant:build")
 }
 
