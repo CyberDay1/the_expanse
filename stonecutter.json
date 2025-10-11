@@ -1,0 +1,45 @@
+﻿{
+    "default": "1.21.1",
+    "variants": {
+        "1.21.1": {
+            "replace": {
+                "NEOFORGE_VERSION": "21.1.209",
+                "PACK_FORMAT": "48",
+                "MC_VERSION": "1.21.1"
+            },
+            "buildscript": "build.neoforge.gradle.kts"
+        },
+        "1.21.2": {
+            "replace": {
+                "NEOFORGE_VERSION": "21.2.84",
+                "PACK_FORMAT": "57",
+                "MC_VERSION": "1.21.2"
+            },
+            "buildscript": "build.neoforge.gradle.kts"
+        },
+        "1.21.3": {
+            "replace": {
+                "NEOFORGE_VERSION": "21.3.64",
+                "PACK_FORMAT": "57",
+                "MC_VERSION": "1.21.3"
+            },
+            "buildscript": "build.neoforge.gradle.kts"
+        },
+        "1.21.4": {
+            "replace": {
+                "NEOFORGE_VERSION": "21.4.154",
+                "PACK_FORMAT": "61",
+                "MC_VERSION": "1.21.4"
+            },
+            "buildscript": "build.neoforge.gradle.kts"
+        },
+        "1.21.5": {
+            "replace": {
+                "NEOFORGE_VERSION": "21.5.72",
+                "PACK_FORMAT": "71",
+                "MC_VERSION": "1.21.5"
+            },
+            "buildscript": "build.neoforge.gradle.kts"
+        }
+    }
+}
