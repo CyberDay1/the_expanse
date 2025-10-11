@@ -3,7 +3,7 @@ loaderVersion = "[${NEOFORGE_VERSION},)"
 license = "MIT"
 
 [[mods]]
-modId="the_expanse"
+modId = "the-expanse"
 version = "${MOD_VERSION}"
 displayName = "The Expanse"
 authors = "CyberDay1"

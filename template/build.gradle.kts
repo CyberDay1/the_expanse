@@ -1,34 +1,23 @@
-// ─────────────────────────────────────────────────────────────
-// Hook root build to build.neoforge.gradle.kts
-// ─────────────────────────────────────────────────────────────
-apply(from = "build.neoforge.gradle.kts")
-
-
-
 plugins {
     id("java")
     id("net.neoforged.gradle") version "6.0.18"
 }
 
-// ───────────────────────────────
-//  Java toolchain
-// ───────────────────────────────
+// --- Apply Java 21 toolchain to mod template ---
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 tasks.withType<JavaCompile>().configureEach {
     options.release.set(21)
 }
 
-// ───────────────────────────────
-//  Base mod metadata
-// ───────────────────────────────
+// --- Base mod metadata ---
 group = "com.cyberday"
-version = "1.0.0" // overridden later
+version = "1.0.0"
 
-// ───────────────────────────────
-//  NeoForge setup
-// ───────────────────────────────
+// --- NeoForge configuration ---
 minecraft {
     mappings("official", stonecutter["MC_VERSION"])
 }
@@ -37,34 +26,15 @@ dependencies {
     implementation("net.neoforged:neoforge:${stonecutter["NEOFORGE_VERSION"]}")
 }
 
-// ───────────────────────────────
-//  Custom JAR task (per-version)
-// ───────────────────────────────
-tasks.register<Jar>("assembleMod") {
-    val mcVersion = stonecutter["MC_VERSION"]
-    val modName = "the_expanse"
-
-    group = "build"
-    description = "Assembles the $modName mod JAR for Minecraft $mcVersion."
-
-    from(sourceSets.main.get().output)
-
-    // Set clean naming
-    archiveBaseName.set(modName)
-    archiveVersion.set(mcVersion)
-    destinationDirectory.set(layout.buildDirectory.dir("libs/final"))
-
-    manifest {
-        attributes(
-            "Implementation-Title" to modName,
-            "Implementation-Version" to mcVersion,
-            "Specification-Title" to "Minecraft Mod",
-            "Specification-Version" to "NeoForge"
-        )
+// --- Enforce proper jar naming after Stonecutter version injection ---
+afterEvaluate {
+    tasks.withType<Jar>().configureEach {
+        val mcVersion = project.name.substringBefore("-")
+        archiveBaseName.set("the_expanse")
+        archiveVersion.set(mcVersion)
+        destinationDirectory.set(layout.buildDirectory.dir("libs/${mcVersion}"))
     }
-}
 
-// Run our custom JAR after standard build
-tasks.named("build").configure {
-    finalizedBy("assembleMod")
+    // Also override the project version to keep it consistent
+    version = project.name.substringBefore("-")
 }

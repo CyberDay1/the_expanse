@@ -14,7 +14,6 @@ pluginManagement {
     }
     plugins {
         id("dev.kikugie.stonecutter") version "0.7.10"
-        id("net.neoforged.moddev") version "2.0.112"
     }
 }
 
@@ -71,20 +70,20 @@ gradle.settingsEvaluated {
 
 rootProject.name = "the_expanse"
 
-val supportedVariants = providers.gradleProperty("versionsList")
-    .map { raw ->
-        raw.split(';')
-            .map(String::trim)
-            .filter(String::isNotBlank)
-    }
-    .orElse(emptyList())
-    .get()
+val supportedVariants = listOf(
+    "1.21.1",
+    "1.21.2",
+    "1.21.3",
+    "1.21.4",
+    "1.21.5",
+    "1.21.6",
+    "1.21.7",
+    "1.21.8",
+    "1.21.9",
+    "1.21.10",
+)
 
-check(supportedVariants.isNotEmpty()) {
-    "No Stonecutter variants declared via the 'versionsList' property."
-}
-
-val defaultVariant = supportedVariants.first()
+val defaultVariant = "1.21.1"
 val requestedVariant = providers.gradleProperty("stonecutter.active")
     .orElse(defaultVariant)
     .get()

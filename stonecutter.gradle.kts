@@ -28,42 +28,15 @@ private fun String.stonecutterSourceSet(prefix: String): String {
 
 plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
-    id("net.neoforged.moddev") version "2.0.112" apply false
 }
 
-private val intendedVariantsProvider = providers.gradleProperty("versionsList")
-    .map { raw ->
-        raw.split(';')
-            .map(String::trim)
-            .filter(String::isNotBlank)
-    }
-private val intendedVariants = intendedVariantsProvider.orElse(listOf("1.21.1-neoforge")).get()
-check(intendedVariants.isNotEmpty()) {
-    "No Stonecutter variants declared via the 'versionsList' property."
-}
-private val DEFAULT_VARIANT = intendedVariants.first()
+private val DEFAULT_VARIANT = "1.21.1"
 
 val requestedActive = providers.gradleProperty("stonecutter.active").orElse(DEFAULT_VARIANT)
-val activeVariant = requestedActive.get()
-check(activeVariant in intendedVariants) {
-    "Unknown Stonecutter variant '$activeVariant'. Supported variants: ${intendedVariants.joinToString()}"
-}
 
 val stonecutter: StonecutterControllerExtension = extensions.getByType()
 
 stonecutter active requestedActive
-
-private val stonecutterVariantIds = stonecutter.versions.map { it.project }
-check(stonecutterVariantIds.containsAll(intendedVariants)) {
-    "Stonecutter registry does not contain all intended variants. Missing: ${
-        intendedVariants.filterNot(stonecutterVariantIds::contains).joinToString()
-    }"
-}
-check(stonecutterVariantIds.all(intendedVariants::contains)) {
-    "Stonecutter registry has unexpected variants configured: ${
-        stonecutterVariantIds.filterNot(intendedVariants::contains).joinToString()
-    }"
-}
 
 stonecutter.parameters {
     val propertiesFile = node.project.projectDir.resolve("gradle.properties")
@@ -113,7 +86,7 @@ tasks.register("chiseledBuild") {
     group = "project"
     description = "Builds the Stonecutter variant selected via -Pstonecutter.active (defaults to $DEFAULT_VARIANT)."
 
-    val variant = activeVariant
+    val variant = requestedActive.get()
     checkNotNull(stonecutter.versions.find { it.project == variant }) {
         "Unknown Stonecutter variant '$variant'."
     }
@@ -124,5 +97,5 @@ tasks.register("chiseledBuild") {
 tasks.register("checkAllVariants") {
     group = "verification"
     description = "Runs the `check` task for every configured Stonecutter variant."
-    dependsOn(intendedVariants.map { ":$it:check" })
+    dependsOn(stonecutter.versions.map { ":${it.project}:check" })
 }
