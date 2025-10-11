@@ -1,5 +1,4 @@
 plugins {
-    id("net.neoforged.gradle") version "6.0.18" apply false
     idea
 }
 
