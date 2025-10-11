@@ -31,9 +31,7 @@ plugins {
 }
 
 private val DEFAULT_VARIANT = "1.21.1"
-
 val requestedActive = providers.gradleProperty("stonecutter.active").orElse(DEFAULT_VARIANT)
-
 val stonecutter: StonecutterControllerExtension = extensions.getByType()
 
 stonecutter active requestedActive
@@ -63,22 +61,49 @@ stonecutter.parameters {
 
     node.project.tasks.withType(Sync::class.java).configureEach {
         if (!name.startsWith("stonecutterGenerate")) return@configureEach
-
         val sourceSet = name.stonecutterSourceSet("stonecutterGenerate")
         val templateDir = templateRoot.dir(sourceSet)
         if (!templateDir.asFile.exists()) return@configureEach
-
         from(templateDir)
     }
 
     node.project.tasks.withType(Copy::class.java).configureEach {
         if (!name.startsWith("stonecutterMerge")) return@configureEach
-
         val sourceSet = name.stonecutterSourceSet("stonecutterMerge")
         val templateDir = templateRoot.dir(sourceSet)
         if (!templateDir.asFile.exists()) return@configureEach
-
         into(templateDir)
+    }
+}
+
+// === Per-version NeoForge setup ===
+stonecutter.versions.forEach { version ->
+    val name = version.project
+    project(":$name") {
+        apply(plugin = "java")
+
+        repositories {
+            maven("https://maven.neoforged.net/releases")
+            mavenCentral()
+        }
+
+        // Read mcVersion and NEOFORGE from version properties
+        val mcVer = version.properties["mcVersion"] ?: DEFAULT_VARIANT
+        val neoForgeVer = version.properties["NEOFORGE"] ?: error("Missing NEOFORGE for $name")
+
+        dependencies {
+            add("implementation", "net.neoforged:neoforge:$neoForgeVer")
+        }
+
+        tasks.withType<Jar> {
+            archiveBaseName.set("the_expanse-$mcVer")
+        }
+
+        tasks.register("assembleMod") {
+            group = "build"
+            description = "Assemble mod for Minecraft $mcVer"
+            dependsOn("build")
+        }
     }
 }
 

@@ -1,204 +1,165 @@
-// ─────────────────────────────────────────────────────────────
-// 🧱 The Expanse: Unified NeoForge Build (Gradle-9-ready)
-// Safe deep clean, assembleAllMods (Windows/Linux safe), clean JAR names
-// ─────────────────────────────────────────────────────────────
-
-import java.io.File
-import org.gradle.kotlin.dsl.support.serviceOf
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.register
+import java.text.SimpleDateFormat
+import java.util.Date
 
 plugins {
-    id("java")
-    id("net.neoforged.gradle.userdev") version "7.0.190"
-}
-
-// Access to ExecOperations for Gradle 9 compatibility
-val execOps = project.serviceOf<org.gradle.process.ExecOperations>()
-
-// ───────────────────────────────
-//  Java setup
-// ───────────────────────────────
-java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
-}
-tasks.withType<JavaCompile>().configureEach {
-    options.release.set(21)
+    id("net.neoforged.gradle") version "6.0.18" apply false
+    id("dev.kikugie.stonecutter") version "0.7.10"
+    id("idea")
 }
 
 // ───────────────────────────────
-//  Project metadata
+// Version + Mod Info
 // ───────────────────────────────
-group = "com.cyberday"
-version = "1.0.0"
+val allVersions: List<String> = stonecutter.versions.map { it.toString() }
+
+val modName = "the_expanse"
+val modVersion = "1.0.0"
+
+val neoForgeVersions = mapOf(
+    "1.21.1" to "21.1.209",
+    "1.21.2" to "21.2.1-beta",
+    "1.21.3" to "21.3.93",
+    "1.21.4" to "21.4.154",
+    "1.21.5" to "21.5.95",
+    "1.21.6" to "21.6.20-beta",
+    "1.21.7" to "21.7.25-beta",
+    "1.21.8" to "21.8.47",
+    "1.21.9" to "21.9.16-beta",
+    "1.21.10" to "21.10.5-beta"
+)
 
 // ───────────────────────────────
-//  Property helpers
+// Disable NeoForm incremental caching
 // ───────────────────────────────
-fun propOrEnv(name: String, default: String): String =
-    (project.findProperty(name) as? String)
-        ?: System.getenv(name)
-        ?: default
-
-val mcVersion = propOrEnv("MC_VERSION", "1.21.1")
-val mcVersionNext = propOrEnv("MC_VERSION_NEXT", "1.21.99")
-val neoForgeVersion = propOrEnv("NEOFORGE_VERSION", "21.1.209")
-val modVersion = project.version.toString()
-val packFormat = 34
-
-println("🔧 Configuring The Expanse → MC $mcVersion • NeoForge $neoForgeVersion")
-
-// ───────────────────────────────
-//  Repositories / Dependencies
-// ───────────────────────────────
-repositories {
-    mavenCentral()
-    maven("https://maven.neoforged.net/releases")
-    maven("https://repo.spongepowered.org/maven")
-    maven("https://libraries.minecraft.net")
-    maven("https://maven.fabricmc.net/")
-}
-
-dependencies {
-    implementation("net.neoforged:neoforge:$neoForgeVersion")
-    implementation("net.fabricmc:sponge-mixin:0.16.4+mixin.0.8.7")
-}
-
-// ───────────────────────────────
-//  Resource Expansion
-// ───────────────────────────────
-tasks.processResources {
-    filesMatching(listOf("META-INF/neoforge.mods.toml", "pack.mcmeta")) {
-        expand(
-            "MOD_VERSION" to modVersion,
-            "MC_VERSION" to mcVersion,
-            "MC_VERSION_NEXT" to mcVersionNext,
-            "NEOFORGE_VERSION" to neoForgeVersion,
-            "PACK_FORMAT" to packFormat
-        )
+gradle.taskGraph.whenReady {
+    allTasks.forEach { t ->
+        if (t.name.contains("neoForm", ignoreCase = true)) {
+            println("⚙️  Disabling incremental/state tracking for ${t.path}")
+            t.outputs.upToDateWhen { false }
+            t.doNotTrackState("NeoForm instability workaround")
+        }
     }
 }
 
 // ───────────────────────────────
-//  Assemble Mod JAR
+// Safe Deep Clean
 // ───────────────────────────────
-tasks.register<Jar>("assembleMod") {
+tasks.register("safeDeepClean") {
     group = "build"
-    description = "Assembles The Expanse mod JAR for MC $mcVersion"
-    val modName = "the_expanse"
-
-    archiveBaseName.set(modName)
-    archiveVersion.set("$mcVersion-$modVersion")
-    destinationDirectory.set(layout.buildDirectory.dir("libs/final"))
-    from(sourceSets.main.get().output)
-
-    manifest {
-        attributes(
-            "Implementation-Title" to modName,
-            "Implementation-Version" to modVersion,
-            "Specification-Title" to "Minecraft Mod",
-            "Specification-Version" to "NeoForge $neoForgeVersion"
-        )
-    }
-
+    description = "Safely remove build caches without touching source."
     doLast {
-        println("📦 Built ${archiveFile.get().asFile.name}")
-    }
-}
-
-// Run our JAR build automatically after standard build
-tasks.named("build").configure {
-    finalizedBy("assembleMod")
-}
-
-// ───────────────────────────────
-//  Safe Deep Clean
-// ───────────────────────────────
-tasks.register("deepClean") {
-    group = "maintenance"
-    description = "Safely cleans build outputs without deleting sources."
-    doLast {
-        println("🧹 Performing safe deep clean …")
-
-        listOf(".gradle", "build").forEach {
-            rootProject.file(it).takeIf(File::exists)?.let { f ->
-                println("   Deleting ${f}")
-                f.deleteRecursively()
+        println("🧹 Safe deep clean …")
+        delete(rootProject.file(".gradle"), rootProject.file("build"))
+        allVersions.forEach { ver ->
+            val buildDir = rootProject.file("versions/$ver/build")
+            if (buildDir.exists()) {
+                println("🗑️  Removing $buildDir")
+                buildDir.deleteRecursively()
             }
         }
-
-        rootProject.file("versions").listFiles()
-            ?.filter(File::isDirectory)
-            ?.forEach { dir ->
-                File(dir, "build").takeIf(File::exists)?.let { b ->
-                    println("   Cleaning ${b}")
-                    b.deleteRecursively()
-                }
-            }
-
-        println("✅ Safe deep clean done.")
+        println("✅ Safe deep clean complete.")
     }
 }
 
 // ───────────────────────────────
-//  Build All Versions (Fixed for Windows Path)
+// Per-Version Setup
+// ───────────────────────────────
+allVersions.forEach { ver ->
+    val verDir = file("versions/$ver")
+    if (verDir.exists()) {
+        project(":$ver") {
+            apply(plugin = "net.neoforged.gradle")
+
+            println("🔧 Configuring The Expanse → MC $ver • NeoForge ${neoForgeVersions[ver]}")
+            group = "com.theexpanse"
+            version = modVersion
+
+            repositories {
+                maven("https://maven.neoforged.net/releases")
+                mavenCentral()
+            }
+
+            dependencies {
+                val neoVersion = neoForgeVersions[ver]
+                    ?: error("Missing NeoForge version for Minecraft $ver")
+                implementation("net.neoforged:neoforge:$neoVersion")
+            }
+
+            // Proper jar naming: the_expanse-<mcver>-1.0.0.jar
+            tasks.withType<Jar> {
+                archiveBaseName.set("$modName-$ver")
+                archiveVersion.set(modVersion)
+            }
+
+            tasks.register("assembleMod") {
+                group = "build"
+                description = "Assemble mod for MC $ver"
+                dependsOn("build")
+            }
+        }
+    }
+}
+
+// ───────────────────────────────
+// Build All Versions (with logging)
 // ───────────────────────────────
 tasks.register("assembleAllMods") {
     group = "build"
-    description = "Builds all Stonecutter subprojects under versions/."
+    description = "Builds all Stonecutter versions sequentially and logs output."
+
+    dependsOn(
+        allVersions.mapNotNull { ver ->
+            val verDir = file("versions/$ver")
+            if (verDir.exists()) ":$ver:assembleMod" else null
+        }
+    )
+
+    doFirst {
+        val logDir = file("build-logs").apply { mkdirs() }
+        val timestamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date())
+        val logFile = logDir.resolve("build-$timestamp.log")
+
+        println("🚀 Building all versions … (logging to ${logFile.name})")
+        logFile.writeText("=== Build started at $timestamp ===\n")
+
+        allVersions.forEach { ver ->
+            val verDir = file("versions/$ver")
+            if (!verDir.exists()) {
+                val msg = "⚠️  Skipping $ver — no directory found"
+                println(msg)
+                logFile.appendText("$msg\n")
+            } else {
+                val msg = "🔧 Scheduled build for $ver"
+                println(msg)
+                logFile.appendText("$msg\n")
+            }
+        }
+    }
 
     doLast {
-        println("🚀 Building all versions …")
-        val isWin = System.getProperty("os.name").lowercase().contains("win")
-        val gradlewPath = rootProject.file("gradlew.bat").absolutePath
-
-        rootProject.file("versions").listFiles()
-            ?.filter(File::isDirectory)
-            ?.forEach { vDir ->
-                println("🔧 Building ${vDir.name} …")
-                if (isWin) {
-                    execOps.exec {
-                        workingDir = rootProject.projectDir
-                        commandLine("cmd", "/c", gradlewPath, "${vDir.name}:build")
-                    }
-                } else {
-                    execOps.exec {
-                        workingDir = rootProject.projectDir
-                        commandLine("bash", "-c", "./gradlew ${vDir.name}:build")
-                    }
-                }
-            }
-
-        println("✅ All versions built successfully.")
+        val timestamp = SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(Date())
+        val logFile = file("build-logs/build-$timestamp.log")
+        logFile.appendText("✅ All builds complete.\n")
+        println("✅ All builds complete — log saved to ${logFile.absolutePath}")
     }
 }
 
 // ───────────────────────────────
-//  Reset Dependency Locks
+// NeoForm Fallback
 // ───────────────────────────────
-tasks.register("resetDependencyLocks") {
-    group = "maintenance"
-    description = "Removes and regenerates Gradle lock files."
-
-    doLast {
-        rootProject.fileTree(".") { include("**/gradle.lockfile") }.forEach {
-            println("🗑️ Removing ${it.path}")
-            it.delete()
-        }
-
-        println("🔄 Regenerating dependency locks …")
-        val isWin = System.getProperty("os.name").lowercase().contains("win")
-
-        if (isWin) {
-            execOps.exec {
-                workingDir = rootProject.projectDir
-                commandLine("cmd", "/c", "gradlew.bat", "dependencies", "--write-locks")
-            }
-        } else {
-            execOps.exec {
-                workingDir = rootProject.projectDir
-                commandLine("bash", "-c", "./gradlew dependencies --write-locks")
+tasks.configureEach {
+    if (name == "neoFormRecompile") {
+        println("⚙️  Applying absolute fallback for $path")
+        outputs.upToDateWhen { false }
+        doNotTrackState("Force clean NeoForm recompile")
+        doFirst {
+            val cache = file("build/neoForm")
+            if (cache.exists()) {
+                println("🧹 Removing stale NeoForm cache: ${cache.absolutePath}")
+                cache.deleteRecursively()
             }
         }
-
-        println("✅ Locks reset successfully.")
     }
 }
