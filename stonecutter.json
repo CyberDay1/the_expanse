@@ -5,75 +5,15 @@
     "build": "stonecutter.gradle.kts"
   },
   "versions": {
-    "1.21.1": {
-      "mcVersion": "1.21.1",
-      "vars": {
-        "NEOFORGE": "21.1.209",
-        "PACK_FORMAT": "48"
-      }
-    },
-    "1.21.2": {
-      "mcVersion": "1.21.2",
-      "vars": {
-        "NEOFORGE": "21.2.1-beta",
-        "PACK_FORMAT": "57"
-      }
-    },
-    "1.21.3": {
-      "mcVersion": "1.21.3",
-      "vars": {
-        "NEOFORGE": "21.3.93",
-        "PACK_FORMAT": "57"
-      }
-    },
-    "1.21.4": {
-      "mcVersion": "1.21.4",
-      "vars": {
-        "NEOFORGE": "21.4.154",
-        "PACK_FORMAT": "61"
-      }
-    },
-    "1.21.5": {
-      "mcVersion": "1.21.5",
-      "vars": {
-        "NEOFORGE": "21.5.95",
-        "PACK_FORMAT": "71"
-      }
-    },
-    "1.21.6": {
-      "mcVersion": "1.21.6",
-      "vars": {
-        "NEOFORGE": "21.6.20-beta",
-        "PACK_FORMAT": "80"
-      }
-    },
-    "1.21.7": {
-      "mcVersion": "1.21.7",
-      "vars": {
-        "NEOFORGE": "21.7.25-beta",
-        "PACK_FORMAT": "81"
-      }
-    },
-    "1.21.8": {
-      "mcVersion": "1.21.8",
-      "vars": {
-        "NEOFORGE": "21.8.47",
-        "PACK_FORMAT": "81"
-      }
-    },
-    "1.21.9": {
-      "mcVersion": "1.21.9",
-      "vars": {
-        "NEOFORGE": "21.9.16-beta",
-        "PACK_FORMAT": "88"
-      }
-    },
-    "1.21.10": {
-      "mcVersion": "1.21.10",
-      "vars": {
-        "NEOFORGE": "21.10.5-beta",
-        "PACK_FORMAT": "88"
-      }
-    }
+    "1.21.1": { "mcVersion": "1.21.1", "vars": { "NEOFORGE": "21.1.209", "PACK_FORMAT": "48" } },
+    "1.21.2": { "mcVersion": "1.21.2", "vars": { "NEOFORGE": "21.2.1-beta", "PACK_FORMAT": "57" } },
+    "1.21.3": { "mcVersion": "1.21.3", "vars": { "NEOFORGE": "21.3.93", "PACK_FORMAT": "57" } },
+    "1.21.4": { "mcVersion": "1.21.4", "vars": { "NEOFORGE": "21.4.154", "PACK_FORMAT": "61" } },
+    "1.21.5": { "mcVersion": "1.21.5", "vars": { "NEOFORGE": "21.5.95", "PACK_FORMAT": "71" } },
+    "1.21.6": { "mcVersion": "1.21.6", "vars": { "NEOFORGE": "21.6.20-beta", "PACK_FORMAT": "80" } },
+    "1.21.7": { "mcVersion": "1.21.7", "vars": { "NEOFORGE": "21.7.25-beta", "PACK_FORMAT": "81" } },
+    "1.21.8": { "mcVersion": "1.21.8", "vars": { "NEOFORGE": "21.8.47", "PACK_FORMAT": "81" } },
+    "1.21.9": { "mcVersion": "1.21.9", "vars": { "NEOFORGE": "21.9.16-beta", "PACK_FORMAT": "88" } },
+    "1.21.10": { "mcVersion": "1.21.10", "vars": { "NEOFORGE": "21.10.5-beta", "PACK_FORMAT": "88" } }
   }
 }
