@@ -3,13 +3,10 @@ plugins {
 }
 
 import dev.kikugie.stonecutter.controller.StonecutterControllerExtension
-        import dev.kikugie.stonecutter.process.SCPrepareTask
-        import org.gradle.api.tasks.Copy
-        import org.gradle.api.tasks.Sync
-        import org.gradle.api.tasks.bundling.Jar
-        import org.gradle.kotlin.dsl.getByType
+import org.gradle.api.tasks.bundling.Jar
+import org.gradle.kotlin.dsl.getByType
 
-        private val DEFAULT_VARIANT = "1.21.1"
+private val DEFAULT_VARIANT = "1.21.4"
 
 val stonecutter = extensions.getByType<StonecutterControllerExtension>()
 stonecutter active providers.gradleProperty("stonecutter.active").orElse(DEFAULT_VARIANT)
@@ -22,6 +19,6 @@ tasks.register("chiseledBuild") {
 
 tasks.register("checkAllVariants") {
     group = "verification"
-    description = "Runs the check task for every configured Stonecutter variant."
+    description = "Runs the `check` task for every configured Stonecutter variant."
     dependsOn(stonecutter.versions.map { ":${it.project}:check" })
 }
