@@ -14,6 +14,7 @@ pluginManagement {
     }
     plugins {
         id("dev.kikugie.stonecutter") version "0.7.10"
+        id("net.neoforged.moddev") version "2.0.112"
     }
 }
 
@@ -71,7 +72,7 @@ gradle.settingsEvaluated {
 rootProject.name = "the_expanse"
 
 val supportedVariants = listOf(
-    "1.21.1",
+    "1.21.1-neoforge",
     "1.21.2",
     "1.21.3",
     "1.21.4",
@@ -83,7 +84,7 @@ val supportedVariants = listOf(
     "1.21.10",
 )
 
-val defaultVariant = "1.21.1"
+val defaultVariant = "1.21.1-neoforge"
 val requestedVariant = providers.gradleProperty("stonecutter.active")
     .orElse(defaultVariant)
     .get()

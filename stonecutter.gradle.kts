@@ -28,9 +28,10 @@ private fun String.stonecutterSourceSet(prefix: String): String {
 
 plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
+    id("net.neoforged.moddev") version "2.0.112" apply false
 }
 
-private val DEFAULT_VARIANT = "1.21.1"
+private val DEFAULT_VARIANT = "1.21.1-neoforge"
 
 val requestedActive = providers.gradleProperty("stonecutter.active").orElse(DEFAULT_VARIANT)
 
