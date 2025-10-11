@@ -1,23 +1,16 @@
 import org.gradle.api.Project
-import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.GradleException
 import org.gradle.api.plugins.quality.Checkstyle
 import org.gradle.api.tasks.compile.JavaCompile
-import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.findByType
-import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.withType
 import io.gitlab.arturbosch.detekt.Detekt
-import net.neoforged.gradle.dsl.common.runs.run.Run
-import org.gradle.api.tasks.JavaExec
 import org.gradle.jvm.tasks.Jar
 import java.io.File
 import java.util.Properties
 
 plugins {
-    id("net.neoforged.gradle.userdev") version "7.0.190"
+    id("net.neoforged.moddev")
     id("maven-publish")
     id("checkstyle")
     id("com.diffplug.spotless") version "6.25.0"
@@ -25,6 +18,28 @@ plugins {
 }
 
 dependencyLocking { lockAllConfigurations() }
+
+fun deps(key: String) = providers.gradleProperty("deps.$key").orElse(
+    providers.provider {
+        project.findProperty("deps.$key")?.toString()
+            ?: error("Missing dependency coordinate for 'deps.$key'")
+    }
+)
+
+val neoForgeVersionProvider = deps("neoforge")
+val datapackRuntimeRunDir = layout.buildDirectory.dir("datapackRuntime/server")
+
+neoForge {
+    version = neoForgeVersionProvider.get()
+    runs {
+        create("datapackRuntime") {
+            server()
+            programArgument("--nogui")
+            disableIdeRun()
+            gameDirectory.set(datapackRuntimeRunDir)
+        }
+    }
+}
 
 tasks.register("verifyDependencyLocks") {
     group = "verification"
@@ -55,29 +70,21 @@ extensions.extraProperties["useMixins"] = useMixins
 // ─── Metadata ─────────────────────────────────────────────────────
 val mcVersion = project.findProperty("MC_VERSION")?.toString() ?: "unspecified"
 val mcVersionNext = project.findProperty("MC_VERSION_NEXT")?.toString() ?: "unspecified"
-val neoForgeVersion = project.findProperty("NEOFORGE_VERSION")?.toString() ?: "unspecified"
+val neoForgeVersion = project.findProperty("NEOFORGE_VERSION")?.toString()
+    ?: neoForgeVersionProvider.get()
 val packFormat = project.findProperty("PACK_FORMAT")?.toString() ?: "0"
 val modVersion = project.findProperty("MOD_VERSION")?.toString() ?: "0.0.0"
 val loaderTag = "neoforge"
 
+extensions.extraProperties["NEOFORGE_VERSION"] = neoForgeVersion
+
 group = "com.theexpanse"
 version = modVersion
 
-@Suppress("UNCHECKED_CAST")
-val runs = extensions.getByName("runs") as NamedDomainObjectContainer<Run>
-val datapackRuntimeRunDir = layout.buildDirectory.dir("datapackRuntime/server")
-
-runs.register("datapackRuntime") {
-    run("server")
-    arguments.add("--nogui")
-    shouldExportToIDE(false)
-    workingDirectory(datapackRuntimeRunDir.get().asFile)
-}
-
 // ─── Dependencies ──────────────────────────────────────────────────
 repositories {
-    mavenCentral()
     maven("https://maven.neoforged.net/releases")
+    mavenCentral()
     maven("https://repo.spongepowered.org/maven")
 }
 
@@ -239,13 +246,14 @@ tasks.register("assembleAllMods") {
 
         variants.forEach { ver ->
             println("🚀 Building $ver...")
-            exec {
-                workingDir = rootProject.projectDir
-                commandLine = if (isWindows)
-                    listOf("cmd", "/c", gradlewCmd, ":$ver:assembleMod", "--no-daemon")
-                else
-                    listOf("bash", "-c", "$gradlewCmd :$ver:assembleMod --no-daemon")
-            }
+            project.providers.exec {
+                workingDir(rootProject.projectDir)
+                if (isWindows) {
+                    commandLine("cmd", "/c", gradlewCmd, ":$ver:assembleMod", "--no-daemon")
+                } else {
+                    commandLine("bash", "-c", "$gradlewCmd :$ver:assembleMod --no-daemon")
+                }
+            }.result.get()
         }
 
         println("✅ All versions built successfully! Check build/libs/final/")
