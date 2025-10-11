@@ -27,6 +27,11 @@ fun deps(key: String) = providers.gradleProperty("deps.$key").orElse(
 )
 
 val neoForgeVersionProvider = deps("neoforge")
+// Fail fast if the property is missing for the active Stonecutter variant
+val resolvedNeoForgeVersion = neoForgeVersionProvider.orElse("MISSING").get()
+require(resolvedNeoForgeVersion != "MISSING") {
+    "deps.neoforge not set for this Stonecutter variant (versions/<id>/gradle.properties)"
+}
 val configuredVersionsProvider = providers.gradleProperty("versionsList")
     .map { raw ->
         raw.split(';')
@@ -41,7 +46,7 @@ val primaryVersion = configuredVersions.first()
 val datapackRuntimeRunDir = layout.buildDirectory.dir("datapackRuntime/server")
 
 neoForge {
-    version = neoForgeVersionProvider
+    version = resolvedNeoForgeVersion
     runs {
         create("datapackRuntime") {
             server()
@@ -90,7 +95,7 @@ extensions.extraProperties["useMixins"] = useMixins
 val mcVersion = project.findProperty("MC_VERSION")?.toString() ?: "unspecified"
 val mcVersionNext = project.findProperty("MC_VERSION_NEXT")?.toString() ?: "unspecified"
 val neoForgeVersion = project.findProperty("NEOFORGE_VERSION")?.toString()
-    ?: neoForgeVersionProvider.get()
+    ?: resolvedNeoForgeVersion
 val packFormat = project.findProperty("PACK_FORMAT")?.toString() ?: "0"
 val modVersion = project.findProperty("MOD_VERSION")?.toString() ?: "0.0.0"
 val loaderTag = "neoforge"
