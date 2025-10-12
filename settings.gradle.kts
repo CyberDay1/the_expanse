@@ -1,11 +1,15 @@
-// settings.gradle.kts — delayed Stonecutter initialization fix
-// Works for multi-version NeoForge setups up to Minecraft 1.21.10
+import org.gradle.api.Action
+import org.gradle.api.artifacts.verification.DependencyVerificationMode
+import org.gradle.api.initialization.Settings
+import org.gradle.kotlin.dsl.dependencyLocking
 
 pluginManagement {
     repositories {
         gradlePluginPortal()
         maven("https://maven.neoforged.net/releases")
         maven("https://maven.kikugie.dev/releases")
+        maven("https://maven.fabricmc.net/")
+        maven("https://maven.architectury.dev/")
         mavenCentral()
     }
     plugins {
@@ -17,30 +21,84 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
+class DependencyVerificationSpec(private val settings: Settings) {
+    fun verify() {
+        val dependencyVerificationMethod = settings::class.java.methods.firstOrNull { method ->
+            method.name == "dependencyVerification" && method.parameterTypes.singleOrNull() == Action::class.java
+        }
+        if (dependencyVerificationMethod != null) {
+            val enableVerificationAction = object : Action<Any> {
+                override fun execute(target: Any) {
+                    val verifyMethod = target::class.java.methods.firstOrNull { method ->
+                        method.name == "verify" && method.parameterCount == 0
+                    }
+                    if (verifyMethod != null) {
+                        verifyMethod.invoke(target)
+                    } else {
+                        settings.gradle.startParameter.dependencyVerificationMode = DependencyVerificationMode.STRICT
+                    }
+                }
+            }
+            dependencyVerificationMethod.invoke(settings, enableVerificationAction)
+        } else {
+            settings.gradle.startParameter.dependencyVerificationMode = DependencyVerificationMode.STRICT
+        }
+    }
+}
+
+fun Settings.dependencyVerification(configuration: DependencyVerificationSpec.() -> Unit) {
+    DependencyVerificationSpec(this).apply(configuration)
+}
+
+dependencyVerification {
+    verify()
+}
+
+gradle.settingsEvaluated {
+    if (System.getenv("CI")?.equals("true", ignoreCase = true) == true) {
+        val startParameters = gradle.startParameter
+        if (startParameters.isWriteDependencyLocks || startParameters.lockedDependenciesToUpdate.isNotEmpty()) {
+            error("Dependency lock updates are not permitted in CI runs.")
+        }
+    }
+    gradle.rootProject {
+        dependencyLocking {
+            lockAllConfigurations()
+        }
+    }
+}
+
 rootProject.name = "the_expanse"
 
-// ───────────────────────────────
-// Register version subprojects
-// ───────────────────────────────
-val versionsDir = file("versions")
-if (!versionsDir.exists()) error("Missing 'versions' directory at ${versionsDir.absolutePath}")
+val supportedVariants = listOf(
+    "1.21.1",
+    "1.21.2",
+    "1.21.3",
+    "1.21.4",
+    "1.21.5",
+    "1.21.6",
+    "1.21.7",
+    "1.21.8",
+    "1.21.9",
+    "1.21.10",
+)
 
-versionsDir.listFiles()
-    ?.filter { it.isDirectory }
-    ?.sortedBy { it.name }
-    ?.forEach { dir ->
-        val name = dir.name.trim()
-        include(name)
-        project(":$name").projectDir = dir
-        println("✅ Registered subproject: $name")
-    }
+val defaultVariant = "1.21.1"
+val requestedVariant = providers.gradleProperty("stonecutter.active")
+    .orElse(defaultVariant)
+    .get()
 
-// ───────────────────────────────
-// Delay Stonecutter until all includes are done
-// ───────────────────────────────
-gradle.settingsEvaluated {
-    println("🔧 Loading Stonecutter configuration from stonecutter.json after project registration")
-    stonecutter {
-        create(rootProject, file("stonecutter.json"))
+require(requestedVariant in supportedVariants) {
+    "Unknown Stonecutter variant '$requestedVariant'. Supported variants: ${supportedVariants.joinToString()}"
+}
+
+stonecutter {
+    create(rootProject) {
+        kotlinController.set(true)
+        centralScript.set("build.neoforge.gradle.kts")
+        vcsVersion.set(defaultVariant)
+
+        // Register every variant explicitly
+        versions(supportedVariants)
     }
 }
