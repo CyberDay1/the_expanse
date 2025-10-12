@@ -1,7 +1,9 @@
 plugins {
-    id("dev.kikugie.stonecutter")
+    id("base")
 }
 
-stonecutter {
-    create(rootProject)
+stonecutter.registerController("neoforge") {
+    versions {
+        // automatically register all versions from stonecutter.json
+    }
 }

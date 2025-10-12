@@ -4,8 +4,8 @@ pluginManagement {
         mavenCentral()
         maven("https://maven.neoforged.net/releases")
         maven("https://maven.neoforged.net/snapshots")
-        maven("https://maven.teamresourceful.com/repository/maven-public/")
-        maven("https://maven.resourcefulbees.com/repository/maven-public/")
+        // Required for Stonecutter plugin
+        maven("https://maven.kikugie.dev/releases")
     }
 }
 
@@ -13,8 +13,8 @@ plugins {
     id("dev.kikugie.stonecutter") version "0.7.10"
 }
 
-stonecutter {
-    create(rootProject)
-}
-
 rootProject.name = "the_expanse"
+
+stonecutter {
+    file(rootDir.resolve("stonecutter.json"))
+}
