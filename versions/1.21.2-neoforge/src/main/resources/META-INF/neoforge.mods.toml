@@ -1,0 +1,26 @@
+modLoader = "neoforge"
+loaderVersion = "[${NEOFORGE_VERSION},)"
+license = "${LICENSE}"
+
+[[mods]]
+modId = "${MOD_ID}"
+version = "${MOD_VERSION}"
+displayName = "${DISPLAY_NAME}"
+authors = "${AUTHOR}"
+description = '''
+Expands Minecraft's world height, carvers, and ore distributions.
+'''
+
+[[dependencies.${MOD_ID}]]
+modId = "neoforge"
+mandatory = true
+versionRange = "[${NEOFORGE_VERSION},)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.${MOD_ID}]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[${MC_VERSION},1.22)"
+ordering = "NONE"
+side = "BOTH"
