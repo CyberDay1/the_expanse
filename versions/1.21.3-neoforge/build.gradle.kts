@@ -97,11 +97,15 @@ runs {
     }
 }
 
+
+}
+
+val reobfJar = tasks.findByName("reobfJar") ?: tasks.register("reobfJar") {
+    dependsOn(tasks.jar)
+}
+
 tasks.register("buildMod") {
     group = "build"
-    description = "Builds distributable mod jar safely."
-    dependsOn(tasks.jar)
-    if (tasks.findByName("reobfJar") -ne ) {
-        dependsOn(tasks.reobfJar)
-    }
+    description = "Builds the distributable mod jar"
+    dependsOn(tasks.jar, reobfJar)
 }
