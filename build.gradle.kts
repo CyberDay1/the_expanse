@@ -1,5 +1,12 @@
 plugins {
+    id("java")
+    id("net.neoforged.gradle.userdev") version "7.0.200"
+    id("maven-publish")
     id("base")
+}
+
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 allprojects {
@@ -17,12 +24,17 @@ allprojects {
 
 tasks.register("buildAll") {
     group = "build"
-    description = "Builds all version variants."
-    subprojects.forEach { dependsOn("${it.path}:build") }
+    description = "Builds all Stonecutter version variants."
+    dependsOn(subprojects.map { "${it.path}:build" })
 }
 
 tasks.register("cleanAll") {
     group = "build"
-    description = "Cleans all version variants."
-    subprojects.forEach { dependsOn("${it.path}:clean") }
+    description = "Cleans all Stonecutter version variants."
+    dependsOn(subprojects.map { "${it.path}:clean" })
+}
+
+// Optional: make the root build depend on all subprojects
+tasks.named("build") {
+    dependsOn("buildAll")
 }
