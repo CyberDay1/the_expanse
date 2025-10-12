@@ -476,9 +476,17 @@ tasks.register("buildAllApp") {
 
 tasks.register("allClean") {
     group = "build"
-    description = "Cleans all configured Stonecutter variants."
+    description = "Cleans all configured Stonecutter variants and removes old jars from build/libs."
+    doFirst {
+        val libsDir = rootProject.layout.buildDirectory.dir("libs").get().asFile
+        if (libsDir.exists()) {
+            println("🧹 Removing existing jars from ${libsDir.absolutePath}")
+            libsDir.listFiles()?.forEach { it.delete() }
+        }
+    }
     dependsOn(configuredVersions.map { ":$it:clean" })
 }
+
 
 // ───────────────────────────────────────────────
 // Safe Deep Clean (preserves version folders)
@@ -512,10 +520,12 @@ tasks.register("deepClean") {
 }
 
 
-
         gradle.projectsEvaluated {
             allprojects.forEach { sub ->
                 sub.tasks.withType<Jar>().configureEach {
+                    // Force jar output to central /build/libs only
+                    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
+
                     doLast {
                         val mcVersion = sub.findProperty("MC_VERSION")?.toString() ?: "unknown"
                         val modVersion = sub.findProperty("MOD_VERSION")?.toString() ?: "dev"
@@ -525,18 +535,21 @@ tasks.register("deepClean") {
 
                         val sourceFile = archiveFile.get().asFile
                         if (sourceFile.exists()) {
-                            val targetName = "The Expanse - Neoforge+$mcVersion - Build $modVersion.jar"
-                            val targetFile = File(destDir, targetName)
+                            val sanitizedName =
+                                "TheExpanse-NeoForge+$mcVersion-$modVersion.jar"
+                            val targetFile = File(destDir, sanitizedName)
 
-                            sourceFile.copyTo(targetFile, overwrite = true)
-                            println("✅ Moved + renamed ${sub.name} jar → ${targetFile.name}")
+                            // Remove any existing duplicates
+                            destDir.listFiles()
+                                ?.filter { it.name.contains("TheExpanse-NeoForge+$mcVersion") }
+                                ?.forEach { it.delete() }
+
+                            sourceFile.renameTo(targetFile)
+                            println("✅ Renamed ${sub.name} jar → ${targetFile.name}")
                         } else {
                             println("⚠️ No jar found for ${sub.name}")
                         }
                     }
-                    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
                 }
             }
         }
-
-
