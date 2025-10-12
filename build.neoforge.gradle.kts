@@ -17,6 +17,7 @@ import java.util.Properties
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.atomic.AtomicBoolean
+import org.gradle.jvm.tasks.Jar
 
 plugins {
     id("net.neoforged.gradle.userdev") version "7.0.190"
@@ -510,27 +511,32 @@ tasks.register("deepClean") {
     }
 }
 
-// ───────────────────────────────────────────────
-// Centralized Jar Output + Custom Naming Scheme
-// ───────────────────────────────────────────────
-subprojects {
-    tasks.withType<Jar>().configureEach {
-        destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
 
-        doLast {
-            val mcVersion = project.findProperty("MC_VERSION")?.toString() ?: "unknown"
-            val modVersion = project.findProperty("MOD_VERSION")?.toString() ?: "dev"
 
-            val newName = "The Expanse - Neoforge+$mcVersion - Build $modVersion.jar"
-            val jarFile = archiveFile.get().asFile
-            val newFile = File(jarFile.parentFile, newName)
+        gradle.projectsEvaluated {
+            allprojects.forEach { sub ->
+                sub.tasks.withType<Jar>().configureEach {
+                    doLast {
+                        val mcVersion = sub.findProperty("MC_VERSION")?.toString() ?: "unknown"
+                        val modVersion = sub.findProperty("MOD_VERSION")?.toString() ?: "dev"
 
-            if (jarFile.exists()) {
-                if (newFile.exists()) newFile.delete()
-                jarFile.renameTo(newFile)
-                println("Renamed jar: ${jarFile.name} → ${newFile.name}")
+                        val destDir = rootProject.layout.buildDirectory.dir("libs").get().asFile
+                        destDir.mkdirs()
+
+                        val sourceFile = archiveFile.get().asFile
+                        if (sourceFile.exists()) {
+                            val targetName = "The Expanse - Neoforge+$mcVersion - Build $modVersion.jar"
+                            val targetFile = File(destDir, targetName)
+
+                            sourceFile.copyTo(targetFile, overwrite = true)
+                            println("✅ Moved + renamed ${sub.name} jar → ${targetFile.name}")
+                        } else {
+                            println("⚠️ No jar found for ${sub.name}")
+                        }
+                    }
+                    destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
+                }
             }
         }
-    }
-}
+
 
