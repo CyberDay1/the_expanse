@@ -436,3 +436,101 @@ tasks.configureEach {
         enabled = shouldDownloadAssets
     }
 }
+// Automatically discover Stonecutter versions from the versions directory
+val configuredVersions = rootProject.file("versions")
+    .listFiles()
+    ?.filter { it.isDirectory }
+    ?.map { it.name }
+    ?.sorted()
+    ?: emptyList()
+
+if (configuredVersions.isEmpty()) {
+    throw GradleException("No Stonecutter version directories found under /versions.")
+}
+
+val primaryVersion = configuredVersions.first()
+
+allprojects {
+    tasks.configureEach {
+        if (name.equals("deepclean", ignoreCase = true)) {
+            enabled = false
+        }
+    }
+}
+
+// ───────────────────────────────────────────────
+// Build tasks
+// ───────────────────────────────────────────────
+tasks.register("buildApp") {
+    group = "build"
+    description = "Builds the primary Stonecutter variant ($primaryVersion)."
+    dependsOn(":$primaryVersion:build")
+}
+
+tasks.register("buildAllApp") {
+    group = "build"
+    description = "Builds every configured Stonecutter variant."
+    dependsOn(configuredVersions.map { ":$it:build" })
+}
+
+tasks.register("allClean") {
+    group = "build"
+    description = "Cleans all configured Stonecutter variants."
+    dependsOn(configuredVersions.map { ":$it:clean" })
+}
+
+// ───────────────────────────────────────────────
+// Safe Deep Clean (preserves version folders)
+// ───────────────────────────────────────────────
+tasks.register("deepClean") {
+    group = "maintenance"
+    description = "Safely removes Gradle caches and build outputs without deleting version folders."
+
+    doLast {
+        val rootTargets = listOf(
+            rootProject.file(".gradle"),
+            rootProject.file("build"),
+            rootProject.file("out"),
+            rootProject.file("logs")
+        )
+
+        val versionBuilds = rootProject.file("versions").listFiles()
+            ?.filter { it.isDirectory }
+            ?.flatMap { listOf(File(it, "build"), File(it, ".gradle")) }
+            ?: emptyList()
+
+        println("🧹 Starting safe deep clean...")
+        (rootTargets + versionBuilds).forEach { dir ->
+            if (dir.exists()) {
+                println("   - Deleting ${dir.absolutePath}")
+                dir.deleteRecursively()
+            }
+        }
+        println("✅ Safe deep clean complete. Version source folders preserved.")
+    }
+}
+
+// ───────────────────────────────────────────────
+// Centralized Jar Output + Custom Naming Scheme
+// ───────────────────────────────────────────────
+subprojects {
+    tasks.withType<Jar>().configureEach {
+        destinationDirectory.set(rootProject.layout.buildDirectory.dir("libs"))
+
+        doLast {
+            val mcVersion = project.findProperty("MC_VERSION")?.toString() ?: "unknown"
+            val modVersion = project.findProperty("MOD_VERSION")?.toString() ?: "dev"
+
+            val newName = "The Expanse - Neoforge+$mcVersion - Build $modVersion.jar"
+            val jarFile = archiveFile.get().asFile
+            val newFile = File(jarFile.parentFile, newName)
+
+            if (jarFile.exists()) {
+                if (newFile.exists()) newFile.delete()
+                jarFile.renameTo(newFile)
+                println("Renamed jar: ${jarFile.name} → ${newFile.name}")
+            }
+        }
+    }
+}
+
