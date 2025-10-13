@@ -17,15 +17,12 @@ allprojects {
 
 tasks.register("buildAll") {
     group = "build"
-    description = "Builds all Stonecutter version variants."
-    dependsOn(
-        gradle.includedBuilds.flatMap { it.taskNames },
-        subprojects.map { "${it.path}:build" }
-    )
+    description = "Builds all version variants."
+    subprojects.forEach { dependsOn("${it.path}:build") }
 }
 
 tasks.register("cleanAll") {
     group = "build"
-    description = "Cleans all Stonecutter version variants."
+    description = "Cleans all version variants."
     subprojects.forEach { dependsOn("${it.path}:clean") }
 }
